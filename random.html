@@ -18,7 +18,6 @@
       --blue:#60a5fa;
       --purple:#8b5cf6;
       --pink:#ec4899;
-      --violet:#a855f7;
       --panel:rgba(255,255,255,.06);
 
       --shadow:0 20px 60px rgba(0,0,0,.30);
@@ -69,7 +68,7 @@
       border-radius:22px;
       display:grid;
       place-items:center;
-      background:linear-gradient(135deg,#0ea5e9,#8b5cf6 58%, #ec4899);
+      background:linear-gradient(135deg,#06b6d4,#8b5cf6 58%, #ec4899);
       color:#ffffff;
       font-size:30px;
       font-weight:900;
@@ -409,7 +408,7 @@
       const boxWidth = resultNumber.parentElement.clientWidth || 900;
       const size = getFontSizePx(selectedDigit, boxWidth);
       resultNumber.style.fontSize = `${size}px`;
-      resultNumber.style.letterSpacing = selectedDigit >= 5 ? ".012em" : ".03em";
+      resultNumber.style.letterSpacing = selectedDigit >= 6 ? ".006em" : selectedDigit === 5 ? ".01em" : ".03em";
     }
 
     function updateModeUI() {
@@ -516,11 +515,11 @@
       const exportRoot = document.getElementById("exportRoot");
       const isStory = type === "story";
 
-      const fontSizesStory = { 1: 320, 2: 285, 3: 240, 4: 205, 5: 172, 6: 148 };
-      const fontSizesSquare = { 1: 245, 2: 215, 3: 186, 4: 156, 5: 132, 6: 116 };
+      const fontSizesStory = { 1: 320, 2: 285, 3: 240, 4: 215, 5: 188, 6: 164 };
+      const fontSizesSquare = { 1: 245, 2: 215, 3: 186, 4: 164, 5: 144, 6: 128 };
 
       const fontSize = isStory ? fontSizesStory[selectedDigit] : fontSizesSquare[selectedDigit];
-      const letterSpacing = selectedDigit >= 5 ? ".012em" : ".03em";
+      const letterSpacing = selectedDigit >= 6 ? ".006em" : selectedDigit === 5 ? ".01em" : ".03em";
 
       exportRoot.innerHTML = `
         <div id="exportCard" style="
