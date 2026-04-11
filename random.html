@@ -7,16 +7,18 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root{
-      --bg:#060816;
-      --bg2:#0c1226;
-      --text:#fffaf2;
-      --muted:#b8c3db;
-      --gold:#ffd66b;
-      --pink:#ff4fb3;
-      --purple:#8b5cf6;
-      --blue:#5ea2ff;
-      --cyan:#2fdcff;
-      --orange:#ff9a3d;
+      --bg1:#081120;
+      --bg2:#101a33;
+      --panel:rgba(255,255,255,.08);
+      --panel-line:rgba(255,255,255,.12);
+      --text:#f8fbff;
+      --muted:#b8c6df;
+      --accent1:#7c3aed;
+      --accent2:#06b6d4;
+      --accent3:#f59e0b;
+      --accent4:#ec4899;
+      --white:#ffffff;
+      --shadow:0 20px 60px rgba(0,0,0,.28);
     }
 
     *{box-sizing:border-box}
@@ -26,10 +28,10 @@
       color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
       background:
-        radial-gradient(circle at 10% 18%, rgba(94,162,255,.18), transparent 18%),
-        radial-gradient(circle at 90% 18%, rgba(255,79,179,.16), transparent 18%),
-        radial-gradient(circle at 50% 85%, rgba(47,220,255,.10), transparent 16%),
-        linear-gradient(180deg,#040612,#0a1021 50%, #050916);
+        radial-gradient(circle at 10% 10%, rgba(6,182,212,.22), transparent 22%),
+        radial-gradient(circle at 90% 12%, rgba(236,72,153,.18), transparent 22%),
+        radial-gradient(circle at 50% 100%, rgba(124,58,237,.18), transparent 26%),
+        linear-gradient(180deg,var(--bg1),var(--bg2));
       overflow-x:hidden;
     }
 
@@ -45,8 +47,8 @@
 
     .topbar{
       display:flex;
-      align-items:flex-start;
       justify-content:space-between;
+      align-items:flex-start;
       gap:16px;
       flex-wrap:wrap;
     }
@@ -63,19 +65,19 @@
       border-radius:22px;
       display:grid;
       place-items:center;
-      background:linear-gradient(135deg,#ffd66b,#ffb54d);
+      background:linear-gradient(135deg,#f8b84e,#ffd86f);
       color:#111827;
       font-size:32px;
       font-weight:900;
-      box-shadow:0 14px 34px rgba(255,214,107,.22);
+      box-shadow:0 12px 30px rgba(248,184,78,.28);
       flex:0 0 auto;
     }
 
     .kicker{
       font-size:14px;
-      color:#eaf2ff;
-      opacity:.9;
+      color:#e7f0ff;
       font-weight:900;
+      opacity:.9;
       margin-bottom:4px;
     }
 
@@ -83,7 +85,7 @@
       margin:0;
       font-size:clamp(44px,7vw,82px);
       line-height:.95;
-      letter-spacing:-1.4px;
+      letter-spacing:-1.3px;
     }
 
     .sub{
@@ -101,7 +103,7 @@
     }
 
     .btn{
-      border:0;
+      border:1px solid rgba(255,255,255,.12);
       cursor:pointer;
       border-radius:18px;
       padding:13px 18px;
@@ -109,9 +111,8 @@
       color:white;
       text-decoration:none;
       background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.10);
       font-size:15px;
-      backdrop-filter:blur(10px);
+      backdrop-filter:blur(12px);
     }
 
     .mode-row{
@@ -121,124 +122,110 @@
     }
 
     .mode-btn{
-      min-height:76px;
-      border-radius:22px;
-      border:1px solid rgba(255,255,255,.11);
-      background:rgba(255,255,255,.05);
+      min-height:74px;
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
       color:var(--text);
-      font-size:clamp(18px,2vw,26px);
+      font-size:clamp(18px,2vw,24px);
       font-weight:900;
       cursor:pointer;
       transition:.18s ease;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
     }
 
     .mode-btn.active{
-      background:linear-gradient(135deg, rgba(255,154,61,.48), rgba(255,79,179,.38));
-      border-color:rgba(255,214,107,.56);
+      background:linear-gradient(135deg, rgba(245,158,11,.85), rgba(236,72,153,.75));
+      border-color:rgba(255,255,255,.22);
       box-shadow:
-        0 0 0 2px rgba(255,214,107,.10) inset,
-        0 18px 44px rgba(255,79,179,.20),
-        0 0 40px rgba(255,154,61,.16);
+        0 12px 32px rgba(236,72,153,.22),
+        0 0 28px rgba(245,158,11,.18);
       transform:translateY(-1px);
     }
 
-    .hero-stage{
+    .stage{
       position:relative;
       min-height:58vh;
+      border-radius:40px;
+      overflow:hidden;
+      border:1px solid var(--panel-line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      backdrop-filter:blur(16px);
+      box-shadow:var(--shadow);
       display:flex;
-      flex-direction:column;
       align-items:center;
       justify-content:center;
       text-align:center;
-      overflow:hidden;
-      border-radius:40px;
-      background:
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,.02), transparent 26%),
-        linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
-      border:1px solid rgba(255,255,255,.06);
+      padding:30px 20px;
     }
 
-    .hero-stage::before{
+    .stage::before{
       content:"";
       position:absolute;
-      width:360px;
-      height:360px;
-      border-radius:50%;
-      background:radial-gradient(circle, rgba(94,162,255,.16), transparent 70%);
-      left:-120px;
-      top:12%;
+      inset:auto auto 8% 50%;
+      transform:translateX(-50%);
+      width:min(74vw,720px);
+      height:min(24vw,220px);
+      border-radius:999px;
+      background:radial-gradient(circle, rgba(255,255,255,.10), transparent 72%);
+      filter:blur(10px);
       pointer-events:none;
     }
 
-    .hero-stage::after{
+    .stage::after{
       content:"";
       position:absolute;
-      width:420px;
-      height:420px;
+      width:380px;
+      height:380px;
+      right:-120px;
+      top:-120px;
       border-radius:50%;
-      background:radial-gradient(circle, rgba(255,79,179,.14), transparent 70%);
-      right:-150px;
-      top:6%;
+      background:radial-gradient(circle, rgba(124,58,237,.24), transparent 70%);
       pointer-events:none;
     }
 
-    .stage-center{
+    .stage-inner{
       position:relative;
       z-index:2;
       width:100%;
       max-width:1100px;
-      padding:20px 20px 10px;
       display:flex;
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      min-height:54vh;
+      min-height:50vh;
     }
 
     .number-label{
       font-size:clamp(24px,3vw,34px);
       font-weight:900;
       color:#edf3ff;
-      opacity:.96;
-      margin-bottom:18px;
-    }
-
-    .number-glow{
-      position:absolute;
-      width:min(72vw,700px);
-      height:min(20vw,180px);
-      background:radial-gradient(circle, rgba(255,214,107,.20), transparent 72%);
-      filter:blur(18px);
-      pointer-events:none;
-      z-index:1;
+      margin-bottom:20px;
     }
 
     .result-number{
-      position:relative;
-      z-index:2;
       width:100%;
       text-align:center;
       line-height:1;
       font-weight:900;
       white-space:nowrap;
       font-variant-numeric:tabular-nums;
+      color:#ffffff;
       letter-spacing:.03em;
-      color:#fff7ea;
       text-shadow:
-        0 0 12px rgba(255,255,255,.12),
-        0 0 26px rgba(255,214,107,.14),
-        0 12px 28px rgba(0,0,0,.34);
-      transform-origin:center center;
+        0 6px 18px rgba(0,0,0,.22),
+        0 0 16px rgba(255,255,255,.10);
       transition:transform .12s ease, opacity .12s ease, text-shadow .12s ease;
       padding:8px 0;
     }
 
-    .result-number.final-pop{
+    .result-number.pop{
       transform:scale(1.08);
       text-shadow:
-        0 0 16px rgba(255,255,255,.18),
-        0 0 36px rgba(255,214,107,.22),
-        0 16px 32px rgba(0,0,0,.38);
+        0 8px 22px rgba(0,0,0,.28),
+        0 0 22px rgba(255,255,255,.18),
+        0 0 34px rgba(6,182,212,.14);
     }
 
     .result-meta{
@@ -259,21 +246,21 @@
     .spin-btn{
       border:0;
       cursor:pointer;
-      border-radius:24px;
+      border-radius:22px;
       min-height:68px;
       padding:16px 32px;
       font-size:24px;
       font-weight:900;
       color:white;
-      background:linear-gradient(135deg,var(--orange),var(--pink),var(--purple));
+      background:linear-gradient(135deg,var(--accent3),var(--accent4),var(--accent1));
       box-shadow:
-        0 20px 44px rgba(255,79,179,.22),
-        0 0 40px rgba(255,154,61,.18);
+        0 18px 40px rgba(236,72,153,.22),
+        0 0 28px rgba(124,58,237,.18);
       min-width:300px;
     }
 
     .action-btn{
-      border:1px solid rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.12);
       cursor:pointer;
       border-radius:18px;
       min-height:56px;
@@ -281,7 +268,7 @@
       font-size:15px;
       font-weight:900;
       color:white;
-      background:rgba(255,255,255,.07);
+      background:rgba(255,255,255,.08);
       min-width:132px;
       backdrop-filter:blur(8px);
     }
@@ -302,8 +289,6 @@
       .mode-row{grid-template-columns:repeat(2,minmax(0,1fr))}
       .spin-btn,.action-btn{width:100%}
       .action-row{justify-content:stretch}
-      .hero-stage{min-height:52vh}
-      .stage-center{min-height:46vh}
     }
   </style>
 </head>
@@ -338,10 +323,9 @@
       <button class="mode-btn" data-digit="6">6 ตัว</button>
     </div>
 
-    <section class="hero-stage">
-      <div class="stage-center">
+    <section class="stage">
+      <div class="stage-inner">
         <div class="number-label" id="numberLabel">เลขนำโชค 2 ตัว</div>
-        <div class="number-glow"></div>
         <div class="result-number" id="resultNumber">--</div>
         <div class="result-meta" id="resultMeta">กดสุ่มเพื่อเริ่ม</div>
       </div>
@@ -386,12 +370,12 @@
 
     function getFontSizePx(digit, width) {
       const rules = {
-        1: Math.min(width * 0.34, 280),
-        2: Math.min(width * 0.30, 238),
-        3: Math.min(width * 0.245, 204),
-        4: Math.min(width * 0.205, 170),
-        5: Math.min(width * 0.172, 142),
-        6: Math.min(width * 0.148, 122)
+        1: Math.min(width * 0.34, 290),
+        2: Math.min(width * 0.30, 240),
+        3: Math.min(width * 0.245, 205),
+        4: Math.min(width * 0.205, 172),
+        5: Math.min(width * 0.172, 144),
+        6: Math.min(width * 0.148, 124)
       };
       return rules[digit] || 100;
     }
@@ -421,9 +405,9 @@
     }
 
     function finalPop() {
-      resultNumber.classList.add("final-pop");
+      resultNumber.classList.add("pop");
       setTimeout(() => {
-        resultNumber.classList.remove("final-pop");
+        resultNumber.classList.remove("pop");
         resultNumber.style.transform = "scale(1)";
       }, 240);
     }
@@ -450,7 +434,7 @@
         setRollingVisual(1.05, ".90");
         phase1++;
         if (phase1 < 24) {
-          setTimeout(runPhase1, 26);
+          setTimeout(runPhase1, 24);
         } else {
           runPhase2();
         }
@@ -461,7 +445,7 @@
         setRollingVisual(1.03, ".95");
         phase2++;
         if (phase2 < 10) {
-          setTimeout(runPhase2, 54);
+          setTimeout(runPhase2, 52);
         } else {
           runPhase3();
         }
@@ -472,7 +456,7 @@
         setRollingVisual(1.015, ".99");
         phase3++;
         if (phase3 < 5) {
-          setTimeout(runPhase3, 105 + (phase3 * 34));
+          setTimeout(runPhase3, 105 + (phase3 * 32));
         } else {
           resultNumber.textContent = finalValue;
           resultNumber.style.opacity = "1";
@@ -507,12 +491,8 @@
       const exportRoot = document.getElementById("exportRoot");
       const isStory = type === "story";
 
-      const fontSizesStory = {
-        1: 330, 2: 290, 3: 245, 4: 205, 5: 168, 6: 146
-      };
-      const fontSizesSquare = {
-        1: 250, 2: 220, 3: 188, 4: 156, 5: 130, 6: 114
-      };
+      const fontSizesStory = { 1: 320, 2: 285, 3: 240, 4: 205, 5: 172, 6: 148 };
+      const fontSizesSquare = { 1: 245, 2: 215, 3: 186, 4: 156, 5: 132, 6: 116 };
 
       const fontSize = isStory ? fontSizesStory[selectedDigit] : fontSizesSquare[selectedDigit];
       const letterSpacing = selectedDigit >= 5 ? ".012em" : ".03em";
@@ -522,13 +502,13 @@
           width:1080px;
           height:${isStory ? "1920px" : "1080px"};
           padding:${isStory ? "64px 56px" : "54px"};
-          color:#fffaf2;
+          color:#f8fbff;
           font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
           background:
-            radial-gradient(circle at 10% 18%, rgba(94,162,255,.18), transparent 18%),
-            radial-gradient(circle at 90% 18%, rgba(255,79,179,.16), transparent 18%),
-            radial-gradient(circle at 50% 85%, rgba(47,220,255,.10), transparent 16%),
-            linear-gradient(180deg,#040612,#0a1021 50%, #050916);
+            radial-gradient(circle at 12% 14%, rgba(45,212,191,.28), transparent 20%),
+            radial-gradient(circle at 88% 14%, rgba(236,72,153,.22), transparent 20%),
+            radial-gradient(circle at 50% 100%, rgba(124,58,237,.24), transparent 28%),
+            linear-gradient(180deg,#0b1220,#131d36);
           position:relative;
           overflow:hidden;
           display:flex;
@@ -536,34 +516,37 @@
           justify-content:space-between;
         ">
           <div style="
-            position:absolute;left:50%;bottom:-120px;transform:translateX(-50%);
-            width:520px;height:520px;border-radius:50%;
-            background:radial-gradient(circle, rgba(47,220,255,.14), transparent 72%);
-            filter:blur(10px);
+            position:absolute;inset:auto auto 10% 50%;
+            transform:translateX(-50%);
+            width:${isStory ? "760px" : "620px"};
+            height:${isStory ? "220px" : "160px"};
+            border-radius:999px;
+            background:radial-gradient(circle, rgba(255,255,255,.12), transparent 72%);
+            filter:blur(12px);
           "></div>
 
           <div style="
-            position:absolute;left:-120px;top:180px;
+            position:absolute;left:-120px;top:140px;
             width:340px;height:340px;border-radius:50%;
-            background:radial-gradient(circle, rgba(94,162,255,.18), transparent 70%);
+            background:radial-gradient(circle, rgba(6,182,212,.28), transparent 70%);
           "></div>
 
           <div style="
-            position:absolute;right:-120px;top:150px;
+            position:absolute;right:-120px;top:120px;
             width:340px;height:340px;border-radius:50%;
-            background:radial-gradient(circle, rgba(255,79,179,.16), transparent 70%);
+            background:radial-gradient(circle, rgba(236,72,153,.24), transparent 70%);
           "></div>
 
           <div style="position:relative;z-index:2;">
             <div style="display:flex;align-items:center;gap:16px;">
               <div style="
                 width:88px;height:88px;border-radius:26px;display:grid;place-items:center;
-                background:linear-gradient(135deg,#ffd66b,#ffb54d);
+                background:linear-gradient(135deg,#f8b84e,#ffd86f);
                 color:#111827;font-size:38px;font-weight:900;
-                box-shadow:0 14px 34px rgba(255,214,107,.20);
+                box-shadow:0 14px 34px rgba(248,184,78,.24);
               ">🎲</div>
               <div>
-                <div style="font-size:24px;color:rgba(255,255,255,.80);font-weight:900;">Random 100% • ไม่เกี่ยวกับ AI</div>
+                <div style="font-size:24px;color:rgba(255,255,255,.84);font-weight:900;">Random 100% • ไม่เกี่ยวกับ AI</div>
                 <div style="font-size:74px;font-weight:900;line-height:1;margin-top:4px;">Lucky Drop</div>
               </div>
             </div>
@@ -573,44 +556,32 @@
             position:relative;z-index:2;
             display:flex;flex-direction:column;align-items:center;justify-content:center;
             text-align:center;flex:1;
-            padding:${isStory ? "80px 0 70px" : "40px 0 30px"};
+            padding:${isStory ? "70px 0 60px" : "30px 0 20px"};
           ">
             <div style="
               font-size:${isStory ? "34px" : "28px"};
-              color:rgba(255,255,255,.88);
+              color:rgba(255,255,255,.90);
               font-weight:900;
-              margin-bottom:24px;
+              margin-bottom:26px;
             ">เลขนำโชค ${selectedDigit} ตัว</div>
 
             <div style="
-              position:absolute;
-              width:${isStory ? "760px" : "640px"};
-              height:${isStory ? "220px" : "170px"};
-              border-radius:50%;
-              background:radial-gradient(circle, rgba(255,214,107,.20), transparent 72%);
-              filter:blur(18px);
-            "></div>
-
-            <div style="
-              position:relative;
-              z-index:3;
-              font-weight:900;
-              line-height:1;
-              letter-spacing:${letterSpacing};
               font-size:${fontSize}px;
-              text-align:center;
+              line-height:1;
+              font-weight:900;
+              letter-spacing:${letterSpacing};
               white-space:nowrap;
-              color:#fff7ea;
+              color:#ffffff;
               text-shadow:
-                0 0 14px rgba(255,255,255,.12),
-                0 0 26px rgba(255,214,107,.16),
-                0 14px 30px rgba(0,0,0,.36);
+                0 10px 24px rgba(0,0,0,.24),
+                0 0 16px rgba(255,255,255,.12),
+                0 0 30px rgba(6,182,212,.10);
             ">${currentValue}</div>
           </div>
 
           <div style="position:relative;z-index:2;">
-            <div style="font-size:30px;font-weight:900;color:rgba(255,255,255,.90);">Lucky Random • Full Random</div>
-            <div style="font-size:22px;color:rgba(255,255,255,.68);margin-top:10px;">${new Date().toLocaleDateString("th-TH")}</div>
+            <div style="font-size:30px;font-weight:900;color:rgba(255,255,255,.92);">Lucky Random • Full Random</div>
+            <div style="font-size:22px;color:rgba(255,255,255,.70);margin-top:10px;">${new Date().toLocaleDateString("th-TH")}</div>
           </div>
         </div>
       `;
