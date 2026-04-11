@@ -3,1494 +3,368 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lottery AI PRO MAX V6</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <title>Lucky Drop</title>
   <style>
     :root{
-      --bg:#07111f;
-      --bg2:#0a1628;
-      --panel:rgba(12,20,36,.82);
-      --line:rgba(148,163,184,.12);
-      --text:#e7eefb;
-      --muted:#98a8c4;
-      --blue:#4f8cff;
-      --cyan:#14b8a6;
-      --gold:#f8d56b;
-      --pink:#ec4899;
-      --green:#10b981;
-      --orange:#fb923c;
+      --bg1:#050816;
+      --bg2:#0b1230;
+      --bg3:#121a3f;
+
+      --text:#f8fbff;
+      --muted:#aebee0;
+      --line:rgba(255,255,255,.10);
+
+      --cyan:#22d3ee;
+      --blue:#60a5fa;
       --purple:#8b5cf6;
-      --shadow:0 24px 60px rgba(0,0,0,.35);
+      --pink:#ec4899;
+
+      --panel:rgba(255,255,255,.06);
+      --shadow:0 24px 60px rgba(0,0,0,.30);
     }
 
     *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+
     body{
-      margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(79,140,255,.18), transparent 28%),
-        radial-gradient(circle at top right, rgba(20,184,166,.14), transparent 30%),
-        linear-gradient(180deg,var(--bg),var(--bg2));
       min-height:100vh;
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+      background:
+        radial-gradient(circle at 10% 14%, rgba(34,211,238,.16), transparent 20%),
+        radial-gradient(circle at 88% 14%, rgba(236,72,153,.18), transparent 20%),
+        radial-gradient(circle at 50% 100%, rgba(139,92,246,.20), transparent 26%),
+        linear-gradient(180deg,var(--bg1),var(--bg2) 55%, var(--bg3));
+      overflow-x:hidden;
     }
 
-    .app{max-width:1400px;margin:0 auto;padding:18px 14px 40px}
-    .hero,.card{
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:28px;
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(14px);
+    .app{
+      max-width:1280px;
+      margin:0 auto;
+      padding:20px 16px 40px;
     }
 
     .hero{
-      padding:22px;
-      background:linear-gradient(135deg, rgba(79,140,255,.18), rgba(20,184,166,.10));
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:24px;
       position:relative;
-      overflow:hidden;
     }
 
-    .hero:after{
+    .hero::before{
       content:"";
       position:absolute;
-      right:-50px;
-      bottom:-70px;
-      width:220px;
-      height:220px;
+      width:420px;
+      height:420px;
+      left:-140px;
+      top:10%;
       border-radius:50%;
-      background:radial-gradient(circle, rgba(248,213,107,.22), transparent 70%);
+      background:radial-gradient(circle, rgba(34,211,238,.14), transparent 72%);
       pointer-events:none;
     }
 
-    .row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-    .brand{display:flex;align-items:center;gap:14px}
+    .hero::after{
+      content:"";
+      position:absolute;
+      width:460px;
+      height:460px;
+      right:-170px;
+      top:8%;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(236,72,153,.14), transparent 72%);
+      pointer-events:none;
+    }
+
+    .top{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      position:relative;
+      z-index:2;
+    }
+
     .logo{
-      width:58px;height:58px;border-radius:18px;display:grid;place-items:center;
-      background:linear-gradient(135deg,var(--gold),#ff9f43);
-      color:#111827;font-weight:900;font-size:18px;
+      width:74px;
+      height:74px;
+      border-radius:22px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,#0f172a,#111827);
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:
+        0 12px 30px rgba(139,92,246,.25),
+        0 0 24px rgba(34,211,238,.20),
+        inset 0 1px 0 rgba(255,255,255,.04);
+      overflow:hidden;
+      flex:0 0 auto;
     }
 
-    h1{margin:0;font-size:clamp(28px,4vw,42px);line-height:1.05}
-    .sub{margin:10px 0 0;color:var(--muted);max-width:900px;line-height:1.65;font-size:15px}
-    .kicker{color:var(--muted);font-size:13px;margin-bottom:8px}
-    .big{font-size:clamp(28px,4vw,40px);font-weight:900;margin:0;word-break:break-word}
-    .note{margin-top:8px;color:#c9d7ef;font-size:13px}
-    .section-title{margin:0 0 8px;font-size:20px}
-    .section-sub{margin:0 0 14px;color:var(--muted);font-size:14px}
-
-    .btn{
-      border:0;cursor:pointer;border-radius:14px;padding:12px 16px;font-weight:800;
-      color:#fff;background:linear-gradient(135deg,var(--blue),#76a8ff);
-      box-shadow:0 10px 24px rgba(79,140,255,.22);
-    }
-    .btn.alt{background:linear-gradient(135deg,var(--pink),#8b5cf6)}
-    .btn.green{background:linear-gradient(135deg,var(--green),#22c55e)}
-    .btn.orange{background:linear-gradient(135deg,var(--orange),#f97316)}
-    .btn.small{padding:9px 12px;border-radius:12px;font-size:13px}
-
-    .grid-4,.grid-main,.grid-2,.grid-3{
-      display:grid;gap:16px;margin-top:16px
-    }
-    .grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
-    .grid-main{grid-template-columns:1.1fr .9fr}
-    .grid-2{grid-template-columns:1fr 1fr}
-    .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
-    .card-inner{padding:18px}
-    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-
-    .analysis{
-      border-radius:18px;padding:16px;
-      background:linear-gradient(135deg, rgba(79,140,255,.12), rgba(20,184,166,.08));
-      border:1px solid rgba(255,255,255,.07);
-      color:#d7e5fb;line-height:1.75;white-space:pre-line;font-size:14px;
+    .logo svg{
+      width:44px;
+      height:44px;
+      display:block;
     }
 
-    .bars{display:grid;gap:12px}
-    .bar-row{
-      display:grid;grid-template-columns:90px 1fr 64px;gap:10px;align-items:center;font-size:14px;
-    }
-    .bar-track{
-      height:12px;border-radius:999px;background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.03);overflow:hidden;
-    }
-    .bar-fill{
-      height:100%;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--cyan));
+    .kicker{
+      font-size:14px;
+      color:#e8f3ff;
+      font-weight:900;
+      opacity:.9;
+      margin-bottom:4px;
+      letter-spacing:.03em;
     }
 
-    .chips{display:flex;flex-wrap:wrap;gap:8px}
-    .chip{
-      display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:9px 12px;
-      background:rgba(79,140,255,.12);border:1px solid rgba(79,140,255,.18);
-      color:#dce9ff;font-size:13px;font-weight:800;
-    }
-    .chip.gold{
-      background:rgba(248,213,107,.14);
-      border:1px solid rgba(248,213,107,.20);
-      color:#fde68a;
-    }
-    .chip.green{
-      background:rgba(16,185,129,.14);
-      border:1px solid rgba(16,185,129,.20);
-      color:#d1fae5;
-    }
-    .chip.pink{
-      background:rgba(236,72,153,.14);
-      border:1px solid rgba(236,72,153,.20);
-      color:#fbcfe8;
-    }
-    .chip.orange{
-      background:rgba(251,146,60,.14);
-      border:1px solid rgba(251,146,60,.20);
-      color:#fed7aa;
-    }
-    .chip.purple{
-      background:rgba(139,92,246,.14);
-      border:1px solid rgba(139,92,246,.20);
-      color:#ddd6fe;
+    h1{
+      margin:0;
+      font-size:clamp(46px,7vw,92px);
+      line-height:.94;
+      letter-spacing:-1.4px;
+      color:#ffffff;
+      text-shadow:
+        0 6px 18px rgba(0,0,0,.18),
+        0 0 16px rgba(96,165,250,.08);
     }
 
-    .mini-chart{
-      display:grid;grid-template-columns:repeat(12,minmax(0,1fr));
-      align-items:end;gap:10px;min-height:180px;margin-top:10px;
+    .tagline{
+      margin:12px 0 0;
+      font-size:16px;
+      font-weight:800;
+      letter-spacing:.08em;
+      color:#c7d2fe;
+      opacity:.92;
     }
-    .month-col{display:flex;flex-direction:column;align-items:center;gap:8px}
-    .month-bar-wrap{width:100%;min-height:130px;display:flex;align-items:flex-end}
-    .month-bar{
-      width:100%;border-radius:14px 14px 8px 8px;
-      background:linear-gradient(180deg,var(--blue),var(--cyan));
-      min-height:6px;
-    }
-    .month-label{color:var(--muted);font-size:12px}
-    .month-value{color:#d8e8ff;font-size:12px;font-weight:800}
 
-    .table-wrap{
-      margin-top:14px;border-radius:16px;overflow:auto;border:1px solid var(--line);
+    .desc{
+      margin:0;
+      max-width:760px;
+      color:var(--muted);
+      font-size:17px;
+      line-height:1.7;
+      position:relative;
+      z-index:2;
     }
-    table{
-      width:100%;min-width:760px;border-collapse:collapse;background:rgba(2,6,23,.22);
+
+    .card-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      position:relative;
+      z-index:2;
     }
-    th,td{
-      padding:14px 12px;text-align:left;border-bottom:1px solid rgba(148,163,184,.12);font-size:14px;
+
+    .card-link{
+      text-decoration:none;
+      color:inherit;
+      display:block;
     }
-    th{
-      position:sticky;top:0;background:rgba(15,23,42,.96);color:#c0d5ff;z-index:1;
+
+    .card{
+      min-height:300px;
+      border-radius:30px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
+      backdrop-filter:blur(16px);
+      box-shadow:var(--shadow);
+      padding:24px;
+      position:relative;
+      overflow:hidden;
+      transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+
+    .card:hover{
+      transform:translateY(-3px);
+      border-color:rgba(255,255,255,.18);
+      box-shadow:
+        0 28px 70px rgba(0,0,0,.34),
+        0 0 28px rgba(139,92,246,.10);
+    }
+
+    .card.random::before{
+      content:"";
+      position:absolute;
+      width:240px;
+      height:240px;
+      right:-60px;
+      top:-60px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(34,211,238,.22), transparent 70%);
+      pointer-events:none;
+    }
+
+    .card.ai::before{
+      content:"";
+      position:absolute;
+      width:240px;
+      height:240px;
+      right:-60px;
+      top:-60px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(236,72,153,.22), transparent 70%);
+      pointer-events:none;
+    }
+
+    .icon-wrap{
+      width:68px;
+      height:68px;
+      border-radius:20px;
+      display:grid;
+      place-items:center;
+      margin-bottom:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.06);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+    }
+
+    .icon{
+      font-size:30px;
+      line-height:1;
+    }
+
+    .card-title{
+      margin:0;
+      font-size:32px;
+      line-height:1;
+      font-weight:900;
+      color:#ffffff;
+    }
+
+    .card-sub{
+      margin:14px 0 0;
+      color:var(--muted);
+      font-size:16px;
+      line-height:1.7;
+      max-width:520px;
+    }
+
+    .pill-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:18px;
     }
 
     .pill{
-      display:inline-flex;align-items:center;justify-content:center;min-width:48px;
-      padding:8px 10px;border-radius:999px;background:rgba(248,213,107,.12);
-      border:1px solid rgba(248,213,107,.18);color:#fce28f;font-weight:900;
-    }
-
-    .search-grid{display:grid;grid-template-columns:1fr 220px;gap:12px}
-    .input{
-      width:100%;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.08);
-      background:rgba(255,255,255,.05);
-      color:var(--text);
-      padding:13px 14px;
-      outline:none;
-    }
-
-    .status{font-size:13px;color:var(--muted);margin-top:10px}
-    .empty{color:var(--muted);padding:8px 0}
-    .error{color:#fecaca}
-
-    /* Lucky Modal */
-    .modal{
-      position:fixed;
-      inset:0;
-      display:none;
+      display:inline-flex;
       align-items:center;
-      justify-content:center;
-      background:rgba(2,6,23,.78);
-      backdrop-filter:blur(12px);
-      z-index:9999;
-      padding:18px;
-    }
-    .modal.show{display:flex}
-
-    .lucky-wrap{
-      width:min(100%,1180px);
-      min-height:min(90vh,900px);
-      border-radius:40px;
-      padding:28px;
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow:0 30px 90px rgba(0,0,0,.5);
-      position:relative;
-      overflow:hidden;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-    }
-    .lucky-theme-1{background:linear-gradient(135deg,#0b1733,#172554,#3b0764)}
-    .lucky-theme-2{background:linear-gradient(135deg,#102a43,#0f766e,#082f49)}
-    .lucky-theme-3{background:linear-gradient(135deg,#1e1b4b,#4c1d95,#701a75)}
-    .lucky-theme-4{background:linear-gradient(135deg,#1f2937,#0f766e,#14532d)}
-    .lucky-theme-5{background:linear-gradient(135deg,#3f0d12,#7c2d12,#451a03)}
-    .lucky-theme-6{background:linear-gradient(135deg,#111827,#1d4ed8,#0f172a)}
-    .lucky-theme-7{background:linear-gradient(135deg,#3b0764,#831843,#1d4ed8)}
-    .lucky-theme-8{background:linear-gradient(135deg,#2d1b00,#8b5e00,#1f2937)}
-
-    .lucky-wrap:before{
-      content:"";
-      position:absolute;
-      right:-140px;
-      top:-140px;
-      width:360px;
-      height:360px;
-      border-radius:50%;
-      background:radial-gradient(circle, rgba(255,255,255,.16), transparent 70%);
-      pointer-events:none;
-    }
-    .lucky-wrap:after{
-      content:"";
-      position:absolute;
-      left:-140px;
-      bottom:-140px;
-      width:360px;
-      height:360px;
-      border-radius:50%;
-      background:radial-gradient(circle, rgba(255,255,255,.10), transparent 70%);
-      pointer-events:none;
-    }
-
-    .spark{
-      position:absolute;
-      width:180px;
-      height:180px;
-      border-radius:50%;
-      background:radial-gradient(circle, rgba(255,255,255,.16), transparent 70%);
-      filter:blur(4px);
-      pointer-events:none;
-      opacity:.9;
-    }
-    .spark.s1{top:8%;left:10%}
-    .spark.s2{top:18%;right:8%}
-    .spark.s3{bottom:12%;left:14%}
-    .spark.s4{bottom:10%;right:10%}
-
-    .lucky-top{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:16px;
-      position:relative;
-      z-index:1;
-    }
-
-    .lucky-brand{
-      display:flex;
-      gap:12px;
-      align-items:center;
-    }
-    .lucky-brand-badge{
-      width:56px;height:56px;border-radius:18px;
-      background:rgba(255,255,255,.14);
-      border:1px solid rgba(255,255,255,.18);
-      display:grid;place-items:center;
-      font-size:24px;font-weight:900;
-    }
-
-    .lucky-title{
-      font-size:clamp(32px,4.2vw,58px);
-      font-weight:900;
-      margin:0;
-      letter-spacing:.5px;
-    }
-    .lucky-sub{
-      margin-top:8px;
-      color:rgba(255,255,255,.78);
-      font-size:15px;
-      line-height:1.65;
-      max-width:620px;
-    }
-
-    .close-btn{
-      background:rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.16);
-      color:#fff;
-      border-radius:16px;
-      padding:12px 16px;
-      font-weight:800;
-      cursor:pointer;
-    }
-
-    .lucky-center{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:20px;
-      margin:22px 0;
-      position:relative;
-      z-index:1;
-    }
-
-    .lucky-card{
-      border-radius:30px;
-      padding:24px;
-      min-height:320px;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.14);
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
-      text-align:center;
-    }
-
-    .lucky-label{
-      color:rgba(255,255,255,.82);
-      font-size:20px;
-      margin-bottom:18px;
-      font-weight:800;
-    }
-
-    .lucky-number{
-      font-size:clamp(74px,12vw,170px);
-      line-height:1;
-      font-weight:900;
-      letter-spacing:4px;
-      text-shadow:0 14px 34px rgba(0,0,0,.28);
-    }
-
-    .lucky-footer{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      position:relative;
-      z-index:1;
-      align-items:center;
-      justify-content:space-between;
-    }
-
-    .lucky-actions{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-
-    .lucky-btn{
-      border:0;
-      cursor:pointer;
-      border-radius:18px;
-      padding:14px 18px;
-      font-weight:900;
-      color:#fff;
-      background:rgba(255,255,255,.14);
-      border:1px solid rgba(255,255,255,.18);
-      box-shadow:0 10px 24px rgba(0,0,0,.18);
-    }
-
-    .lucky-btn.primary{
-      background:linear-gradient(135deg,#f59e0b,#fb7185);
-    }
-
-    .lucky-meta{
-      margin-top:10px;
-      color:rgba(255,255,255,.75);
-      font-size:14px;
-    }
-
-    .export-card{
-      position:fixed;
-      left:-99999px;
-      top:0;
-      width:1080px;
-      height:1920px;
-      overflow:hidden;
-      z-index:-1;
-    }
-    .export-square{
-      width:1080px;
-      height:1080px;
-    }
-
-    .share-note{
-      color:var(--muted);
+      padding:9px 12px;
+      border-radius:999px;
       font-size:13px;
-      margin-top:8px;
+      font-weight:900;
+      color:#edf3ff;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .cta{
+      margin-top:24px;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      font-size:15px;
+      font-weight:900;
+      color:#ffffff;
+    }
+
+    .footer-note{
+      color:var(--muted);
+      font-size:14px;
+      position:relative;
+      z-index:2;
     }
 
     @media (max-width:900px){
-      .lucky-center{grid-template-columns:1fr}
-      .lucky-card{min-height:240px}
-      .lucky-footer{flex-direction:column;align-items:flex-start}
+      .card-grid{grid-template-columns:1fr}
+      .card{min-height:260px}
     }
 
-    @media (max-width:1100px){
-      .grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .grid-main,.grid-2,.grid-3{grid-template-columns:1fr}
-      .search-grid{grid-template-columns:1fr}
-    }
     @media (max-width:700px){
-      .app{padding:12px 10px 30px}
-      .grid-4{grid-template-columns:1fr}
-      .toolbar{flex-direction:column}
-      .btn{width:100%}
-      .lucky-wrap{padding:20px}
-      .lucky-title{font-size:34px}
+      .app{padding:16px 10px 28px}
+      .hero{min-height:100svh}
+      h1{font-size:48px}
+      .card-title{font-size:28px}
+      .desc{font-size:15px}
     }
   </style>
 </head>
 <body>
   <div class="app">
     <section class="hero">
-      <div class="row">
+      <div class="top">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="cubeGradLanding" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#22D3EE"/>
+                <stop offset="0.5" stop-color="#8B5CF6"/>
+                <stop offset="1" stop-color="#EC4899"/>
+              </linearGradient>
+            </defs>
+            <path d="M32 8L49 18V38L32 48L15 38V18L32 8Z" stroke="url(#cubeGradLanding)" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M32 8V28M49 18L32 28M15 18L32 28M32 48V28" stroke="url(#cubeGradLanding)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="24" cy="22" r="2.6" fill="#ffffff" fill-opacity=".95"/>
+            <circle cx="40" cy="22" r="2.6" fill="#ffffff" fill-opacity=".95"/>
+            <circle cx="32" cy="34" r="2.8" fill="#ffffff" fill-opacity=".95"/>
+          </svg>
+        </div>
+
         <div>
-          <div class="brand">
-            <div class="logo">LP</div>
-            <div>
-              <div class="kicker">PRO MAX V6 + Lucky Card Export + Share</div>
-              <h1>Lottery AI PRO MAX V6</h1>
+          <div class="kicker">Lucky Drop</div>
+          <h1>Pure Random<br>or Smart Analysis</h1>
+          <p class="tagline">Pure Random • Real Luck</p>
+        </div>
+      </div>
+
+      <p class="desc">
+        เลือกใช้งานได้ 2 แบบตามสไตล์ของคุณ
+        จะใช้โหมดสุ่มเลขนำโชคแบบดวงล้วน หรือเข้าโหมดวิเคราะห์เลขด้วย AI ก็แยกกันชัดเจน
+      </p>
+
+      <div class="card-grid">
+        <a class="card-link" href="./random.html">
+          <article class="card random">
+            <div class="icon-wrap">
+              <div class="icon">🎲</div>
             </div>
-          </div>
-          <p class="sub">
-            เวอร์ชัน V6 เพิ่ม Lucky Card แบบเซฟเป็นรูปได้ทั้ง Story 9:16 และ Square 1:1
-            พร้อมปุ่ม Share และ LINE โดยแยกจากระบบ AI อย่างชัดเจน
-          </p>
-        </div>
+            <h2 class="card-title">Lucky Drop</h2>
+            <p class="card-sub">
+              โหมดสุ่มเลขนำโชคแบบสุ่มจริง 100% เหมาะสำหรับคนที่อยากได้เลขไว กดง่าย
+              เล่นสนุก ส่งต่อได้ และไม่เกี่ยวกับ AI
+            </p>
+            <div class="pill-row">
+              <span class="pill">1–6 ตัว</span>
+              <span class="pill">Random 100%</span>
+              <span class="pill">Save / Share</span>
+            </div>
+            <div class="cta">เข้าสู่หน้าสุ่มเลข →</div>
+          </article>
+        </a>
 
-        <div class="toolbar">
-          <button class="btn" id="refreshBtn">Refresh Data</button>
-          <button class="btn alt" id="runBtn">Run AI</button>
-          <button class="btn green" id="bundleBtn">Auto Generate ชุด</button>
-          <button class="btn orange" id="copyBtn">Copy ชุดเลข</button>
-          <button class="btn" id="openLuckyBtn">🎲 Lucky Random</button>
-        </div>
+        <a class="card-link" href="./ai.html">
+          <article class="card ai">
+            <div class="icon-wrap">
+              <div class="icon">🤖</div>
+            </div>
+            <h2 class="card-title">AI Analysis</h2>
+            <p class="card-sub">
+              โหมดวิเคราะห์เลขจากข้อมูลย้อนหลัง ช่วยดูแนวโน้ม Ranking เลข
+              และใช้ระบบวิเคราะห์แยกจากหน้าสุ่มอย่างชัดเจน
+            </p>
+            <div class="pill-row">
+              <span class="pill">Dashboard</span>
+              <span class="pill">Auto Insight</span>
+              <span class="pill">Scoring</span>
+            </div>
+            <div class="cta">เข้าสู่หน้า AI วิเคราะห์ →</div>
+          </article>
+        </a>
       </div>
 
-      <div id="statusBox" class="status">กำลังเตรียมโหลดข้อมูล...</div>
-    </section>
-
-    <section class="grid-4">
-      <div class="card"><div class="card-inner">
-        <div class="kicker">จำนวนงวดทั้งหมด</div>
-        <div class="big" id="statTotal">0</div>
-        <div class="note">นับจาก data.json</div>
-      </div></div>
-
-      <div class="card"><div class="card-inner">
-        <div class="kicker">เลข 2 ตัวเด่นสุด</div>
-        <div class="big" id="statTop2">--</div>
-        <div class="note" id="statTop2Meta">ยังไม่มีข้อมูล</div>
-      </div></div>
-
-      <div class="card"><div class="card-inner">
-        <div class="kicker">3 ตัวบนเด่นสุด</div>
-        <div class="big" id="statTopTop3">---</div>
-        <div class="note" id="statTopTop3Meta">ยังไม่มีข้อมูล</div>
-      </div></div>
-
-      <div class="card"><div class="card-inner">
-        <div class="kicker">3 ตัวล่างเด่นสุด</div>
-        <div class="big" id="statTopBottom3">---</div>
-        <div class="note" id="statTopBottom3Meta">ยังไม่มีข้อมูล</div>
-      </div></div>
-    </section>
-
-    <section class="grid-2">
-      <div class="card"><div class="card-inner">
-        <h2 class="section-title">สรุปเลขเด่นประจำงวด</h2>
-        <p class="section-sub">อ่านเร็ว ใช้ตัดสินใจไว</p>
-        <div class="analysis" id="summaryBox">ยังกด Run AI อยู่</div>
-      </div></div>
-
-      <div class="card"><div class="card-inner">
-        <h2 class="section-title">Filter การดูผล</h2>
-        <p class="section-sub">เลือกเฉพาะส่วนที่อยากโฟกัส</p>
-        <div class="toolbar">
-          <button class="btn small" data-filter="all">ทั้งหมด</button>
-          <button class="btn small" data-filter="two">2 ตัว</button>
-          <button class="btn small" data-filter="top">3 ตัวบน</button>
-          <button class="btn small" data-filter="bottom">3 ตัวล่าง</button>
-        </div>
-        <div class="analysis" id="filterInfo">ตอนนี้แสดง: ทั้งหมด</div>
-      </div></div>
-    </section>
-
-    <section class="grid-main">
-      <div class="card">
-        <div class="card-inner">
-          <div class="filter-block filter-all">
-            <h2 class="section-title">Auto Insight</h2>
-            <div class="analysis" id="analysisBox">ยังไม่มีข้อมูลสำหรับวิเคราะห์</div>
-          </div>
-
-          <div style="height:18px;"></div>
-
-          <div class="filter-block filter-two filter-all">
-            <h2 class="section-title">เลข 2 ตัวเด่น</h2>
-            <div id="ranking2Box" class="chips"><span class="empty">ยังไม่มีข้อมูล</span></div>
-          </div>
-
-          <div style="height:18px;"></div>
-
-          <div class="filter-block filter-top filter-all">
-            <h2 class="section-title">3 ตัวบนเด่น</h2>
-            <div id="rankingTop3Box" class="chips"><span class="empty">ยังไม่มีข้อมูล</span></div>
-          </div>
-
-          <div style="height:18px;"></div>
-
-          <div class="filter-block filter-bottom filter-all">
-            <h2 class="section-title">3 ตัวล่างเด่น</h2>
-            <div id="rankingBottom3Box" class="chips"><span class="empty">ยังไม่มีข้อมูล</span></div>
-          </div>
-
-          <div style="height:18px;"></div>
-
-          <div class="filter-block filter-all">
-            <h2 class="section-title">Hybrid AI Prediction</h2>
-
-            <div class="kicker">Top 3 ตัวบน</div>
-            <div id="topPredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
-
-            <div style="height:12px;"></div>
-
-            <div class="kicker">Bottom 3 ตัวล่าง</div>
-            <div id="bottomPredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
-
-            <div style="height:12px;"></div>
-
-            <div class="kicker">เลขรวม Hybrid</div>
-            <div id="hybridPredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
-
-            <div style="height:12px;"></div>
-
-            <div class="analysis" id="predictInsight">ระบบจะวิเคราะห์เมื่อกด Run AI</div>
-          </div>
-        </div>
+      <div class="footer-note">
+        ถ้าหน้า AI ของคุณยังใช้ไฟล์เดิมชื่อ <strong>index.html</strong> อยู่ ให้เปลี่ยนลิงก์ปุ่ม AI เป็นไฟล์ที่คุณต้องการใช้จริง เช่น <strong>./dashboard.html</strong> หรือ <strong>./ai.html</strong>
       </div>
-
-      <div class="grid-3" style="grid-template-columns:1fr;">
-        <div class="card filter-block filter-two filter-all"><div class="card-inner">
-          <h2 class="section-title">Top 10 เลข 2 ตัว</h2>
-          <div id="bars2" class="bars"><div class="empty">ยังไม่มีข้อมูล</div></div>
-        </div></div>
-
-        <div class="card filter-block filter-top filter-all"><div class="card-inner">
-          <h2 class="section-title">Top 10 3 ตัวบน</h2>
-          <div id="barsTop3" class="bars"><div class="empty">ยังไม่มีข้อมูล</div></div>
-        </div></div>
-
-        <div class="card filter-block filter-bottom filter-all"><div class="card-inner">
-          <h2 class="section-title">Top 10 3 ตัวล่าง</h2>
-          <div id="barsBottom3" class="bars"><div class="empty">ยังไม่มีข้อมูล</div></div>
-        </div></div>
-      </div>
-    </section>
-
-    <section class="grid-2">
-      <div class="card"><div class="card-inner">
-        <h2 class="section-title">Auto Generate เลขชุด</h2>
-
-        <div class="kicker">ชุด 2 ตัวเด่น</div>
-        <div id="bundle2MainBox" class="chips"><span class="empty">ยังไม่ได้สร้างชุด</span></div>
-
-        <div style="height:12px;"></div>
-
-        <div class="kicker">ชุด 2 ตัวรอง</div>
-        <div id="bundle2SubBox" class="chips"><span class="empty">ยังไม่ได้สร้างชุด</span></div>
-
-        <div style="height:12px;"></div>
-
-        <div class="kicker">ชุด 3 ตัวบน</div>
-        <div id="bundleTop3Box" class="chips"><span class="empty">ยังไม่ได้สร้างชุด</span></div>
-
-        <div style="height:12px;"></div>
-
-        <div class="kicker">ชุด 3 ตัวล่าง</div>
-        <div id="bundleBottom3Box" class="chips"><span class="empty">ยังไม่ได้สร้างชุด</span></div>
-
-        <div style="height:12px;"></div>
-
-        <div class="analysis" id="bundleInsight">กด Auto Generate ชุด เพื่อให้ระบบสร้างเลขชุดอัตโนมัติ</div>
-      </div></div>
-
-      <div class="card"><div class="card-inner">
-        <h2 class="section-title">ผลย้อนหลัง</h2>
-        <div class="search-grid">
-          <input class="input" id="searchInput" type="text" placeholder="ค้นหาเลข / วันที่" />
-          <select class="input" id="sortSelect">
-            <option value="date_desc">เรียงวันที่ล่าสุดก่อน</option>
-            <option value="date_asc">เรียงวันที่เก่าก่อน</option>
-            <option value="last2_desc">เรียงเลข 2 ตัวมากไปน้อย</option>
-            <option value="last2_asc">เรียงเลข 2 ตัวน้อยไปมาก</option>
-          </select>
-        </div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>วันที่</th>
-                <th>เลข 2 ตัว</th>
-                <th>3 ตัวบน</th>
-                <th>3 ตัวล่าง</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-          </table>
-        </div>
-      </div></div>
-    </section>
-
-    <section class="grid-2">
-      <div class="card"><div class="card-inner">
-        <h2 class="section-title">แนวโน้มรายเดือน</h2>
-        <div id="monthlyChart" class="mini-chart"></div>
-      </div></div>
-
-      <div class="card"><div class="card-inner">
-        <h2 class="section-title">Lucky Random</h2>
-        <div class="analysis">Lucky Random เป็นโหมดสุ่มจริง 100%
-- ไม่เกี่ยวกับ AI
-- เลข 2 ตัวออกได้ 00-99
-- เลข 3 ตัวออกได้ 000-999
-- Save ได้ทั้ง Story และ Square
-- Share ได้ผ่าน Web Share และ LINE</div>
-        <div class="share-note">แก้ชื่อแบรนด์ได้ในตัวแปร APP_BRAND_NAME ในโค้ด</div>
-      </div></div>
     </section>
   </div>
-
-  <!-- Lucky Modal -->
-  <div id="luckyModal" class="modal" aria-hidden="true">
-    <div id="luckyWrap" class="lucky-wrap lucky-theme-1">
-      <div class="spark s1"></div>
-      <div class="spark s2"></div>
-      <div class="spark s3"></div>
-      <div class="spark s4"></div>
-
-      <div class="lucky-top">
-        <div>
-          <div class="lucky-brand">
-            <div class="lucky-brand-badge">🎲</div>
-            <div>
-              <div class="kicker" style="color:rgba(255,255,255,.85);font-size:15px;" id="brandLabel">Lucky Random • LP Studio</div>
-              <h2 class="lucky-title">เลขนำโชคของคุณ</h2>
-            </div>
-          </div>
-          <div class="lucky-sub">
-            โหมดนี้ไม่เกี่ยวกับ AI และไม่อิงข้อมูลย้อนหลัง  
-            เป็นการสุ่มจริงสำหรับความสนุกและเสี่ยงดวง
-          </div>
-        </div>
-        <button class="close-btn" id="closeLuckyBtn">ปิด</button>
-      </div>
-
-      <div class="lucky-center">
-        <div class="lucky-card">
-          <div class="lucky-label">เลขนำโชค 2 ตัว</div>
-          <div id="lucky2" class="lucky-number">--</div>
-        </div>
-
-        <div class="lucky-card">
-          <div class="lucky-label">เลขนำโชค 3 ตัว</div>
-          <div id="lucky3" class="lucky-number">---</div>
-        </div>
-      </div>
-
-      <div style="position:relative;z-index:1;">
-        <div class="lucky-footer">
-          <div class="lucky-actions">
-            <button class="lucky-btn primary" id="spinLuckyBtn">สุ่มใหม่</button>
-            <button class="lucky-btn" id="copyLuckyBtn">คัดลอกเลข</button>
-            <button class="lucky-btn" id="saveStoryBtn">Save Story</button>
-            <button class="lucky-btn" id="saveSquareBtn">Save Square</button>
-            <button class="lucky-btn" id="shareLuckyBtn">Share</button>
-            <button class="lucky-btn" id="lineLuckyBtn">LINE</button>
-          </div>
-        </div>
-        <div class="lucky-meta">Random จริง • ไม่ล็อค • ไม่กันซ้ำ • ไม่เกี่ยวกับระบบวิเคราะห์</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Export Area -->
-  <div id="exportRoot" style="position:fixed;left:-99999px;top:0;z-index:-1;"></div>
-
-  <script>
-    const APP_BRAND_NAME = "LP Studio";
-
-    let records = [];
-    let allTop3 = [];
-    let allBottom3 = [];
-    let allCombined3 = [];
-
-    let cached2Scores = [];
-    let cachedTop3Scores = [];
-    let cachedBottom3Scores = [];
-    let cachedHybridTop = [];
-    let cachedHybridBottom = [];
-    let lastBundleText = "";
-    let currentFilter = "all";
-    let lastLuckyText = "";
-    let currentLuckyTheme = "lucky-theme-1";
-    let currentLucky2 = "--";
-    let currentLucky3 = "---";
-
-    function normalizeNumber(value, size) {
-      const cleaned = String(value || "").replace(/[^\d]/g, "").trim();
-      if (!cleaned) return null;
-      return cleaned.padStart(size, "0").slice(-size);
-    }
-
-    function sortDateDesc(a, b) {
-      return String(b.date || "").localeCompare(String(a.date || ""));
-    }
-
-    async function loadData() {
-      const statusBox = document.getElementById("statusBox");
-      statusBox.textContent = "กำลังโหลดข้อมูลจาก data.json...";
-
-      try {
-        const response = await fetch("./data.json", { cache: "no-store" });
-        if (!response.ok) throw new Error("โหลดข้อมูลไม่สำเร็จ");
-
-        const raw = await response.json();
-
-        records = raw.map((row, index) => {
-          const last2 = normalizeNumber(row.last2, 2);
-
-          let top3 = Array.isArray(row.top3)
-            ? row.top3.map(x => normalizeNumber(x, 3)).filter(Boolean)
-            : [];
-
-          let bottom3 = Array.isArray(row.bottom3)
-            ? row.bottom3.map(x => normalizeNumber(x, 3)).filter(Boolean)
-            : [];
-
-          if ((!top3.length && !bottom3.length) && Array.isArray(row.last3)) {
-            const normalized = row.last3.map(x => normalizeNumber(x, 3)).filter(Boolean);
-            top3 = normalized.slice(0, 2);
-            bottom3 = normalized.slice(2, 4);
-          }
-
-          return {
-            id: index + 1,
-            date: String(row.date || "").trim(),
-            last2,
-            top3,
-            bottom3,
-            last3: [...top3, ...bottom3]
-          };
-        }).filter(r => r.date && r.last2);
-
-        allTop3 = records.flatMap(r => r.top3);
-        allBottom3 = records.flatMap(r => r.bottom3);
-        allCombined3 = records.flatMap(r => r.last3);
-
-        cached2Scores = [];
-        cachedTop3Scores = [];
-        cachedBottom3Scores = [];
-        cachedHybridTop = [];
-        cachedHybridBottom = [];
-        lastBundleText = "";
-
-        statusBox.textContent = `โหลดข้อมูลสำเร็จ ${records.length} งวด | top3 ${allTop3.length} | bottom3 ${allBottom3.length}`;
-        render();
-      } catch (error) {
-        statusBox.innerHTML = '<span class="error">โหลด data.json ไม่สำเร็จ</span>';
-        records = [];
-        allTop3 = [];
-        allBottom3 = [];
-        allCombined3 = [];
-        render();
-      }
-    }
-
-    function countBy(items, fn) {
-      const map = {};
-      for (const item of items) {
-        const key = fn(item);
-        if (key === undefined || key === null || key === "") continue;
-        map[key] = (map[key] || 0) + 1;
-      }
-      return map;
-    }
-
-    function getLastNRecords(n) {
-      return [...records].sort(sortDateDesc).slice(0, n);
-    }
-
-    function getLastNTop3(n) {
-      return getLastNRecords(n).flatMap(r => r.top3);
-    }
-
-    function getLastNBottom3(n) {
-      return getLastNRecords(n).flatMap(r => r.bottom3);
-    }
-
-    function getLastNCombined3(n) {
-      return getLastNRecords(n).flatMap(r => r.last3);
-    }
-
-    function digitFreq2() {
-      const map = {};
-      records.forEach(r => r.last2.split("").forEach(d => map[d] = (map[d] || 0) + 1));
-      return map;
-    }
-
-    function digitFreq3(list) {
-      const map = {};
-      list.forEach(num => num.split("").forEach(d => map[d] = (map[d] || 0) + 1));
-      return map;
-    }
-
-    function pairFreq3(list) {
-      const map = {};
-      list.forEach(num => {
-        const a = num.slice(0, 2);
-        const b = num.slice(1, 3);
-        map[a] = (map[a] || 0) + 1;
-        map[b] = (map[b] || 0) + 1;
-      });
-      return map;
-    }
-
-    function isDouble2(num) {
-      return num && num.length === 2 && num[0] === num[1];
-    }
-
-    function hasPattern3(num) {
-      const [a, b, c] = num.split("");
-      return {
-        hasDouble: a === b || b === c || a === c,
-        allSame: a === b && b === c
-      };
-    }
-
-    function calculate2Scores() {
-      const allFreq = countBy(records, r => r.last2);
-      const recent12 = getLastNRecords(12);
-      const recentFreq = countBy(recent12, r => r.last2);
-      const digitFreq = digitFreq2();
-
-      const maxAll = Math.max(...Object.values(allFreq), 1);
-      const maxRecent = Math.max(...Object.values(recentFreq), 1);
-      const maxDigit = Math.max(...Object.values(digitFreq), 1);
-
-      return Object.keys(allFreq).map(num => {
-        const totalScore = (allFreq[num] || 0) / maxAll;
-        const recentScore = (recentFreq[num] || 0) / maxRecent;
-        const digitScore = (((digitFreq[num[0]] || 0) / maxDigit) + ((digitFreq[num[1]] || 0) / maxDigit)) / 2;
-        const doubleBonus = isDouble2(num) ? 1 : 0;
-
-        const finalScore =
-          (totalScore * 0.35) +
-          (recentScore * 0.35) +
-          (digitScore * 0.20) +
-          (doubleBonus * 0.10);
-
-        return {
-          number: num,
-          score: Number((finalScore * 100).toFixed(2)),
-          totalCount: allFreq[num] || 0,
-          recentCount: recentFreq[num] || 0
-        };
-      }).sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
-    }
-
-    function calculate3ScoresFromList(list, recentList) {
-      if (!list.length) return [];
-
-      const allFreq = countBy(list, x => x);
-      const recentFreq = countBy(recentList, x => x);
-      const digitFreq = digitFreq3(list);
-      const pairFreq = pairFreq3(list);
-
-      const maxAll = Math.max(...Object.values(allFreq), 1);
-      const maxRecent = Math.max(...Object.values(recentFreq), 1);
-      const maxDigit = Math.max(...Object.values(digitFreq), 1);
-      const maxPair = Math.max(...Object.values(pairFreq), 1);
-
-      return Object.keys(allFreq).map(num => {
-        const totalScore = (allFreq[num] || 0) / maxAll;
-        const recentScore = (recentFreq[num] || 0) / maxRecent;
-        const digitScore =
-          (((digitFreq[num[0]] || 0) / maxDigit) +
-           ((digitFreq[num[1]] || 0) / maxDigit) +
-           ((digitFreq[num[2]] || 0) / maxDigit)) / 3;
-
-        const pairScore =
-          (((pairFreq[num.slice(0,2)] || 0) / maxPair) +
-           ((pairFreq[num.slice(1,3)] || 0) / maxPair)) / 2;
-
-        const pattern = hasPattern3(num);
-        const doubleBonus = pattern.hasDouble ? 0.08 : 0;
-        const sameBonus = pattern.allSame ? 0.05 : 0;
-
-        const finalScore =
-          (totalScore * 0.34) +
-          (recentScore * 0.26) +
-          (digitScore * 0.18) +
-          (pairScore * 0.17) +
-          doubleBonus +
-          sameBonus;
-
-        return {
-          number: num,
-          score: Number((finalScore * 100).toFixed(2)),
-          totalCount: allFreq[num] || 0,
-          recentCount: recentFreq[num] || 0
-        };
-      }).sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
-    }
-
-    function mergeHybridScores(baseScores, targetScores, oppositeScores, type) {
-      const baseMap = Object.fromEntries(baseScores.map(x => [x.number, x.score]));
-      const targetMap = Object.fromEntries(targetScores.map(x => [x.number, x.score]));
-      const oppositeMap = Object.fromEntries(oppositeScores.map(x => [x.number, x.score]));
-
-      const candidateSet = new Set([
-        ...Object.keys(baseMap),
-        ...Object.keys(targetMap)
-      ]);
-
-      const results = [...candidateSet].map(number => {
-        const base = baseMap[number] || 0;
-        const target = targetMap[number] || 0;
-        const opposite = oppositeMap[number] || 0;
-
-        const score =
-          (base * 0.45) +
-          (target * 0.45) +
-          (opposite * 0.10);
-
-        return {
-          number,
-          score: Number(score.toFixed(2)),
-          type
-        };
-      });
-
-      return results.sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
-    }
-
-    function renderBars(containerId, entries) {
-      const el = document.getElementById(containerId);
-      if (!entries.length) {
-        el.innerHTML = '<div class="empty">ยังไม่มีข้อมูล</div>';
-        return;
-      }
-
-      const max = entries[0].value || 1;
-      el.innerHTML = entries.map(item => `
-        <div class="bar-row">
-          <div>${item.label}</div>
-          <div class="bar-track">
-            <div class="bar-fill" style="width:${(item.value / max) * 100}%"></div>
-          </div>
-          <div>${item.value}</div>
-        </div>
-      `).join("");
-    }
-
-    function renderStats(scores2, scoresTop, scoresBottom) {
-      document.getElementById("statTotal").textContent = records.length;
-
-      if (scores2.length) {
-        document.getElementById("statTop2").textContent = scores2[0].number;
-        document.getElementById("statTop2Meta").textContent = `คะแนน ${scores2[0].score} | ออก ${scores2[0].totalCount} ครั้ง`;
-      } else {
-        document.getElementById("statTop2").textContent = "--";
-        document.getElementById("statTop2Meta").textContent = "ยังไม่มีข้อมูล";
-      }
-
-      if (scoresTop.length) {
-        document.getElementById("statTopTop3").textContent = scoresTop[0].number;
-        document.getElementById("statTopTop3Meta").textContent = `คะแนน ${scoresTop[0].score}`;
-      } else {
-        document.getElementById("statTopTop3").textContent = "---";
-        document.getElementById("statTopTop3Meta").textContent = "ยังไม่มีข้อมูล";
-      }
-
-      if (scoresBottom.length) {
-        document.getElementById("statTopBottom3").textContent = scoresBottom[0].number;
-        document.getElementById("statTopBottom3Meta").textContent = `คะแนน ${scoresBottom[0].score}`;
-      } else {
-        document.getElementById("statTopBottom3").textContent = "---";
-        document.getElementById("statTopBottom3Meta").textContent = "ยังไม่มีข้อมูล";
-      }
-    }
-
-    function renderMonthlyChart() {
-      const el = document.getElementById("monthlyChart");
-      const monthMap = {
-        "01":0,"02":0,"03":0,"04":0,"05":0,"06":0,
-        "07":0,"08":0,"09":0,"10":0,"11":0,"12":0
-      };
-
-      for (const r of records) {
-        const parts = String(r.date).split("-");
-        if (parts.length >= 2 && monthMap.hasOwnProperty(parts[1])) {
-          monthMap[parts[1]]++;
-        }
-      }
-
-      const values = Object.values(monthMap);
-      const max = Math.max(...values, 1);
-      const labels = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-      const keys = Object.keys(monthMap);
-
-      el.innerHTML = keys.map((key, i) => {
-        const value = monthMap[key];
-        const h = value === 0 ? 6 : Math.max(16, (value / max) * 130);
-        return `
-          <div class="month-col">
-            <div class="month-value">${value}</div>
-            <div class="month-bar-wrap">
-              <div class="month-bar" style="height:${h}px"></div>
-            </div>
-            <div class="month-label">${labels[i]}</div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    function renderTable() {
-      const tbody = document.getElementById("tableBody");
-      const search = document.getElementById("searchInput").value.trim().toLowerCase();
-      const sort = document.getElementById("sortSelect").value;
-
-      let filtered = [...records];
-
-      if (search) {
-        filtered = filtered.filter(r =>
-          (r.last2 || "").includes(search) ||
-          (r.date || "").toLowerCase().includes(search) ||
-          r.top3.join(" ").includes(search) ||
-          r.bottom3.join(" ").includes(search)
-        );
-      }
-
-      if (sort === "date_desc") filtered.sort(sortDateDesc);
-      if (sort === "date_asc") filtered.sort((a, b) => String(a.date).localeCompare(String(b.date)));
-      if (sort === "last2_desc") filtered.sort((a, b) => Number(b.last2) - Number(a.last2));
-      if (sort === "last2_asc") filtered.sort((a, b) => Number(a.last2) - Number(b.last2));
-
-      if (!filtered.length) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty">ไม่พบข้อมูล</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = filtered.map((r, idx) => `
-        <tr>
-          <td>${idx + 1}</td>
-          <td>${r.date}</td>
-          <td><span class="pill">${r.last2}</span></td>
-          <td>${r.top3.join(" , ") || "-"}</td>
-          <td>${r.bottom3.join(" , ") || "-"}</td>
-        </tr>
-      `).join("");
-    }
-
-    function updateSummaryBox() {
-      const top2 = cached2Scores.slice(0, 3).map(x => x.number).join(", ") || "-";
-      const top3Top = cachedHybridTop.slice(0, 3).map(x => x.number).join(", ") || "-";
-      const top3Bottom = cachedHybridBottom.slice(0, 3).map(x => x.number).join(", ") || "-";
-
-      document.getElementById("summaryBox").textContent =
-`สรุปงวดนี้:
-- 2 ตัวเด่น: ${top2}
-- 3 ตัวบนเด่น: ${top3Top}
-- 3 ตัวล่างเด่น: ${top3Bottom}
-
-แนวใช้เร็ว:
-- ถ้าจะเน้น 2 ตัว ให้ดู Top 3 ก่อน
-- ถ้าจะเน้น 3 ตัวบน ให้ดูกล่อง 3 ตัวบนเด่น
-- ถ้าจะเน้น 3 ตัวล่าง ให้ดูกล่อง 3 ตัวล่างเด่น
-- ถ้าเลขไปซ้ำหลายกล่อง ถือว่าแรงในระบบ`;
-    }
-
-    function runAI() {
-      cached2Scores = calculate2Scores();
-
-      const combinedScores = calculate3ScoresFromList(allCombined3, getLastNCombined3(20));
-      const topScores = calculate3ScoresFromList(allTop3, getLastNTop3(20));
-      const bottomScores = calculate3ScoresFromList(allBottom3, getLastNBottom3(20));
-
-      cachedTop3Scores = topScores;
-      cachedBottom3Scores = bottomScores;
-
-      cachedHybridTop = mergeHybridScores(combinedScores, topScores, bottomScores, "top");
-      cachedHybridBottom = mergeHybridScores(combinedScores, bottomScores, topScores, "bottom");
-
-      renderStats(cached2Scores, cachedHybridTop, cachedHybridBottom);
-
-      document.getElementById("ranking2Box").innerHTML = cached2Scores.length
-        ? cached2Scores.slice(0, 10).map((x, i) => `<span class="chip green">#${i + 1} ${x.number} · ${x.score}</span>`).join("")
-        : '<span class="empty">ยังไม่มีข้อมูล</span>';
-
-      document.getElementById("rankingTop3Box").innerHTML = cachedHybridTop.length
-        ? cachedHybridTop.slice(0, 10).map((x, i) => `<span class="chip gold">#${i + 1} ${x.number} · ${x.score}</span>`).join("")
-        : '<span class="empty">ยังไม่มีข้อมูล</span>';
-
-      document.getElementById("rankingBottom3Box").innerHTML = cachedHybridBottom.length
-        ? cachedHybridBottom.slice(0, 10).map((x, i) => `<span class="chip pink">#${i + 1} ${x.number} · ${x.score}</span>`).join("")
-        : '<span class="empty">ยังไม่มีข้อมูล</span>';
-
-      document.getElementById("topPredictBox").innerHTML = cachedHybridTop.length
-        ? cachedHybridTop.slice(0, 5).map((x, i) => `<span class="chip gold">บน ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
-        : '<span class="empty">ยังไม่มีข้อมูล</span>';
-
-      document.getElementById("bottomPredictBox").innerHTML = cachedHybridBottom.length
-        ? cachedHybridBottom.slice(0, 5).map((x, i) => `<span class="chip pink">ล่าง ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
-        : '<span class="empty">ยังไม่มีข้อมูล</span>';
-
-      const hybridMerge = [...new Map(
-        [...cachedHybridTop.slice(0, 8), ...cachedHybridBottom.slice(0, 8)]
-          .map(x => [x.number, x])
-      ).values()].sort((a, b) => b.score - a.score).slice(0, 8);
-
-      document.getElementById("hybridPredictBox").innerHTML = hybridMerge.length
-        ? hybridMerge.map((x, i) => `<span class="chip purple">Hybrid ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
-        : '<span class="empty">ยังไม่มีข้อมูล</span>';
-
-      document.getElementById("predictInsight").textContent =
-`Hybrid บน/ล่าง ทำงานแบบนี้:
-- AI รวม = ใช้เพื่อความนิ่ง
-- AI บน = โฟกัส top3
-- AI ล่าง = โฟกัส bottom3
-
-Final score บน = รวม 45% + บน 45% + ล่าง 10%
-Final score ล่าง = รวม 45% + ล่าง 45% + บน 10%`;
-
-      document.getElementById("analysisBox").textContent =
-`จากข้อมูลทั้งหมด ${records.length} งวด
-top3 ทั้งหมด ${allTop3.length} รายการ
-bottom3 ทั้งหมด ${allBottom3.length} รายการ
-
-Top 2 ตัว: ${cached2Scores.slice(0, 5).map(x => x.number).join(", ")}
-Top 3 ตัวบน: ${cachedHybridTop.slice(0, 5).map(x => x.number).join(", ")}
-Top 3 ตัวล่าง: ${cachedHybridBottom.slice(0, 5).map(x => x.number).join(", ")}
-
-ข้อดีของ V6:
-- แยกบน/ล่างชัด
-- Lucky Card save/share ได้
-- ยังคง AI วิเคราะห์ครบ`;
-
-      renderBars("bars2", cached2Scores.slice(0, 10).map(x => ({ label: x.number, value: x.score })));
-      renderBars("barsTop3", cachedHybridTop.slice(0, 10).map(x => ({ label: x.number, value: x.score })));
-      renderBars("barsBottom3", cachedHybridBottom.slice(0, 10).map(x => ({ label: x.number, value: x.score })));
-
-      updateSummaryBox();
-      applyFilter(currentFilter);
-      renderMonthlyChart();
-      renderTable();
-    }
-
-    function generateBundles() {
-      if (!cached2Scores.length || !cachedHybridTop.length || !cachedHybridBottom.length) {
-        document.getElementById("bundleInsight").textContent = "ให้กด Run AI ก่อน แล้วค่อย Auto Generate ชุด";
-        return;
-      }
-
-      const twoMain = cached2Scores.slice(0, 5).map(x => x.number);
-      const twoSub = cached2Scores.slice(5, 10).map(x => x.number);
-      const topSet = cachedHybridTop.slice(0, 5).map(x => x.number);
-      const bottomSet = cachedHybridBottom.slice(0, 5).map(x => x.number);
-
-      document.getElementById("bundle2MainBox").innerHTML =
-        twoMain.map((x, i) => `<span class="chip green">2 ตัวเด่น ${i + 1}: ${x}</span>`).join("");
-
-      document.getElementById("bundle2SubBox").innerHTML =
-        twoSub.map((x, i) => `<span class="chip orange">2 ตัวรอง ${i + 1}: ${x}</span>`).join("");
-
-      document.getElementById("bundleTop3Box").innerHTML =
-        topSet.map((x, i) => `<span class="chip gold">บน ${i + 1}: ${x}</span>`).join("");
-
-      document.getElementById("bundleBottom3Box").innerHTML =
-        bottomSet.map((x, i) => `<span class="chip pink">ล่าง ${i + 1}: ${x}</span>`).join("");
-
-      lastBundleText =
-`2 ตัวเด่น: ${twoMain.join(", ")}
-2 ตัวรอง: ${twoSub.join(", ")}
-3 ตัวบน: ${topSet.join(", ")}
-3 ตัวล่าง: ${bottomSet.join(", ")}`;
-
-      document.getElementById("bundleInsight").textContent =
-`Auto Generate ชุด:
-- 2 ตัวเด่น: ${twoMain.join(", ")}
-- 2 ตัวรอง: ${twoSub.join(", ")}
-- 3 ตัวบน: ${topSet.join(", ")}
-- 3 ตัวล่าง: ${bottomSet.join(", ")}`;
-    }
-
-    async function copyBundles() {
-      if (!lastBundleText) {
-        alert("ให้กด Auto Generate ชุด ก่อน");
-        return;
-      }
-
-      try {
-        await navigator.clipboard.writeText(lastBundleText);
-        alert("คัดลอกชุดเลขแล้ว");
-      } catch (error) {
-        alert("คัดลอกไม่สำเร็จ ลองกดค้างเพื่อ copy ด้วยตัวเอง");
-      }
-    }
-
-    function applyFilter(mode) {
-      currentFilter = mode;
-      const blocks = document.querySelectorAll(".filter-block");
-      blocks.forEach(el => {
-        const show =
-          mode === "all" ||
-          el.classList.contains(`filter-${mode}`) ||
-          el.classList.contains("filter-all");
-
-        el.style.display = show ? "" : "none";
-      });
-
-      const labelMap = {
-        all: "ทั้งหมด",
-        two: "2 ตัว",
-        top: "3 ตัวบน",
-        bottom: "3 ตัวล่าง"
-      };
-
-      document.getElementById("filterInfo").textContent = `ตอนนี้แสดง: ${labelMap[mode] || "ทั้งหมด"}`;
-    }
-
-    // Lucky Random
-    function randomInt(maxExclusive) {
-      const arr = new Uint32Array(1);
-      crypto.getRandomValues(arr);
-      return arr[0] % maxExclusive;
-    }
-
-    function padNum(num, size) {
-      return String(num).padStart(size, "0");
-    }
-
-    function randomThemeClass() {
-      const themes = [
-        "lucky-theme-1","lucky-theme-2","lucky-theme-3","lucky-theme-4",
-        "lucky-theme-5","lucky-theme-6","lucky-theme-7","lucky-theme-8"
-      ];
-      return themes[randomInt(themes.length)];
-    }
-
-    function animateLuckyNumber(element, size, finalValue, duration = 850) {
-      return new Promise(resolve => {
-        const start = performance.now();
-
-        function frame(now) {
-          const elapsed = now - start;
-          const progress = elapsed / duration;
-
-          if (progress < 1) {
-            const max = size === 2 ? 100 : 1000;
-            element.textContent = padNum(randomInt(max), size);
-            requestAnimationFrame(frame);
-          } else {
-            element.textContent = finalValue;
-            resolve();
-          }
-        }
-
-        requestAnimationFrame(frame);
-      });
-    }
-
-    async function spinLucky() {
-      currentLucky2 = padNum(randomInt(100), 2);
-      currentLucky3 = padNum(randomInt(1000), 3);
-      currentLuckyTheme = randomThemeClass();
-
-      const wrap = document.getElementById("luckyWrap");
-      wrap.className = `lucky-wrap ${currentLuckyTheme}`;
-
-      document.getElementById("brandLabel").textContent = `Lucky Random • ${APP_BRAND_NAME}`;
-
-      const el2 = document.getElementById("lucky2");
-      const el3 = document.getElementById("lucky3");
-
-      await Promise.all([
-        animateLuckyNumber(el2, 2, currentLucky2, 900),
-        animateLuckyNumber(el3, 3, currentLucky3, 1100)
-      ]);
-
-      lastLuckyText = `เลขนำโชค 2 ตัว: ${currentLucky2}
-เลขนำโชค 3 ตัว: ${currentLucky3}`;
-    }
-
-    function openLuckyModal() {
-      const modal = document.getElementById("luckyModal");
-      modal.classList.add("show");
-      modal.setAttribute("aria-hidden", "false");
-      spinLucky();
-    }
-
-    function closeLuckyModal() {
-      const modal = document.getElementById("luckyModal");
-      modal.classList.remove("show");
-      modal.setAttribute("aria-hidden", "true");
-    }
-
-    async function copyLucky() {
-      if (!lastLuckyText) {
-        alert("ยังไม่มีเลขนำโชค");
-        return;
-      }
-
-      try {
-        await navigator.clipboard.writeText(lastLuckyText);
-        alert("คัดลอกเลขนำโชคแล้ว");
-      } catch (error) {
-        alert("คัดลอกไม่สำเร็จ ลองกดค้างเพื่อ copy ด้วยตัวเอง");
-      }
-    }
-
-    function buildExportCard(type = "story") {
-      const root = document.getElementById("exportRoot");
-      const isStory = type === "story";
-
-      root.innerHTML = `
-        <div id="exportCard" class="lucky-wrap ${currentLuckyTheme} ${isStory ? "" : "export-square"}" style="
-          width:1080px;
-          height:${isStory ? "1920px" : "1080px"};
-          min-height:${isStory ? "1920px" : "1080px"};
-          padding:48px;
-          position:relative;
-          overflow:hidden;
-          display:flex;
-          flex-direction:column;
-          justify-content:space-between;
-        ">
-          <div class="spark s1"></div>
-          <div class="spark s2"></div>
-          <div class="spark s3"></div>
-          <div class="spark s4"></div>
-
-          <div style="position:relative;z-index:1;">
-            <div style="display:flex;align-items:center;gap:16px;">
-              <div style="width:74px;height:74px;border-radius:24px;background:rgba(255,255,255,.14);display:grid;place-items:center;font-size:30px;font-weight:900;border:1px solid rgba(255,255,255,.18);">🎲</div>
-              <div>
-                <div style="font-size:22px;color:rgba(255,255,255,.82);font-weight:700;">${APP_BRAND_NAME}</div>
-                <div style="font-size:54px;font-weight:900;line-height:1.05;margin-top:4px;">Lucky Random</div>
-              </div>
-            </div>
-          </div>
-
-          <div style="position:relative;z-index:1;display:grid;grid-template-columns:1fr;gap:24px;">
-            <div style="border-radius:34px;padding:34px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);text-align:center;">
-              <div style="font-size:30px;color:rgba(255,255,255,.82);font-weight:800;margin-bottom:20px;">เลขนำโชค 2 ตัว</div>
-              <div style="font-size:${isStory ? "190px" : "170px"};font-weight:900;line-height:1;">${currentLucky2}</div>
-            </div>
-
-            <div style="border-radius:34px;padding:34px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);text-align:center;">
-              <div style="font-size:30px;color:rgba(255,255,255,.82);font-weight:800;margin-bottom:20px;">เลขนำโชค 3 ตัว</div>
-              <div style="font-size:${isStory ? "190px" : "170px"};font-weight:900;line-height:1;">${currentLucky3}</div>
-            </div>
-          </div>
-
-          <div style="position:relative;z-index:1;">
-            <div style="font-size:26px;color:rgba(255,255,255,.84);font-weight:700;">Random 100% • ไม่เกี่ยวกับ AI</div>
-            <div style="margin-top:10px;font-size:20px;color:rgba(255,255,255,.72);">${new Date().toLocaleDateString("th-TH")}</div>
-          </div>
-        </div>
-      `;
-    }
-
-    async function saveLuckyCard(type = "story") {
-      if (!currentLucky2 || !currentLucky3) {
-        alert("ยังไม่มีเลขนำโชค");
-        return;
-      }
-
-      buildExportCard(type);
-      const node = document.getElementById("exportCard");
-
-      try {
-        const canvas = await html2canvas(node, {
-          scale: 2,
-          useCORS: true,
-          backgroundColor: null
-        });
-
-        const link = document.createElement("a");
-        link.download = type === "story" ? "lucky-story.png" : "lucky-square.png";
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-      } catch (err) {
-        alert("Save ไม่สำเร็จ");
-      }
-    }
-
-    async function shareLucky() {
-      if (!currentLucky2 || !currentLucky3) {
-        alert("ยังไม่มีเลขนำโชค");
-        return;
-      }
-
-      const text = `เลขนำโชคของฉัน
-2 ตัว: ${currentLucky2}
-3 ตัว: ${currentLucky3}`;
-
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: "Lucky Random",
-            text
-          });
-        } catch (err) {}
-      } else {
-        alert("อุปกรณ์นี้ยังไม่รองรับ Share โดยตรง");
-      }
-    }
-
-    function shareLineLucky() {
-      if (!currentLucky2 || !currentLucky3) {
-        alert("ยังไม่มีเลขนำโชค");
-        return;
-      }
-
-      const text = encodeURIComponent(`เลขนำโชคของฉัน\n2 ตัว: ${currentLucky2}\n3 ตัว: ${currentLucky3}`);
-      window.open(`https://line.me/R/msg/text/?${text}`, "_blank");
-    }
-
-    function render() {
-      renderMonthlyChart();
-      renderTable();
-      applyFilter(currentFilter);
-    }
-
-    document.getElementById("refreshBtn").addEventListener("click", loadData);
-    document.getElementById("runBtn").addEventListener("click", runAI);
-    document.getElementById("bundleBtn").addEventListener("click", generateBundles);
-    document.getElementById("copyBtn").addEventListener("click", copyBundles);
-    document.getElementById("searchInput").addEventListener("input", renderTable);
-    document.getElementById("sortSelect").addEventListener("change", renderTable);
-
-    document.querySelectorAll("[data-filter]").forEach(btn => {
-      btn.addEventListener("click", () => applyFilter(btn.dataset.filter));
-    });
-
-    document.getElementById("openLuckyBtn").addEventListener("click", openLuckyModal);
-    document.getElementById("closeLuckyBtn").addEventListener("click", closeLuckyModal);
-    document.getElementById("spinLuckyBtn").addEventListener("click", spinLucky);
-    document.getElementById("copyLuckyBtn").addEventListener("click", copyLucky);
-    document.getElementById("saveStoryBtn").addEventListener("click", () => saveLuckyCard("story"));
-    document.getElementById("saveSquareBtn").addEventListener("click", () => saveLuckyCard("square"));
-    document.getElementById("shareLuckyBtn").addEventListener("click", shareLucky);
-    document.getElementById("lineLuckyBtn").addEventListener("click", shareLineLucky);
-
-    document.getElementById("luckyModal").addEventListener("click", (e) => {
-      if (e.target.id === "luckyModal") closeLuckyModal();
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeLuckyModal();
-    });
-
-    loadData();
-  </script>
 </body>
 </html>
