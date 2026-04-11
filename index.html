@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lottery AI PRO MAX</title>
+  <title>Lottery AI PRO MAX Hybrid Top/Bottom</title>
   <style>
     :root{
       --bg:#07111f;
@@ -17,7 +17,8 @@
       --gold:#f8d56b;
       --pink:#ec4899;
       --green:#10b981;
-      --red:#ef4444;
+      --orange:#fb923c;
+      --purple:#8b5cf6;
       --shadow:0 24px 60px rgba(0,0,0,.35);
     }
 
@@ -33,7 +34,7 @@
       min-height:100vh;
     }
 
-    .app{max-width:1320px;margin:0 auto;padding:18px 14px 40px}
+    .app{max-width:1380px;margin:0 auto;padding:18px 14px 40px}
     .hero,.card{
       background:var(--panel);
       border:1px solid var(--line);
@@ -64,13 +65,13 @@
     .row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between}
     .brand{display:flex;align-items:center;gap:14px}
     .logo{
-      width:54px;height:54px;border-radius:18px;display:grid;place-items:center;
+      width:58px;height:58px;border-radius:18px;display:grid;place-items:center;
       background:linear-gradient(135deg,var(--gold),#ff9f43);
-      color:#111827;font-weight:900;
+      color:#111827;font-weight:900;font-size:18px;
     }
 
     h1{margin:0;font-size:clamp(28px,4vw,42px);line-height:1.05}
-    .sub{margin:10px 0 0;color:var(--muted);max-width:820px;line-height:1.65;font-size:15px}
+    .sub{margin:10px 0 0;color:var(--muted);max-width:900px;line-height:1.65;font-size:15px}
     .kicker{color:var(--muted);font-size:13px;margin-bottom:8px}
     .big{font-size:clamp(28px,4vw,40px);font-weight:900;margin:0;word-break:break-word}
     .note{margin-top:8px;color:#c9d7ef;font-size:13px}
@@ -84,12 +85,13 @@
     }
     .btn.alt{background:linear-gradient(135deg,var(--pink),#8b5cf6)}
     .btn.green{background:linear-gradient(135deg,var(--green),#22c55e)}
+    .btn.orange{background:linear-gradient(135deg,var(--orange),#f97316)}
 
     .grid-4,.grid-main,.grid-2,.grid-3{
       display:grid;gap:16px;margin-top:16px
     }
     .grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
-    .grid-main{grid-template-columns:1.1fr .9fr}
+    .grid-main{grid-template-columns:1.12fr .88fr}
     .grid-2{grid-template-columns:1fr 1fr}
     .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
     .card-inner{padding:18px}
@@ -104,7 +106,7 @@
 
     .bars{display:grid;gap:12px}
     .bar-row{
-      display:grid;grid-template-columns:84px 1fr 64px;gap:10px;align-items:center;font-size:14px;
+      display:grid;grid-template-columns:90px 1fr 64px;gap:10px;align-items:center;font-size:14px;
     }
     .bar-track{
       height:12px;border-radius:999px;background:rgba(255,255,255,.06);
@@ -135,6 +137,16 @@
       border:1px solid rgba(236,72,153,.20);
       color:#fbcfe8;
     }
+    .chip.orange{
+      background:rgba(251,146,60,.14);
+      border:1px solid rgba(251,146,60,.20);
+      color:#fed7aa;
+    }
+    .chip.purple{
+      background:rgba(139,92,246,.14);
+      border:1px solid rgba(139,92,246,.20);
+      color:#ddd6fe;
+    }
 
     .mini-chart{
       display:grid;grid-template-columns:repeat(12,minmax(0,1fr));
@@ -154,7 +166,7 @@
       margin-top:14px;border-radius:16px;overflow:auto;border:1px solid var(--line);
     }
     table{
-      width:100%;min-width:720px;border-collapse:collapse;background:rgba(2,6,23,.22);
+      width:100%;min-width:760px;border-collapse:collapse;background:rgba(2,6,23,.22);
     }
     th,td{
       padding:14px 12px;text-align:left;border-bottom:1px solid rgba(148,163,184,.12);font-size:14px;
@@ -205,14 +217,13 @@
           <div class="brand">
             <div class="logo">LP</div>
             <div>
-              <div class="kicker">PRO MAX + Auto Generate ชุด + Hybrid AI + 3D Train</div>
+              <div class="kicker">PRO MAX Hybrid Top/Bottom + Auto Bundle + 3D Real Train</div>
               <h1>Lottery AI PRO MAX</h1>
             </div>
           </div>
           <p class="sub">
-            Dashboard เวอร์ชันเต็ม ใช้ข้อมูลเลข 2 ตัวและเลข 3 ตัวจริงจาก data.json
-            วิเคราะห์ด้วย scoring, pattern, pair frequency, recent trend, Markov transition
-            และสร้างเลขชุดอัตโนมัติ
+            Dashboard เวอร์ชันเต็มแบบ Hybrid บน/ล่าง ใช้ AI รวม + AI 3 ตัวบน + AI 3 ตัวล่าง
+            เพื่อให้ผลวิเคราะห์ตรงการใช้งานจริงมากขึ้น แต่ยังคงความนิ่งของระบบจากข้อมูลรวม
           </p>
         </div>
 
@@ -240,15 +251,15 @@
       </div></div>
 
       <div class="card"><div class="card-inner">
-        <div class="kicker">เลข 3 ตัวเด่นสุด</div>
-        <div class="big" id="statTop3">---</div>
-        <div class="note" id="statTop3Meta">ยังไม่มีข้อมูล</div>
+        <div class="kicker">3 ตัวบนเด่นสุด</div>
+        <div class="big" id="statTopTop3">---</div>
+        <div class="note" id="statTopTop3Meta">ยังไม่มีข้อมูล</div>
       </div></div>
 
       <div class="card"><div class="card-inner">
-        <div class="kicker">ช่วงข้อมูล</div>
-        <div class="big" id="statDateRange">--</div>
-        <div class="note">ดูจากวันที่เก่าสุด → ล่าสุด</div>
+        <div class="kicker">3 ตัวล่างเด่นสุด</div>
+        <div class="big" id="statTopBottom3">---</div>
+        <div class="note" id="statTopBottom3Meta">ยังไม่มีข้อมูล</div>
       </div></div>
     </section>
 
@@ -265,24 +276,30 @@
 
           <div style="height:18px;"></div>
 
-          <h2 class="section-title">เลข 3 ตัวเด่นจากข้อมูลจริง</h2>
-          <div id="ranking3Box" class="chips"><span class="empty">ยังไม่มีข้อมูล</span></div>
+          <h2 class="section-title">3 ตัวบนเด่น</h2>
+          <div id="rankingTop3Box" class="chips"><span class="empty">ยังไม่มีข้อมูล</span></div>
+
+          <div style="height:18px;"></div>
+
+          <h2 class="section-title">3 ตัวล่างเด่น</h2>
+          <div id="rankingBottom3Box" class="chips"><span class="empty">ยังไม่มีข้อมูล</span></div>
 
           <div style="height:18px;"></div>
 
           <h2 class="section-title">Hybrid AI Prediction</h2>
-          <div class="kicker">เลขเด่น</div>
-          <div id="mainPredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
+
+          <div class="kicker">Top 3 ตัวบน</div>
+          <div id="topPredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
 
           <div style="height:12px;"></div>
 
-          <div class="kicker">เลขรอง</div>
-          <div id="subPredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
+          <div class="kicker">Bottom 3 ตัวล่าง</div>
+          <div id="bottomPredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
 
           <div style="height:12px;"></div>
 
-          <div class="kicker">เลขกัน</div>
-          <div id="hedgePredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
+          <div class="kicker">เลขรวม Hybrid</div>
+          <div id="hybridPredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
 
           <div style="height:12px;"></div>
 
@@ -297,13 +314,13 @@
         </div></div>
 
         <div class="card"><div class="card-inner">
-          <h2 class="section-title">Top 10 เลข 3 ตัว</h2>
-          <div id="bars3" class="bars"><div class="empty">ยังไม่มีข้อมูล</div></div>
+          <h2 class="section-title">Top 10 3 ตัวบน</h2>
+          <div id="barsTop3" class="bars"><div class="empty">ยังไม่มีข้อมูล</div></div>
         </div></div>
 
         <div class="card"><div class="card-inner">
-          <h2 class="section-title">แนวโน้มรายเดือน</h2>
-          <div id="monthlyChart" class="mini-chart"></div>
+          <h2 class="section-title">Top 10 3 ตัวล่าง</h2>
+          <div id="barsBottom3" class="bars"><div class="empty">ยังไม่มีข้อมูล</div></div>
         </div></div>
       </div>
     </section>
@@ -311,18 +328,24 @@
     <section class="grid-2">
       <div class="card"><div class="card-inner">
         <h2 class="section-title">Auto Generate เลขชุด</h2>
-        <div class="kicker">ชุดเด่น</div>
-        <div id="bundleMainBox" class="chips"><span class="empty">ยังไม่ได้สร้างชุด</span></div>
+
+        <div class="kicker">ชุด 2 ตัวเด่น</div>
+        <div id="bundle2MainBox" class="chips"><span class="empty">ยังไม่ได้สร้างชุด</span></div>
 
         <div style="height:12px;"></div>
 
-        <div class="kicker">ชุดรอง</div>
-        <div id="bundleSubBox" class="chips"><span class="empty">ยังไม่ได้สร้างชุด</span></div>
+        <div class="kicker">ชุด 2 ตัวรอง</div>
+        <div id="bundle2SubBox" class="chips"><span class="empty">ยังไม่ได้สร้างชุด</span></div>
 
         <div style="height:12px;"></div>
 
-        <div class="kicker">ชุด 3 ตัว</div>
-        <div id="bundle3Box" class="chips"><span class="empty">ยังไม่ได้สร้างชุด</span></div>
+        <div class="kicker">ชุด 3 ตัวบน</div>
+        <div id="bundleTop3Box" class="chips"><span class="empty">ยังไม่ได้สร้างชุด</span></div>
+
+        <div style="height:12px;"></div>
+
+        <div class="kicker">ชุด 3 ตัวล่าง</div>
+        <div id="bundleBottom3Box" class="chips"><span class="empty">ยังไม่ได้สร้างชุด</span></div>
 
         <div style="height:12px;"></div>
 
@@ -348,7 +371,8 @@
                 <th>#</th>
                 <th>วันที่</th>
                 <th>เลข 2 ตัว</th>
-                <th>เลข 3 ตัว</th>
+                <th>3 ตัวบน</th>
+                <th>3 ตัวล่าง</th>
               </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -356,14 +380,48 @@
         </div>
       </div></div>
     </section>
+
+    <section class="grid-2">
+      <div class="card"><div class="card-inner">
+        <h2 class="section-title">แนวโน้มรายเดือน</h2>
+        <div id="monthlyChart" class="mini-chart"></div>
+      </div></div>
+
+      <div class="card"><div class="card-inner">
+        <h2 class="section-title">รูปแบบข้อมูลที่รองรับ</h2>
+        <div class="analysis">แบบใหม่ที่แนะนำ:
+{
+  "date": "2026-04-16",
+  "last2": "55",
+  "top3": ["111","222"],
+  "bottom3": ["333","444"]
+}
+
+แบบเก่าที่ยังรองรับ:
+{
+  "date": "2026-04-16",
+  "last2": "55",
+  "last3": ["111","222","333","444"]
+}
+
+หมายเหตุ:
+- ถ้าใช้แบบเก่า ระบบจะถือว่า 2 ตัวแรกของ last3 = top3
+- และ 2 ตัวหลังของ last3 = bottom3</div>
+      </div></div>
+    </section>
   </div>
 
   <script>
     let records = [];
-    let all3List = [];
+    let allTop3 = [];
+    let allBottom3 = [];
+    let allCombined3 = [];
+
     let cached2Scores = [];
-    let cached3Scores = [];
-    let cachedPrediction = null;
+    let cachedTop3Scores = [];
+    let cachedBottom3Scores = [];
+    let cachedHybridTop = [];
+    let cachedHybridBottom = [];
 
     function normalizeNumber(value, size) {
       const cleaned = String(value || "").replace(/[^\d]/g, "").trim();
@@ -385,26 +443,51 @@
 
         const raw = await response.json();
 
-        records = raw.map((row, index) => ({
-          id: index + 1,
-          date: String(row.date || "").trim(),
-          last2: normalizeNumber(row.last2, 2),
-          last3: Array.isArray(row.last3)
-            ? row.last3.map(x => normalizeNumber(x, 3)).filter(Boolean)
-            : []
-        })).filter(r => r.date && r.last2);
+        records = raw.map((row, index) => {
+          const last2 = normalizeNumber(row.last2, 2);
 
-        all3List = records.flatMap(r => r.last3);
+          let top3 = Array.isArray(row.top3)
+            ? row.top3.map(x => normalizeNumber(x, 3)).filter(Boolean)
+            : [];
+
+          let bottom3 = Array.isArray(row.bottom3)
+            ? row.bottom3.map(x => normalizeNumber(x, 3)).filter(Boolean)
+            : [];
+
+          if ((!top3.length && !bottom3.length) && Array.isArray(row.last3)) {
+            const normalized = row.last3.map(x => normalizeNumber(x, 3)).filter(Boolean);
+            top3 = normalized.slice(0, 2);
+            bottom3 = normalized.slice(2, 4);
+          }
+
+          return {
+            id: index + 1,
+            date: String(row.date || "").trim(),
+            last2,
+            top3,
+            bottom3,
+            last3: [...top3, ...bottom3]
+          };
+        }).filter(r => r.date && r.last2);
+
+        allTop3 = records.flatMap(r => r.top3);
+        allBottom3 = records.flatMap(r => r.bottom3);
+        allCombined3 = records.flatMap(r => r.last3);
+
         cached2Scores = [];
-        cached3Scores = [];
-        cachedPrediction = null;
+        cachedTop3Scores = [];
+        cachedBottom3Scores = [];
+        cachedHybridTop = [];
+        cachedHybridBottom = [];
 
-        statusBox.textContent = `โหลดข้อมูลสำเร็จ ${records.length} งวด | เลข 3 ตัว ${all3List.length} รายการ`;
+        statusBox.textContent = `โหลดข้อมูลสำเร็จ ${records.length} งวด | top3 ${allTop3.length} | bottom3 ${allBottom3.length}`;
         render();
       } catch (error) {
         statusBox.innerHTML = '<span class="error">โหลด data.json ไม่สำเร็จ</span>';
         records = [];
-        all3List = [];
+        allTop3 = [];
+        allBottom3 = [];
+        allCombined3 = [];
         render();
       }
     }
@@ -427,7 +510,15 @@
       return [...records].sort(sortDateDesc).slice(0, n);
     }
 
-    function getLastNThree(n) {
+    function getLastNTop3(n) {
+      return getLastNRecords(n).flatMap(r => r.top3);
+    }
+
+    function getLastNBottom3(n) {
+      return getLastNRecords(n).flatMap(r => r.bottom3);
+    }
+
+    function getLastNCombined3(n) {
       return getLastNRecords(n).flatMap(r => r.last3);
     }
 
@@ -484,12 +575,6 @@
       return markov;
     }
 
-    function nextDigitMarkov(markov, pos, digit) {
-      const options = (((markov || {})[pos] || {})[digit]) || {};
-      const entries = Object.entries(options).sort((a, b) => b[1] - a[1]);
-      return entries.length ? entries[0][0] : digit;
-    }
-
     function calculate2Scores() {
       const allFreq = countBy(records, r => r.last2);
       const recent12 = getLastNRecords(12);
@@ -521,14 +606,13 @@
       }).sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
     }
 
-    function calculate3Scores() {
-      if (!all3List.length) return [];
+    function calculate3ScoresFromList(list, recentList) {
+      if (!list.length) return [];
 
-      const allFreq = countBy(all3List, x => x);
-      const recentList = getLastNThree(20);
+      const allFreq = countBy(list, x => x);
       const recentFreq = countBy(recentList, x => x);
-      const digitFreq = digitFreq3(all3List);
-      const pairFreq = pairFreq3(all3List);
+      const digitFreq = digitFreq3(list);
+      const pairFreq = pairFreq3(list);
 
       const maxAll = Math.max(...Object.values(allFreq), 1);
       const maxRecent = Math.max(...Object.values(recentFreq), 1);
@@ -542,6 +626,7 @@
           (((digitFreq[num[0]] || 0) / maxDigit) +
            ((digitFreq[num[1]] || 0) / maxDigit) +
            ((digitFreq[num[2]] || 0) / maxDigit)) / 3;
+
         const pairScore =
           (((pairFreq[num.slice(0,2)] || 0) / maxPair) +
            ((pairFreq[num.slice(1,3)] || 0) / maxPair)) / 2;
@@ -567,119 +652,34 @@
       }).sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
     }
 
-    function generateHybrid3Prediction() {
-      if (!all3List.length) return { main: [], sub: [], hedge: [], text: "ยังไม่มีข้อมูลเลข 3 ตัว" };
+    function mergeHybridScores(baseScores, targetScores, oppositeScores, type) {
+      const baseMap = Object.fromEntries(baseScores.map(x => [x.number, x.score]));
+      const targetMap = Object.fromEntries(targetScores.map(x => [x.number, x.score]));
+      const oppositeMap = Object.fromEntries(oppositeScores.map(x => [x.number, x.score]));
 
-      const digitFreq = digitFreq3(all3List);
-      const pairFreq = pairFreq3(all3List);
-      const recentList = getLastNThree(20);
-      const recentFreq = countBy(recentList, x => x);
-      const allFreq = countBy(all3List, x => x);
-      const markov = buildMarkov3(all3List);
+      const candidateSet = new Set([
+        ...Object.keys(baseMap),
+        ...Object.keys(targetMap)
+      ]);
 
-      const topDigits = Object.entries(digitFreq)
-        .sort((a, b) => b[1] - a[1])
-        .map(x => x[0])
-        .slice(0, 6);
+      const results = [...candidateSet].map(number => {
+        const base = baseMap[number] || 0;
+        const target = targetMap[number] || 0;
+        const opposite = oppositeMap[number] || 0;
 
-      const maxDigit = Math.max(...Object.values(digitFreq), 1);
-      const maxPair = Math.max(...Object.values(pairFreq), 1);
-      const maxRecent = Math.max(...Object.values(recentFreq), 1);
-      const maxAll = Math.max(...Object.values(allFreq), 1);
+        const score =
+          (base * 0.45) +
+          (target * 0.45) +
+          (opposite * 0.10);
 
-      const candidateMap = new Map();
+        return {
+          number,
+          score: Number(score.toFixed(2)),
+          type
+        };
+      });
 
-      for (const a of topDigits) {
-        for (const b of topDigits) {
-          let c = nextDigitMarkov(markov, 2, b);
-          const num = `${a}${b}${c}`;
-
-          const digitScore =
-            (((digitFreq[a] || 0) / maxDigit) +
-             ((digitFreq[b] || 0) / maxDigit) +
-             ((digitFreq[c] || 0) / maxDigit)) / 3;
-
-          const pairScore =
-            (((pairFreq[a+b] || 0) / maxPair) +
-             ((pairFreq[b+c] || 0) / maxPair)) / 2;
-
-          const freqScore = (allFreq[num] || 0) / maxAll;
-          const recentScore = (recentFreq[num] || 0) / maxRecent;
-
-          const pattern = hasPattern3(num);
-          const bonus = (pattern.hasDouble ? 0.06 : 0) + (pattern.allSame ? 0.03 : 0);
-
-          const score =
-            (digitScore * 0.25) +
-            (pairScore * 0.25) +
-            (freqScore * 0.28) +
-            (recentScore * 0.17) +
-            bonus;
-
-          candidateMap.set(num, {
-            number: num,
-            score: Number((score * 100).toFixed(2)),
-            isDouble: pattern.hasDouble,
-            isAllSame: pattern.allSame
-          });
-        }
-      }
-
-      const ranked = [...candidateMap.values()].sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
-      const main = ranked.slice(0, 5);
-      const sub = ranked.slice(5, 10);
-      const hedge = ranked.filter(x => x.isDouble).slice(0, 5);
-
-      const text =
-`เลข 3 ตัวถูกคัดจาก:
-- ความถี่เลข 3 ตัวจริง
-- ความถี่ช่วงล่าสุด
-- pair pattern (AB / BC)
-- digit frequency
-- Markov transition รายตำแหน่ง
-
-เลขเด่น: ${main.map(x => x.number).join(", ")}
-เลขรอง: ${sub.map(x => x.number).join(", ")}
-เลขกัน: ${hedge.map(x => x.number).join(", ") || "-"}`;
-
-      return { main, sub, hedge, text };
-    }
-
-    function generateAutoBundles() {
-      const top2 = cached2Scores.slice(0, 8).map(x => x.number);
-      const top3 = cached3Scores.slice(0, 8).map(x => x.number);
-
-      const main2 = top2.slice(0, 5);
-      const sub2 = top2.slice(3, 8);
-      const main3 = top3.slice(0, 5);
-
-      const bundleMain = [];
-      const bundleSub = [];
-
-      for (let i = 0; i < Math.min(5, main2.length); i++) {
-        bundleMain.push(main2[i]);
-      }
-
-      for (let i = 0; i < Math.min(5, sub2.length); i++) {
-        bundleSub.push(sub2[i]);
-      }
-
-      const text =
-`Auto Generate ใช้จาก:
-- Top 2 ตัวคะแนนสูงสุด
-- Top 3 ตัวคะแนนสูงสุด
-- ผล Hybrid Prediction ล่าสุด
-
-ชุดเด่น 2 ตัว: ${bundleMain.join(", ")}
-ชุดรอง 2 ตัว: ${bundleSub.join(", ")}
-ชุดเด่น 3 ตัว: ${main3.join(", ")}`;
-
-      return {
-        bundleMain,
-        bundleSub,
-        bundle3: main3,
-        text
-      };
+      return results.sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
     }
 
     function renderBars(containerId, entries) {
@@ -701,15 +701,8 @@
       `).join("");
     }
 
-    function renderStats(scores2, scores3) {
+    function renderStats(scores2, scoresTop, scoresBottom) {
       document.getElementById("statTotal").textContent = records.length;
-
-      const sorted = [...records].sort(sortDateDesc);
-      if (sorted.length) {
-        document.getElementById("statDateRange").textContent = `${sorted[sorted.length - 1].date} → ${sorted[0].date}`;
-      } else {
-        document.getElementById("statDateRange").textContent = "--";
-      }
 
       if (scores2.length) {
         document.getElementById("statTop2").textContent = scores2[0].number;
@@ -719,12 +712,20 @@
         document.getElementById("statTop2Meta").textContent = "ยังไม่มีข้อมูล";
       }
 
-      if (scores3.length) {
-        document.getElementById("statTop3").textContent = scores3[0].number;
-        document.getElementById("statTop3Meta").textContent = `คะแนน ${scores3[0].score} | ออก ${scores3[0].totalCount} ครั้ง`;
+      if (scoresTop.length) {
+        document.getElementById("statTopTop3").textContent = scoresTop[0].number;
+        document.getElementById("statTopTop3Meta").textContent = `คะแนน ${scoresTop[0].score}`;
       } else {
-        document.getElementById("statTop3").textContent = "---";
-        document.getElementById("statTop3Meta").textContent = "ยังไม่มีข้อมูล";
+        document.getElementById("statTopTop3").textContent = "---";
+        document.getElementById("statTopTop3Meta").textContent = "ยังไม่มีข้อมูล";
+      }
+
+      if (scoresBottom.length) {
+        document.getElementById("statTopBottom3").textContent = scoresBottom[0].number;
+        document.getElementById("statTopBottom3Meta").textContent = `คะแนน ${scoresBottom[0].score}`;
+      } else {
+        document.getElementById("statTopBottom3").textContent = "---";
+        document.getElementById("statTopBottom3Meta").textContent = "ยังไม่มีข้อมูล";
       }
     }
 
@@ -773,7 +774,8 @@
         filtered = filtered.filter(r =>
           (r.last2 || "").includes(search) ||
           (r.date || "").toLowerCase().includes(search) ||
-          (r.last3 || []).join(" ").includes(search)
+          r.top3.join(" ").includes(search) ||
+          r.bottom3.join(" ").includes(search)
         );
       }
 
@@ -783,7 +785,7 @@
       if (sort === "last2_asc") filtered.sort((a, b) => Number(a.last2) - Number(b.last2));
 
       if (!filtered.length) {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty">ไม่พบข้อมูล</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="empty">ไม่พบข้อมูล</td></tr>';
         return;
       }
 
@@ -792,93 +794,130 @@
           <td>${idx + 1}</td>
           <td>${r.date}</td>
           <td><span class="pill">${r.last2}</span></td>
-          <td>${r.last3.join(" , ") || "-"}</td>
+          <td>${r.top3.join(" , ") || "-"}</td>
+          <td>${r.bottom3.join(" , ") || "-"}</td>
         </tr>
       `).join("");
     }
 
     function runAI() {
       cached2Scores = calculate2Scores();
-      cached3Scores = calculate3Scores();
-      cachedPrediction = generateHybrid3Prediction();
 
-      renderStats(cached2Scores, cached3Scores);
+      const combinedScores = calculate3ScoresFromList(allCombined3, getLastNCombined3(20));
+      const topScores = calculate3ScoresFromList(allTop3, getLastNTop3(20));
+      const bottomScores = calculate3ScoresFromList(allBottom3, getLastNBottom3(20));
+
+      cachedTop3Scores = topScores;
+      cachedBottom3Scores = bottomScores;
+
+      cachedHybridTop = mergeHybridScores(combinedScores, topScores, bottomScores, "top");
+      cachedHybridBottom = mergeHybridScores(combinedScores, bottomScores, topScores, "bottom");
+
+      renderStats(cached2Scores, cachedHybridTop, cachedHybridBottom);
 
       document.getElementById("ranking2Box").innerHTML = cached2Scores.length
         ? cached2Scores.slice(0, 10).map((x, i) => `<span class="chip green">#${i + 1} ${x.number} · ${x.score}</span>`).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
-      document.getElementById("ranking3Box").innerHTML = cached3Scores.length
-        ? cached3Scores.slice(0, 10).map((x, i) => `<span class="chip gold">#${i + 1} ${x.number} · ${x.score}</span>`).join("")
+      document.getElementById("rankingTop3Box").innerHTML = cachedHybridTop.length
+        ? cachedHybridTop.slice(0, 10).map((x, i) => `<span class="chip gold">#${i + 1} ${x.number} · ${x.score}</span>`).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
-      document.getElementById("mainPredictBox").innerHTML = cachedPrediction.main.length
-        ? cachedPrediction.main.map((x, i) => `<span class="chip gold">เด่น ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
+      document.getElementById("rankingBottom3Box").innerHTML = cachedHybridBottom.length
+        ? cachedHybridBottom.slice(0, 10).map((x, i) => `<span class="chip pink">#${i + 1} ${x.number} · ${x.score}</span>`).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
-      document.getElementById("subPredictBox").innerHTML = cachedPrediction.sub.length
-        ? cachedPrediction.sub.map((x, i) => `<span class="chip green">รอง ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
+      document.getElementById("topPredictBox").innerHTML = cachedHybridTop.length
+        ? cachedHybridTop.slice(0, 5).map((x, i) => `<span class="chip gold">บน ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
-      document.getElementById("hedgePredictBox").innerHTML = cachedPrediction.hedge.length
-        ? cachedPrediction.hedge.map((x, i) => `<span class="chip pink">กัน ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
+      document.getElementById("bottomPredictBox").innerHTML = cachedHybridBottom.length
+        ? cachedHybridBottom.slice(0, 5).map((x, i) => `<span class="chip pink">ล่าง ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
-      document.getElementById("predictInsight").textContent = cachedPrediction.text;
+      const hybridMerge = [...new Map(
+        [...cachedHybridTop.slice(0, 8), ...cachedHybridBottom.slice(0, 8)]
+          .map(x => [x.number, x])
+      ).values()].sort((a, b) => b.score - a.score).slice(0, 8);
 
-      const top2Text = cached2Scores.slice(0, 5).map(x => `${x.number} (${x.score})`).join(", ");
-      const top3Text = cached3Scores.slice(0, 5).map(x => `${x.number} (${x.score})`).join(", ");
-      const recent2 = getLastNRecords(5).map(x => x.last2).join(", ");
-      const recent3 = getLastNThree(10).slice(0, 5).join(", ");
-      const hotDigits3 = Object.entries(digitFreq3(all3List)).sort((a, b) => b[1] - a[1]).slice(0, 3).map(x => x[0]).join(", ");
+      document.getElementById("hybridPredictBox").innerHTML = hybridMerge.length
+        ? hybridMerge.map((x, i) => `<span class="chip purple">Hybrid ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
+        : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
-      document.getElementById("analysisBox").textContent =
-`จากข้อมูลทั้งหมด ${records.length} งวด และเลข 3 ตัว ${all3List.length} รายการ
+      document.getElementById("predictInsight").textContent =
+`Hybrid บน/ล่าง ทำงานแบบนี้:
+- AI รวม = ใช้เพื่อความนิ่ง
+- AI บน = โฟกัส top3
+- AI ล่าง = โฟกัส bottom3
 
-Top 2 ตัว: ${top2Text}
-Top 3 ตัว: ${top3Text}
-
-เลข 2 ตัวล่าสุด: ${recent2}
-เลข 3 ตัวล่าสุด: ${recent3}
-Digit 3 ตัวที่เด่นที่สุด: ${hotDigits3 || "-"}
+Final score บน = รวม 45% + บน 45% + ล่าง 10%
+Final score ล่าง = รวม 45% + ล่าง 45% + บน 10%
 
 สรุป:
-- 2 ตัวใช้ frequency + recent trend + digit trend
-- 3 ตัวใช้ frequency จริง + recent trend + pair pattern + Markov
-- เลขเด่นคือกลุ่มที่คะแนนรวมสูงสุด ไม่ใช่การการันตีผลจริง`;
+- ถ้าอยากดู 3 ตัวบน ให้ดูกล่องบน
+- ถ้าอยากดู 3 ตัวล่าง ให้ดูกล่องล่าง
+- ถ้าอยากดูภาพรวม ให้ดูกล่อง Hybrid`;
+
+      document.getElementById("analysisBox").textContent =
+`จากข้อมูลทั้งหมด ${records.length} งวด
+top3 ทั้งหมด ${allTop3.length} รายการ
+bottom3 ทั้งหมด ${allBottom3.length} รายการ
+
+Top 2 ตัว: ${cached2Scores.slice(0, 5).map(x => x.number).join(", ")}
+Top 3 ตัวบน: ${cachedHybridTop.slice(0, 5).map(x => x.number).join(", ")}
+Top 3 ตัวล่าง: ${cachedHybridBottom.slice(0, 5).map(x => x.number).join(", ")}
+
+ข้อดีของ Hybrid:
+- ยังใช้ข้อมูลรวม ทำให้ระบบไม่นิ่งน้อยลง
+- แต่เวลาแสดงผล แยกบน/ล่างชัดเจน
+- ใช้งานจริงตรงกว่าแบบรวมล้วน`;
 
       renderBars("bars2", cached2Scores.slice(0, 10).map(x => ({ label: x.number, value: x.score })));
-      renderBars("bars3", cached3Scores.slice(0, 10).map(x => ({ label: x.number, value: x.score })));
+      renderBars("barsTop3", cachedHybridTop.slice(0, 10).map(x => ({ label: x.number, value: x.score })));
+      renderBars("barsBottom3", cachedHybridBottom.slice(0, 10).map(x => ({ label: x.number, value: x.score })));
       renderMonthlyChart();
       renderTable();
     }
 
     function generateBundles() {
-      if (!cached2Scores.length || !cached3Scores.length) {
+      if (!cached2Scores.length || !cachedHybridTop.length || !cachedHybridBottom.length) {
         document.getElementById("bundleInsight").textContent = "ให้กด Run AI ก่อน แล้วค่อย Auto Generate ชุด";
         return;
       }
 
-      const bundles = generateAutoBundles();
+      const twoMain = cached2Scores.slice(0, 5).map(x => x.number);
+      const twoSub = cached2Scores.slice(5, 10).map(x => x.number);
+      const topSet = cachedHybridTop.slice(0, 5).map(x => x.number);
+      const bottomSet = cachedHybridBottom.slice(0, 5).map(x => x.number);
 
-      document.getElementById("bundleMainBox").innerHTML =
-        bundles.bundleMain.map((x, i) => `<span class="chip gold">ชุดเด่น ${i + 1}: ${x}</span>`).join("");
+      document.getElementById("bundle2MainBox").innerHTML =
+        twoMain.map((x, i) => `<span class="chip green">2 ตัวเด่น ${i + 1}: ${x}</span>`).join("");
 
-      document.getElementById("bundleSubBox").innerHTML =
-        bundles.bundleSub.map((x, i) => `<span class="chip green">ชุดรอง ${i + 1}: ${x}</span>`).join("");
+      document.getElementById("bundle2SubBox").innerHTML =
+        twoSub.map((x, i) => `<span class="chip orange">2 ตัวรอง ${i + 1}: ${x}</span>`).join("");
 
-      document.getElementById("bundle3Box").innerHTML =
-        bundles.bundle3.map((x, i) => `<span class="chip pink">3 ตัว ${i + 1}: ${x}</span>`).join("");
+      document.getElementById("bundleTop3Box").innerHTML =
+        topSet.map((x, i) => `<span class="chip gold">บน ${i + 1}: ${x}</span>`).join("");
 
-      document.getElementById("bundleInsight").textContent = bundles.text;
+      document.getElementById("bundleBottom3Box").innerHTML =
+        bottomSet.map((x, i) => `<span class="chip pink">ล่าง ${i + 1}: ${x}</span>`).join("");
+
+      document.getElementById("bundleInsight").textContent =
+`Auto Generate ชุด:
+- 2 ตัวเด่น: ${twoMain.join(", ")}
+- 2 ตัวรอง: ${twoSub.join(", ")}
+- 3 ตัวบน: ${topSet.join(", ")}
+- 3 ตัวล่าง: ${bottomSet.join(", ")}
+
+แนวคิด:
+- เอา Top ranking มาสร้างชุดแบบพร้อมใช้งาน
+- ถ้าจะเล่นบน ให้ดูชุดบนเป็นหลัก
+- ถ้าจะเล่นล่าง ให้ดูชุดล่างเป็นหลัก`;
     }
 
     function render() {
       renderMonthlyChart();
       renderTable();
-      const scores2 = calculate2Scores();
-      const scores3 = calculate3Scores();
-      renderStats(scores2, scores3);
     }
 
     document.getElementById("refreshBtn").addEventListener("click", loadData);
