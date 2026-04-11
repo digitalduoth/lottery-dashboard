@@ -101,7 +101,8 @@
       flex:0 0 auto;
     }
 
-    .logo svg{
+    .logo svg,
+    .icon-svg{
       width:44px;
       height:44px;
       display:block;
@@ -181,7 +182,7 @@
         0 0 28px rgba(139,92,246,.10);
     }
 
-    .card.random::before{
+    .card::before{
       content:"";
       position:absolute;
       width:240px;
@@ -189,20 +190,15 @@
       right:-60px;
       top:-60px;
       border-radius:50%;
-      background:radial-gradient(circle, rgba(34,211,238,.22), transparent 70%);
       pointer-events:none;
     }
 
+    .card.random::before{
+      background:radial-gradient(circle, rgba(34,211,238,.22), transparent 70%);
+    }
+
     .card.ai::before{
-      content:"";
-      position:absolute;
-      width:240px;
-      height:240px;
-      right:-60px;
-      top:-60px;
-      border-radius:50%;
       background:radial-gradient(circle, rgba(236,72,153,.22), transparent 70%);
-      pointer-events:none;
     }
 
     .icon-wrap{
@@ -215,11 +211,6 @@
       border:1px solid rgba(255,255,255,.10);
       background:rgba(255,255,255,.06);
       box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
-    }
-
-    .icon{
-      font-size:30px;
-      line-height:1;
     }
 
     .card-title{
@@ -267,13 +258,6 @@
       color:#ffffff;
     }
 
-    .footer-note{
-      color:var(--muted);
-      font-size:14px;
-      position:relative;
-      z-index:2;
-    }
-
     @media (max-width:900px){
       .card-grid{grid-template-columns:1fr}
       .card{min-height:260px}
@@ -295,14 +279,14 @@
         <div class="logo" aria-hidden="true">
           <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <linearGradient id="cubeGradLanding" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+              <linearGradient id="cubeGradLandingHero" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
                 <stop stop-color="#22D3EE"/>
                 <stop offset="0.5" stop-color="#8B5CF6"/>
                 <stop offset="1" stop-color="#EC4899"/>
               </linearGradient>
             </defs>
-            <path d="M32 8L49 18V38L32 48L15 38V18L32 8Z" stroke="url(#cubeGradLanding)" stroke-width="4" stroke-linejoin="round"/>
-            <path d="M32 8V28M49 18L32 28M15 18L32 28M32 48V28" stroke="url(#cubeGradLanding)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M32 8L49 18V38L32 48L15 38V18L32 8Z" stroke="url(#cubeGradLandingHero)" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M32 8V28M49 18L32 28M15 18L32 28M32 48V28" stroke="url(#cubeGradLandingHero)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
             <circle cx="24" cy="22" r="2.6" fill="#ffffff" fill-opacity=".95"/>
             <circle cx="40" cy="22" r="2.6" fill="#ffffff" fill-opacity=".95"/>
             <circle cx="32" cy="34" r="2.8" fill="#ffffff" fill-opacity=".95"/>
@@ -317,15 +301,28 @@
       </div>
 
       <p class="desc">
-        เลือกใช้งานได้ 2 แบบตามสไตล์ของคุณ
-        จะใช้โหมดสุ่มเลขนำโชคแบบดวงล้วน หรือเข้าโหมดวิเคราะห์เลขด้วย AI ก็แยกกันชัดเจน
+        เลือกใช้งานได้ 2 แบบตามสไตล์ของคุณ จะใช้โหมดสุ่มเลขนำโชคแบบดวงล้วน
+        หรือเข้าโหมดวิเคราะห์เลขด้วย AI ก็แยกกันชัดเจน
       </p>
 
       <div class="card-grid">
         <a class="card-link" href="./random.html">
           <article class="card random">
-            <div class="icon-wrap">
-              <div class="icon">🎲</div>
+            <div class="icon-wrap" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="cubeGradRandomCard" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#22D3EE"/>
+                    <stop offset="0.5" stop-color="#8B5CF6"/>
+                    <stop offset="1" stop-color="#EC4899"/>
+                  </linearGradient>
+                </defs>
+                <path d="M32 8L49 18V38L32 48L15 38V18L32 8Z" stroke="url(#cubeGradRandomCard)" stroke-width="4" stroke-linejoin="round"/>
+                <path d="M32 8V28M49 18L32 28M15 18L32 28M32 48V28" stroke="url(#cubeGradRandomCard)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="24" cy="22" r="2.6" fill="#ffffff" fill-opacity=".95"/>
+                <circle cx="40" cy="22" r="2.6" fill="#ffffff" fill-opacity=".95"/>
+                <circle cx="32" cy="34" r="2.8" fill="#ffffff" fill-opacity=".95"/>
+              </svg>
             </div>
             <h2 class="card-title">Lucky Drop</h2>
             <p class="card-sub">
@@ -343,8 +340,21 @@
 
         <a class="card-link" href="./ai.html">
           <article class="card ai">
-            <div class="icon-wrap">
-              <div class="icon">🤖</div>
+            <div class="icon-wrap" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="cubeGradAICard" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#22D3EE"/>
+                    <stop offset="0.5" stop-color="#8B5CF6"/>
+                    <stop offset="1" stop-color="#EC4899"/>
+                  </linearGradient>
+                </defs>
+                <path d="M32 8L49 18V38L32 48L15 38V18L32 8Z" stroke="url(#cubeGradAICard)" stroke-width="4" stroke-linejoin="round"/>
+                <path d="M32 8V28M49 18L32 28M15 18L32 28M32 48V28" stroke="url(#cubeGradAICard)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="24" cy="22" r="2.6" fill="#ffffff" fill-opacity=".95"/>
+                <circle cx="40" cy="22" r="2.6" fill="#ffffff" fill-opacity=".95"/>
+                <circle cx="32" cy="34" r="2.8" fill="#ffffff" fill-opacity=".95"/>
+              </svg>
             </div>
             <h2 class="card-title">AI Analysis</h2>
             <p class="card-sub">
@@ -359,10 +369,6 @@
             <div class="cta">เข้าสู่หน้า AI วิเคราะห์ →</div>
           </article>
         </a>
-      </div>
-
-      <div class="footer-note">
-        ถ้าหน้า AI ของคุณยังใช้ไฟล์เดิมชื่อ <strong>index.html</strong> อยู่ ให้เปลี่ยนลิงก์ปุ่ม AI เป็นไฟล์ที่คุณต้องการใช้จริง เช่น <strong>./dashboard.html</strong> หรือ <strong>./ai.html</strong>
       </div>
     </section>
   </div>
