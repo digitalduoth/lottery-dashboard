@@ -623,13 +623,13 @@
     </section>
 
     <section class="grid-2">
-      <div class="card"><div class="card-inner">
+      <div class="card filter-block filter-all"><div class="card-inner">
         <h2 class="section-title">สรุปเลขเด่นประจำงวด</h2>
         <p class="section-sub">อ่านเร็ว ใช้ตัดสินใจไว</p>
         <div class="analysis" id="summaryBox">ยังกด Run AI อยู่</div>
       </div></div>
 
-      <div class="card"><div class="card-inner">
+      <div class="card filter-block filter-all"><div class="card-inner">
         <h2 class="section-title">Filter การดูผล</h2>
         <p class="section-sub">เลือกเฉพาะส่วนที่อยากโฟกัส</p>
         <div class="toolbar">
@@ -652,21 +652,21 @@
 
           <div style="height:18px;"></div>
 
-          <div class="filter-block filter-two filter-all">
+          <div class="filter-block filter-two">
             <h2 class="section-title">เลข 2 ตัวเด่น</h2>
             <div id="ranking2Box" class="chips"><span class="empty">ยังไม่มีข้อมูล</span></div>
           </div>
 
           <div style="height:18px;"></div>
 
-          <div class="filter-block filter-top filter-all">
+          <div class="filter-block filter-top">
             <h2 class="section-title">3 ตัวบนเด่น</h2>
             <div id="rankingTop3Box" class="chips"><span class="empty">ยังไม่มีข้อมูล</span></div>
           </div>
 
           <div style="height:18px;"></div>
 
-          <div class="filter-block filter-bottom filter-all">
+          <div class="filter-block filter-bottom">
             <h2 class="section-title">3 ตัวล่างเด่น</h2>
             <div id="rankingBottom3Box" class="chips"><span class="empty">ยังไม่มีข้อมูล</span></div>
           </div>
@@ -697,17 +697,17 @@
       </div>
 
       <div style="display:grid;gap:16px;">
-        <div class="card filter-block filter-two filter-all"><div class="card-inner">
+        <div class="card filter-block filter-two"><div class="card-inner">
           <h2 class="section-title">Top 10 เลข 2 ตัว</h2>
           <div id="bars2" class="bars"><div class="empty">ยังไม่มีข้อมูล</div></div>
         </div></div>
 
-        <div class="card filter-block filter-top filter-all"><div class="card-inner">
+        <div class="card filter-block filter-top"><div class="card-inner">
           <h2 class="section-title">Top 10 3 ตัวบน</h2>
           <div id="barsTop3" class="bars"><div class="empty">ยังไม่มีข้อมูล</div></div>
         </div></div>
 
-        <div class="card filter-block filter-bottom filter-all"><div class="card-inner">
+        <div class="card filter-block filter-bottom"><div class="card-inner">
           <h2 class="section-title">Top 10 3 ตัวล่าง</h2>
           <div id="barsBottom3" class="bars"><div class="empty">ยังไม่มีข้อมูล</div></div>
         </div></div>
@@ -715,7 +715,7 @@
     </section>
 
     <section class="grid-2">
-      <div class="card"><div class="card-inner">
+      <div class="card filter-block filter-all"><div class="card-inner">
         <h2 class="section-title">Auto Generate เลขชุด</h2>
 
         <div class="kicker">ชุด 2 ตัวเด่น</div>
@@ -741,7 +741,7 @@
         <div class="analysis" id="bundleInsight">กด Auto Generate ชุด เพื่อให้ระบบสร้างเลขชุดอัตโนมัติ</div>
       </div></div>
 
-      <div class="card"><div class="card-inner">
+      <div class="card filter-block filter-all"><div class="card-inner">
         <h2 class="section-title">ผลย้อนหลัง</h2>
         <div class="search-grid">
           <input class="input" id="searchInput" type="text" placeholder="ค้นหาเลข / วันที่" />
@@ -771,7 +771,7 @@
     </section>
 
     <section class="grid-2">
-      <div class="card"><div class="card-inner">
+      <div class="card filter-block filter-all"><div class="card-inner">
         <h2 class="section-title">แนวโน้มรายเดือน</h2>
         <div id="monthlyChart" class="mini-chart"></div>
       </div></div>
@@ -1324,10 +1324,15 @@ Top 3 ตัวล่าง: ${cachedHybridBottom.slice(0, 5).map(x => x.number)
 
       const blocks = document.querySelectorAll(".filter-block");
       blocks.forEach(el => {
-        const show =
-          mode === "all" ||
-          el.classList.contains(`filter-${mode}`) ||
-          el.classList.contains("filter-all");
+        let show = false;
+
+        if (mode === "all") {
+          show = true;
+        } else if (el.classList.contains(`filter-${mode}`)) {
+          show = true;
+        } else if (el.classList.contains("filter-all")) {
+          show = true;
+        }
 
         el.style.display = show ? "" : "none";
       });
