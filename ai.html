@@ -6,184 +6,287 @@
   <title>Lucky Drop AI Analysis</title>
   <style>
     :root{
-      --bg:#07111f;
-      --bg2:#0a1628;
-      --panel:rgba(12,20,36,.82);
-      --line:rgba(148,163,184,.12);
-      --text:#e7eefb;
-      --muted:#98a8c4;
+      --bg:#040a16;
+      --bg2:#091120;
+      --panel:rgba(8,16,30,.88);
+      --panel-2:rgba(10,20,36,.92);
+      --line:rgba(148,163,184,.10);
+      --text:#e8eefc;
+      --muted:#90a2c0;
+
       --blue:#4f8cff;
-      --cyan:#14b8a6;
-      --gold:#f8d56b;
-      --pink:#ec4899;
-      --green:#10b981;
-      --orange:#fb923c;
-      --purple:#8b5cf6;
-      --shadow:0 24px 60px rgba(0,0,0,.35);
+      --blue-2:#7aa2ff;
+      --cyan:#1f6fff;
+      --green:#16a34a;
+      --orange:#f59e0b;
+      --pink:#c026d3;
+      --purple:#6d5efc;
+      --gold:#e7c96d;
+
+      --shadow:0 26px 70px rgba(0,0,0,.42);
     }
 
     *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
     body{
-      margin:0;
+      min-height:100vh;
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
       color:var(--text);
       background:
-        radial-gradient(circle at top left, rgba(79,140,255,.18), transparent 28%),
-        radial-gradient(circle at top right, rgba(20,184,166,.14), transparent 30%),
+        radial-gradient(circle at 0% 0%, rgba(59,130,246,.10), transparent 22%),
+        radial-gradient(circle at 100% 0%, rgba(109,94,252,.10), transparent 24%),
         linear-gradient(180deg,var(--bg),var(--bg2));
-      min-height:100vh;
     }
 
-    .app{max-width:1400px;margin:0 auto;padding:18px 14px 40px}
-    .hero,.card{
-      background:var(--panel);
+    .app{
+      max-width:1400px;
+      margin:0 auto;
+      padding:18px 14px 40px;
+    }
+
+    .hero,
+    .card{
       border:1px solid var(--line);
       border-radius:28px;
+      background:var(--panel);
       box-shadow:var(--shadow);
       backdrop-filter:blur(14px);
     }
 
     .hero{
       padding:22px;
-      background:linear-gradient(135deg, rgba(79,140,255,.18), rgba(20,184,166,.10));
       position:relative;
       overflow:hidden;
+      background:
+        radial-gradient(circle at 100% 100%, rgba(231,201,109,.10), transparent 18%),
+        linear-gradient(135deg, rgba(29,78,216,.20), rgba(8,16,30,.40));
     }
 
-    .hero:after{
+    .hero::after{
       content:"";
       position:absolute;
-      right:-50px;
-      bottom:-70px;
-      width:220px;
-      height:220px;
+      right:-90px;
+      top:-90px;
+      width:260px;
+      height:260px;
       border-radius:50%;
-      background:radial-gradient(circle, rgba(248,213,107,.22), transparent 70%);
+      background:radial-gradient(circle, rgba(79,140,255,.16), transparent 70%);
       pointer-events:none;
     }
 
-    .row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-    .brand{display:flex;align-items:center;gap:14px}
-    .logo{
-      width:58px;height:58px;border-radius:18px;display:grid;place-items:center;
-      background:linear-gradient(135deg,var(--gold),#ff9f43);
-      color:#111827;font-weight:900;font-size:18px;
+    .row{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
     }
 
-    h1{margin:0;font-size:clamp(28px,4vw,42px);line-height:1.05}
-    .sub{margin:10px 0 0;color:var(--muted);max-width:900px;line-height:1.65;font-size:15px}
-    .kicker{color:var(--muted);font-size:13px;margin-bottom:8px}
-    .big{font-size:clamp(28px,4vw,40px);font-weight:900;margin:0;word-break:break-word}
-    .note{margin-top:8px;color:#c9d7ef;font-size:13px}
-    .section-title{margin:0 0 8px;font-size:20px}
-    .section-sub{margin:0 0 14px;color:var(--muted);font-size:14px}
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .logo{
+      width:58px;
+      height:58px;
+      border-radius:18px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,#e7c96d,#f59e0b);
+      color:#111827;
+      font-weight:900;
+      font-size:18px;
+      box-shadow:0 12px 26px rgba(245,158,11,.18);
+    }
+
+    .kicker{
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:8px;
+    }
+
+    h1{
+      margin:0;
+      font-size:clamp(28px,4vw,42px);
+      line-height:1.05;
+    }
+
+    .sub{
+      margin:10px 0 0;
+      color:var(--muted);
+      max-width:920px;
+      line-height:1.7;
+      font-size:15px;
+    }
+
+    .toolbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
 
     .btn{
-      border:0;cursor:pointer;border-radius:14px;padding:12px 16px;font-weight:800;
-      color:#fff;background:linear-gradient(135deg,var(--blue),#76a8ff);
-      box-shadow:0 10px 24px rgba(79,140,255,.22);
-      text-decoration:none;display:inline-flex;align-items:center;justify-content:center;
+      border:0;
+      cursor:pointer;
+      border-radius:14px;
+      padding:12px 16px;
+      font-weight:800;
+      color:#fff;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 10px 24px rgba(0,0,0,.18);
     }
-    .btn.alt{background:linear-gradient(135deg,var(--pink),#8b5cf6)}
-    .btn.green{background:linear-gradient(135deg,var(--green),#22c55e)}
-    .btn.orange{background:linear-gradient(135deg,var(--orange),#f97316)}
-    .btn.small{padding:9px 12px;border-radius:12px;font-size:13px}
 
-    .grid-4,.grid-main,.grid-2,.grid-3{
-      display:grid;gap:16px;margin-top:16px
+    .btn.blue{background:linear-gradient(135deg,var(--blue),var(--blue-2))}
+    .btn.purple{background:linear-gradient(135deg,#7c3aed,var(--pink))}
+    .btn.green{background:linear-gradient(135deg,#16a34a,#22c55e)}
+    .btn.orange{background:linear-gradient(135deg,#f59e0b,#fb923c)}
+    .btn.small{
+      padding:9px 12px;
+      border-radius:12px;
+      font-size:13px;
     }
+
+    .status{
+      font-size:13px;
+      color:var(--muted);
+      margin-top:12px;
+    }
+
+    .grid-4,
+    .grid-main,
+    .grid-2{
+      display:grid;
+      gap:16px;
+      margin-top:16px;
+    }
+
     .grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
-    .grid-main{grid-template-columns:1.1fr .9fr}
+    .grid-main{grid-template-columns:1.08fr .92fr}
     .grid-2{grid-template-columns:1fr 1fr}
-    .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+
     .card-inner{padding:18px}
-    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+
+    .big{
+      font-size:clamp(28px,4vw,40px);
+      font-weight:900;
+      margin:0;
+      word-break:break-word;
+    }
+
+    .note{
+      margin-top:8px;
+      color:#c5d1e7;
+      font-size:13px;
+    }
+
+    .section-title{
+      margin:0 0 8px;
+      font-size:20px;
+    }
+
+    .section-sub{
+      margin:0 0 14px;
+      color:var(--muted);
+      font-size:14px;
+    }
 
     .analysis{
-      border-radius:18px;padding:16px;
-      background:linear-gradient(135deg, rgba(79,140,255,.12), rgba(20,184,166,.08));
-      border:1px solid rgba(255,255,255,.07);
-      color:#d7e5fb;line-height:1.75;white-space:pre-line;font-size:14px;
+      border-radius:18px;
+      padding:16px;
+      background:linear-gradient(135deg, rgba(37,99,235,.12), rgba(15,23,42,.50));
+      border:1px solid rgba(255,255,255,.06);
+      color:#d9e4fb;
+      line-height:1.8;
+      white-space:pre-line;
+      font-size:14px;
     }
 
-    .bars{display:grid;gap:12px}
-    .bar-row{
-      display:grid;grid-template-columns:90px 1fr 64px;gap:10px;align-items:center;font-size:14px;
-    }
-    .bar-track{
-      height:12px;border-radius:999px;background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.03);overflow:hidden;
-    }
-    .bar-fill{
-      height:100%;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--cyan));
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
     }
 
-    .chips{display:flex;flex-wrap:wrap;gap:8px}
     .chip{
-      display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:9px 12px;
-      background:rgba(79,140,255,.12);border:1px solid rgba(79,140,255,.18);
-      color:#dce9ff;font-size:13px;font-weight:800;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border-radius:999px;
+      padding:9px 12px;
+      font-size:13px;
+      font-weight:800;
+      border:1px solid rgba(255,255,255,.08);
     }
-    .chip.gold{
-      background:rgba(248,213,107,.14);
-      border:1px solid rgba(248,213,107,.20);
-      color:#fde68a;
-    }
+
     .chip.green{
-      background:rgba(16,185,129,.14);
-      border:1px solid rgba(16,185,129,.20);
+      background:rgba(22,163,74,.14);
+      border-color:rgba(22,163,74,.20);
       color:#d1fae5;
     }
+
+    .chip.gold{
+      background:rgba(231,201,109,.12);
+      border-color:rgba(231,201,109,.18);
+      color:#fde68a;
+    }
+
     .chip.pink{
-      background:rgba(236,72,153,.14);
-      border:1px solid rgba(236,72,153,.20);
-      color:#fbcfe8;
+      background:rgba(192,38,211,.12);
+      border-color:rgba(192,38,211,.18);
+      color:#f5d0fe;
     }
+
     .chip.orange{
-      background:rgba(251,146,60,.14);
-      border:1px solid rgba(251,146,60,.20);
-      color:#fed7aa;
+      background:rgba(245,158,11,.12);
+      border-color:rgba(245,158,11,.18);
+      color:#fde68a;
     }
+
     .chip.purple{
-      background:rgba(139,92,246,.14);
-      border:1px solid rgba(139,92,246,.20);
+      background:rgba(109,94,252,.14);
+      border-color:rgba(109,94,252,.20);
       color:#ddd6fe;
     }
 
-    .mini-chart{
-      display:grid;grid-template-columns:repeat(12,minmax(0,1fr));
-      align-items:end;gap:10px;min-height:180px;margin-top:10px;
-    }
-    .month-col{display:flex;flex-direction:column;align-items:center;gap:8px}
-    .month-bar-wrap{width:100%;min-height:130px;display:flex;align-items:flex-end}
-    .month-bar{
-      width:100%;border-radius:14px 14px 8px 8px;
-      background:linear-gradient(180deg,var(--blue),var(--cyan));
-      min-height:6px;
-    }
-    .month-label{color:var(--muted);font-size:12px}
-    .month-value{color:#d8e8ff;font-size:12px;font-weight:800}
-
-    .table-wrap{
-      margin-top:14px;border-radius:16px;overflow:auto;border:1px solid var(--line);
-    }
-    table{
-      width:100%;min-width:760px;border-collapse:collapse;background:rgba(2,6,23,.22);
-    }
-    th,td{
-      padding:14px 12px;text-align:left;border-bottom:1px solid rgba(148,163,184,.12);font-size:14px;
-    }
-    th{
-      position:sticky;top:0;background:rgba(15,23,42,.96);color:#c0d5ff;z-index:1;
+    .bars{
+      display:grid;
+      gap:12px;
     }
 
-    .pill{
-      display:inline-flex;align-items:center;justify-content:center;min-width:48px;
-      padding:8px 10px;border-radius:999px;background:rgba(248,213,107,.12);
-      border:1px solid rgba(248,213,107,.18);color:#fce28f;font-weight:900;
+    .bar-row{
+      display:grid;
+      grid-template-columns:90px 1fr 64px;
+      gap:10px;
+      align-items:center;
+      font-size:14px;
     }
 
-    .search-grid{display:grid;grid-template-columns:1fr 220px;gap:12px}
+    .bar-track{
+      height:12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.03);
+      overflow:hidden;
+    }
+
+    .bar-fill{
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg,var(--blue),var(--purple));
+    }
+
+    .search-grid{
+      display:grid;
+      grid-template-columns:1fr 220px;
+      gap:12px;
+    }
+
     .input{
       width:100%;
       border-radius:14px;
@@ -194,15 +297,104 @@
       outline:none;
     }
 
-    .status{font-size:13px;color:var(--muted);margin-top:10px}
-    .empty{color:var(--muted);padding:8px 0}
-    .error{color:#fecaca}
+    .table-wrap{
+      margin-top:14px;
+      border-radius:16px;
+      overflow:auto;
+      border:1px solid var(--line);
+    }
+
+    table{
+      width:100%;
+      min-width:760px;
+      border-collapse:collapse;
+      background:rgba(2,6,23,.24);
+    }
+
+    th,td{
+      padding:14px 12px;
+      text-align:left;
+      border-bottom:1px solid rgba(148,163,184,.12);
+      font-size:14px;
+    }
+
+    th{
+      position:sticky;
+      top:0;
+      background:rgba(8,15,30,.98);
+      color:#c0d5ff;
+      z-index:1;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:48px;
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(231,201,109,.10);
+      border:1px solid rgba(231,201,109,.16);
+      color:#fce28f;
+      font-weight:900;
+    }
+
+    .mini-chart{
+      display:grid;
+      grid-template-columns:repeat(12,minmax(0,1fr));
+      align-items:end;
+      gap:10px;
+      min-height:180px;
+      margin-top:10px;
+    }
+
+    .month-col{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+    }
+
+    .month-bar-wrap{
+      width:100%;
+      min-height:130px;
+      display:flex;
+      align-items:flex-end;
+    }
+
+    .month-bar{
+      width:100%;
+      border-radius:14px 14px 8px 8px;
+      background:linear-gradient(180deg,var(--blue),#14b8a6);
+      min-height:6px;
+    }
+
+    .month-label{
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .month-value{
+      color:#d8e8ff;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .empty{
+      color:var(--muted);
+      padding:8px 0;
+    }
+
+    .error{
+      color:#fecaca;
+    }
 
     @media (max-width:1100px){
       .grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .grid-main,.grid-2,.grid-3{grid-template-columns:1fr}
+      .grid-main,.grid-2{grid-template-columns:1fr}
       .search-grid{grid-template-columns:1fr}
     }
+
     @media (max-width:700px){
       .app{padding:12px 10px 30px}
       .grid-4{grid-template-columns:1fr}
@@ -231,9 +423,9 @@
 
         <div class="toolbar">
           <a class="btn orange" href="./index.html">← กลับหน้า Landing</a>
-          <a class="btn" href="./random.html">🎲 ไปหน้า Lucky Drop</a>
-          <button class="btn" id="refreshBtn">Refresh Data</button>
-          <button class="btn alt" id="runBtn">Run AI</button>
+          <a class="btn blue" href="./random.html">🎲 ไปหน้า Lucky Drop</a>
+          <button class="btn blue" id="refreshBtn">Refresh Data</button>
+          <button class="btn purple" id="runBtn">Run AI</button>
           <button class="btn green" id="bundleBtn">Auto Generate ชุด</button>
           <button class="btn orange" id="copyBtn">Copy ชุดเลข</button>
         </div>
@@ -279,10 +471,10 @@
         <h2 class="section-title">Filter การดูผล</h2>
         <p class="section-sub">เลือกเฉพาะส่วนที่อยากโฟกัส</p>
         <div class="toolbar">
-          <button class="btn small" data-filter="all">ทั้งหมด</button>
-          <button class="btn small" data-filter="two">2 ตัว</button>
-          <button class="btn small" data-filter="top">3 ตัวบน</button>
-          <button class="btn small" data-filter="bottom">3 ตัวล่าง</button>
+          <button class="btn small blue" data-filter="all">ทั้งหมด</button>
+          <button class="btn small blue" data-filter="two">2 ตัว</button>
+          <button class="btn small blue" data-filter="top">3 ตัวบน</button>
+          <button class="btn small blue" data-filter="bottom">3 ตัวล่าง</button>
         </div>
         <div class="analysis" id="filterInfo">ตอนนี้แสดง: ทั้งหมด</div>
       </div></div>
@@ -342,7 +534,7 @@
         </div>
       </div>
 
-      <div class="grid-3" style="grid-template-columns:1fr;">
+      <div style="display:grid;gap:16px;">
         <div class="card filter-block filter-two filter-all"><div class="card-inner">
           <h2 class="section-title">Top 10 เลข 2 ตัว</h2>
           <div id="bars2" class="bars"><div class="empty">ยังไม่มีข้อมูล</div></div>
@@ -420,24 +612,6 @@
       <div class="card"><div class="card-inner">
         <h2 class="section-title">แนวโน้มรายเดือน</h2>
         <div id="monthlyChart" class="mini-chart"></div>
-      </div></div>
-
-      <div class="card"><div class="card-inner">
-        <h2 class="section-title">รูปแบบข้อมูลที่รองรับ</h2>
-        <div class="analysis">แบบใหม่ที่แนะนำ:
-{
-  "date": "2026-04-16",
-  "last2": "55",
-  "top3": ["111","222"],
-  "bottom3": ["333","444"]
-}
-
-แบบเก่าที่ยังรองรับ:
-{
-  "date": "2026-04-16",
-  "last2": "55",
-  "last3": ["111","222","333","444"]
-}</div>
       </div></div>
     </section>
   </div>
