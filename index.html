@@ -19,7 +19,6 @@
       --green:#10b981;
       --red:#ef4444;
       --shadow:0 24px 60px rgba(0,0,0,.35);
-      --radius:24px;
     }
 
     *{box-sizing:border-box}
@@ -84,6 +83,7 @@
       box-shadow:0 10px 24px rgba(79,140,255,.22);
     }
     .btn.alt{background:linear-gradient(135deg,var(--pink),#8b5cf6)}
+    .btn.green{background:linear-gradient(135deg,var(--green),#22c55e)}
 
     .grid-4,.grid-main,.grid-2,.grid-3{
       display:grid;gap:16px;margin-top:16px
@@ -205,19 +205,21 @@
           <div class="brand">
             <div class="logo">LP</div>
             <div>
-              <div class="kicker">PRO MAX + Dashboard + Hybrid AI + 3 Digit Real Train</div>
+              <div class="kicker">PRO MAX + Auto Generate ชุด + Hybrid AI + 3D Train</div>
               <h1>Lottery AI PRO MAX</h1>
             </div>
           </div>
           <p class="sub">
             Dashboard เวอร์ชันเต็ม ใช้ข้อมูลเลข 2 ตัวและเลข 3 ตัวจริงจาก data.json
-            วิเคราะห์ด้วย scoring, pattern, pair frequency, recent trend และ Markov transition
+            วิเคราะห์ด้วย scoring, pattern, pair frequency, recent trend, Markov transition
+            และสร้างเลขชุดอัตโนมัติ
           </p>
         </div>
 
         <div class="toolbar">
           <button class="btn" id="refreshBtn">Refresh Data</button>
           <button class="btn alt" id="runBtn">Run AI</button>
+          <button class="btn green" id="bundleBtn">Auto Generate ชุด</button>
         </div>
       </div>
 
@@ -259,44 +261,32 @@
           <div style="height:18px;"></div>
 
           <h2 class="section-title">เลข 2 ตัวเด่น</h2>
-          <div id="ranking2Box" class="chips">
-            <span class="empty">ยังไม่มีข้อมูล</span>
-          </div>
+          <div id="ranking2Box" class="chips"><span class="empty">ยังไม่มีข้อมูล</span></div>
 
           <div style="height:18px;"></div>
 
           <h2 class="section-title">เลข 3 ตัวเด่นจากข้อมูลจริง</h2>
-          <div id="ranking3Box" class="chips">
-            <span class="empty">ยังไม่มีข้อมูล</span>
-          </div>
+          <div id="ranking3Box" class="chips"><span class="empty">ยังไม่มีข้อมูล</span></div>
 
           <div style="height:18px;"></div>
 
           <h2 class="section-title">Hybrid AI Prediction</h2>
           <div class="kicker">เลขเด่น</div>
-          <div id="mainPredictBox" class="chips">
-            <span class="empty">ยังไม่ได้รัน</span>
-          </div>
+          <div id="mainPredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
 
           <div style="height:12px;"></div>
 
           <div class="kicker">เลขรอง</div>
-          <div id="subPredictBox" class="chips">
-            <span class="empty">ยังไม่ได้รัน</span>
-          </div>
+          <div id="subPredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
 
           <div style="height:12px;"></div>
 
           <div class="kicker">เลขกัน</div>
-          <div id="hedgePredictBox" class="chips">
-            <span class="empty">ยังไม่ได้รัน</span>
-          </div>
+          <div id="hedgePredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
 
           <div style="height:12px;"></div>
 
-          <div class="analysis" id="predictInsight">
-            ระบบจะวิเคราะห์เมื่อกด Run AI
-          </div>
+          <div class="analysis" id="predictInsight">ระบบจะวิเคราะห์เมื่อกด Run AI</div>
         </div>
       </div>
 
@@ -319,6 +309,26 @@
     </section>
 
     <section class="grid-2">
+      <div class="card"><div class="card-inner">
+        <h2 class="section-title">Auto Generate เลขชุด</h2>
+        <div class="kicker">ชุดเด่น</div>
+        <div id="bundleMainBox" class="chips"><span class="empty">ยังไม่ได้สร้างชุด</span></div>
+
+        <div style="height:12px;"></div>
+
+        <div class="kicker">ชุดรอง</div>
+        <div id="bundleSubBox" class="chips"><span class="empty">ยังไม่ได้สร้างชุด</span></div>
+
+        <div style="height:12px;"></div>
+
+        <div class="kicker">ชุด 3 ตัว</div>
+        <div id="bundle3Box" class="chips"><span class="empty">ยังไม่ได้สร้างชุด</span></div>
+
+        <div style="height:12px;"></div>
+
+        <div class="analysis" id="bundleInsight">กด Auto Generate ชุด เพื่อให้ระบบสร้างเลขชุดอัตโนมัติ</div>
+      </div></div>
+
       <div class="card"><div class="card-inner">
         <h2 class="section-title">ผลย้อนหลัง</h2>
         <div class="search-grid">
@@ -345,31 +355,15 @@
           </table>
         </div>
       </div></div>
-
-      <div class="card"><div class="card-inner">
-        <h2 class="section-title">วิธีเพิ่มงวดใหม่</h2>
-        <div class="analysis">แก้ไฟล์ data.json เท่านั้น
-
-รูปแบบ 1 งวด:
-{
-  "date": "2026-04-16",
-  "last2": "55",
-  "last3": ["111","222","333","444"]
-}
-
-แล้วกด Commit จากนั้นกลับมา Refresh Data และ Run AI
-
-หมายเหตุ:
-- last3 ต้องเป็น array
-- 1 งวดใส่ 4 ค่าได้ เช่น หน้า 3 ตัว 2 ค่า + หลัง 3 ตัว 2 ค่า
-- ถ้ามีแค่ 2 ค่า ก็ยังใช้ได้</div>
-      </div></div>
     </section>
   </div>
 
   <script>
     let records = [];
     let all3List = [];
+    let cached2Scores = [];
+    let cached3Scores = [];
+    let cachedPrediction = null;
 
     function normalizeNumber(value, size) {
       const cleaned = String(value || "").replace(/[^\d]/g, "").trim();
@@ -401,6 +395,9 @@
         })).filter(r => r.date && r.last2);
 
         all3List = records.flatMap(r => r.last3);
+        cached2Scores = [];
+        cached3Scores = [];
+        cachedPrediction = null;
 
         statusBox.textContent = `โหลดข้อมูลสำเร็จ ${records.length} งวด | เลข 3 ตัว ${all3List.length} รายการ`;
         render();
@@ -648,6 +645,43 @@
       return { main, sub, hedge, text };
     }
 
+    function generateAutoBundles() {
+      const top2 = cached2Scores.slice(0, 8).map(x => x.number);
+      const top3 = cached3Scores.slice(0, 8).map(x => x.number);
+
+      const main2 = top2.slice(0, 5);
+      const sub2 = top2.slice(3, 8);
+      const main3 = top3.slice(0, 5);
+
+      const bundleMain = [];
+      const bundleSub = [];
+
+      for (let i = 0; i < Math.min(5, main2.length); i++) {
+        bundleMain.push(main2[i]);
+      }
+
+      for (let i = 0; i < Math.min(5, sub2.length); i++) {
+        bundleSub.push(sub2[i]);
+      }
+
+      const text =
+`Auto Generate ใช้จาก:
+- Top 2 ตัวคะแนนสูงสุด
+- Top 3 ตัวคะแนนสูงสุด
+- ผล Hybrid Prediction ล่าสุด
+
+ชุดเด่น 2 ตัว: ${bundleMain.join(", ")}
+ชุดรอง 2 ตัว: ${bundleSub.join(", ")}
+ชุดเด่น 3 ตัว: ${main3.join(", ")}`;
+
+      return {
+        bundleMain,
+        bundleSub,
+        bundle3: main3,
+        text
+      };
+    }
+
     function renderBars(containerId, entries) {
       const el = document.getElementById(containerId);
       if (!entries.length) {
@@ -764,36 +798,36 @@
     }
 
     function runAI() {
-      const scores2 = calculate2Scores();
-      const scores3 = calculate3Scores();
-      const prediction = generateHybrid3Prediction();
+      cached2Scores = calculate2Scores();
+      cached3Scores = calculate3Scores();
+      cachedPrediction = generateHybrid3Prediction();
 
-      renderStats(scores2, scores3);
+      renderStats(cached2Scores, cached3Scores);
 
-      document.getElementById("ranking2Box").innerHTML = scores2.length
-        ? scores2.slice(0, 10).map((x, i) => `<span class="chip green">#${i + 1} ${x.number} · ${x.score}</span>`).join("")
+      document.getElementById("ranking2Box").innerHTML = cached2Scores.length
+        ? cached2Scores.slice(0, 10).map((x, i) => `<span class="chip green">#${i + 1} ${x.number} · ${x.score}</span>`).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
-      document.getElementById("ranking3Box").innerHTML = scores3.length
-        ? scores3.slice(0, 10).map((x, i) => `<span class="chip gold">#${i + 1} ${x.number} · ${x.score}</span>`).join("")
+      document.getElementById("ranking3Box").innerHTML = cached3Scores.length
+        ? cached3Scores.slice(0, 10).map((x, i) => `<span class="chip gold">#${i + 1} ${x.number} · ${x.score}</span>`).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
-      document.getElementById("mainPredictBox").innerHTML = prediction.main.length
-        ? prediction.main.map((x, i) => `<span class="chip gold">เด่น ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
+      document.getElementById("mainPredictBox").innerHTML = cachedPrediction.main.length
+        ? cachedPrediction.main.map((x, i) => `<span class="chip gold">เด่น ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
-      document.getElementById("subPredictBox").innerHTML = prediction.sub.length
-        ? prediction.sub.map((x, i) => `<span class="chip green">รอง ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
+      document.getElementById("subPredictBox").innerHTML = cachedPrediction.sub.length
+        ? cachedPrediction.sub.map((x, i) => `<span class="chip green">รอง ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
-      document.getElementById("hedgePredictBox").innerHTML = prediction.hedge.length
-        ? prediction.hedge.map((x, i) => `<span class="chip pink">กัน ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
+      document.getElementById("hedgePredictBox").innerHTML = cachedPrediction.hedge.length
+        ? cachedPrediction.hedge.map((x, i) => `<span class="chip pink">กัน ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
-      document.getElementById("predictInsight").textContent = prediction.text;
+      document.getElementById("predictInsight").textContent = cachedPrediction.text;
 
-      const top2Text = scores2.slice(0, 5).map(x => `${x.number} (${x.score})`).join(", ");
-      const top3Text = scores3.slice(0, 5).map(x => `${x.number} (${x.score})`).join(", ");
+      const top2Text = cached2Scores.slice(0, 5).map(x => `${x.number} (${x.score})`).join(", ");
+      const top3Text = cached3Scores.slice(0, 5).map(x => `${x.number} (${x.score})`).join(", ");
       const recent2 = getLastNRecords(5).map(x => x.last2).join(", ");
       const recent3 = getLastNThree(10).slice(0, 5).join(", ");
       const hotDigits3 = Object.entries(digitFreq3(all3List)).sort((a, b) => b[1] - a[1]).slice(0, 3).map(x => x[0]).join(", ");
@@ -812,11 +846,31 @@ Digit 3 ตัวที่เด่นที่สุด: ${hotDigits3 || "-"}
 - 2 ตัวใช้ frequency + recent trend + digit trend
 - 3 ตัวใช้ frequency จริง + recent trend + pair pattern + Markov
 - เลขเด่นคือกลุ่มที่คะแนนรวมสูงสุด ไม่ใช่การการันตีผลจริง`;
-      
-      renderBars("bars2", scores2.slice(0, 10).map(x => ({ label: x.number, value: x.score })));
-      renderBars("bars3", scores3.slice(0, 10).map(x => ({ label: x.number, value: x.score })));
+
+      renderBars("bars2", cached2Scores.slice(0, 10).map(x => ({ label: x.number, value: x.score })));
+      renderBars("bars3", cached3Scores.slice(0, 10).map(x => ({ label: x.number, value: x.score })));
       renderMonthlyChart();
       renderTable();
+    }
+
+    function generateBundles() {
+      if (!cached2Scores.length || !cached3Scores.length) {
+        document.getElementById("bundleInsight").textContent = "ให้กด Run AI ก่อน แล้วค่อย Auto Generate ชุด";
+        return;
+      }
+
+      const bundles = generateAutoBundles();
+
+      document.getElementById("bundleMainBox").innerHTML =
+        bundles.bundleMain.map((x, i) => `<span class="chip gold">ชุดเด่น ${i + 1}: ${x}</span>`).join("");
+
+      document.getElementById("bundleSubBox").innerHTML =
+        bundles.bundleSub.map((x, i) => `<span class="chip green">ชุดรอง ${i + 1}: ${x}</span>`).join("");
+
+      document.getElementById("bundle3Box").innerHTML =
+        bundles.bundle3.map((x, i) => `<span class="chip pink">3 ตัว ${i + 1}: ${x}</span>`).join("");
+
+      document.getElementById("bundleInsight").textContent = bundles.text;
     }
 
     function render() {
@@ -829,6 +883,7 @@ Digit 3 ตัวที่เด่นที่สุด: ${hotDigits3 || "-"}
 
     document.getElementById("refreshBtn").addEventListener("click", loadData);
     document.getElementById("runBtn").addEventListener("click", runAI);
+    document.getElementById("bundleBtn").addEventListener("click", generateBundles);
     document.getElementById("searchInput").addEventListener("input", renderTable);
     document.getElementById("sortSelect").addEventListener("change", renderTable);
 
