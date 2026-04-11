@@ -7,12 +7,12 @@
   <style>
     :root{
       --bg1:#030712;
-      --bg2:#081020;
-      --bg3:#0d1830;
+      --bg2:#071120;
+      --bg3:#0c1730;
 
-      --panel:#091325;
-      --panel-soft:rgba(10,18,35,.82);
-      --panel-glass:rgba(10,18,35,.72);
+      --panel:#0a1528;
+      --panel-soft:rgba(10,21,40,.84);
+      --panel-glass:rgba(10,21,40,.72);
       --line:rgba(255,255,255,.08);
 
       --text:#eef4ff;
@@ -26,6 +26,8 @@
       --green:#22c55e;
       --orange:#f59e0b;
       --gold:#f4d06f;
+      --slate:#1e293b;
+      --slate2:#334155;
 
       --shadow:0 28px 70px rgba(0,0,0,.42);
     }
@@ -66,7 +68,7 @@
       overflow:hidden;
       background:
         radial-gradient(circle at 100% 100%, rgba(34,211,238,.08), transparent 20%),
-        linear-gradient(135deg, rgba(59,130,246,.14), rgba(9,19,37,.94) 55%, rgba(9,19,37,.98));
+        linear-gradient(135deg, rgba(59,130,246,.14), rgba(10,21,40,.94) 55%, rgba(10,21,40,.98));
     }
 
     .hero::before{
@@ -159,7 +161,7 @@
     }
 
     .btn{
-      border:0;
+      border:1px solid rgba(255,255,255,.08);
       cursor:pointer;
       border-radius:14px;
       padding:12px 16px;
@@ -170,16 +172,34 @@
       align-items:center;
       justify-content:center;
       box-shadow:0 10px 24px rgba(0,0,0,.18);
+      min-height:50px;
     }
 
-    .btn.blue{background:linear-gradient(135deg,var(--blue),var(--blue2))}
-    .btn.purple{background:linear-gradient(135deg,var(--purple),var(--pink))}
-    .btn.green{background:linear-gradient(135deg,#16a34a,var(--green))}
-    .btn.orange{background:linear-gradient(135deg,#d97706,var(--orange))}
+    .btn.nav{
+      background:linear-gradient(135deg,#1f2937,#0f172a);
+    }
+
+    .btn.primary{
+      background:linear-gradient(135deg,var(--blue),var(--blue2));
+    }
+
+    .btn.run{
+      background:linear-gradient(135deg,#7c3aed,var(--purple));
+    }
+
+    .btn.success{
+      background:linear-gradient(135deg,#15803d,var(--green));
+    }
+
+    .btn.secondary{
+      background:linear-gradient(135deg,#334155,#1e293b);
+    }
+
     .btn.small{
       padding:9px 12px;
       border-radius:12px;
       font-size:13px;
+      min-height:42px;
     }
 
     .status{
@@ -249,45 +269,113 @@
     .chips{
       display:flex;
       flex-wrap:wrap;
-      gap:8px;
+      gap:10px;
     }
 
-    .chip{
+    .score-chip{
+      min-width:160px;
+      padding:10px 12px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.03);
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .score-chip.green{
+      background:rgba(34,197,94,.10);
+      border-color:rgba(34,197,94,.18);
+    }
+
+    .score-chip.gold{
+      background:rgba(244,208,111,.10);
+      border-color:rgba(244,208,111,.18);
+    }
+
+    .score-chip.pink{
+      background:rgba(236,72,153,.10);
+      border-color:rgba(236,72,153,.18);
+    }
+
+    .score-chip.orange{
+      background:rgba(245,158,11,.10);
+      border-color:rgba(245,158,11,.18);
+    }
+
+    .score-chip.purple{
+      background:rgba(139,92,246,.12);
+      border-color:rgba(139,92,246,.18);
+    }
+
+    .score-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      font-size:12px;
+      color:#cfd9ef;
+      font-weight:800;
+    }
+
+    .score-rank{
+      opacity:.82;
+    }
+
+    .score-value{
+      opacity:.92;
+    }
+
+    .score-number{
+      font-size:28px;
+      line-height:1;
+      font-weight:900;
+      color:#ffffff;
+      letter-spacing:.02em;
+    }
+
+    .score-sub{
+      font-size:12px;
+      color:#d7e2f7;
+      opacity:.92;
+    }
+
+    .mini-chip{
       display:inline-flex;
       align-items:center;
       gap:8px;
       border-radius:999px;
-      padding:9px 12px;
+      padding:10px 14px;
       font-size:13px;
       font-weight:800;
       border:1px solid rgba(255,255,255,.08);
     }
 
-    .chip.green{
+    .mini-chip.green{
       background:rgba(34,197,94,.12);
       border-color:rgba(34,197,94,.18);
       color:#dcfce7;
     }
 
-    .chip.gold{
+    .mini-chip.gold{
       background:rgba(244,208,111,.12);
       border-color:rgba(244,208,111,.18);
       color:#fde68a;
     }
 
-    .chip.pink{
+    .mini-chip.pink{
       background:rgba(236,72,153,.12);
       border-color:rgba(236,72,153,.18);
       color:#fbcfe8;
     }
 
-    .chip.orange{
+    .mini-chip.orange{
       background:rgba(245,158,11,.12);
       border-color:rgba(245,158,11,.18);
       color:#fde68a;
     }
 
-    .chip.purple{
+    .mini-chip.purple{
       background:rgba(139,92,246,.14);
       border-color:rgba(139,92,246,.20);
       color:#ddd6fe;
@@ -300,8 +388,8 @@
 
     .bar-row{
       display:grid;
-      grid-template-columns:90px 1fr 64px;
-      gap:10px;
+      grid-template-columns:90px 1fr 78px;
+      gap:12px;
       align-items:center;
       font-size:14px;
     }
@@ -318,6 +406,12 @@
       height:100%;
       border-radius:999px;
       background:linear-gradient(90deg,var(--blue),var(--cyan),var(--purple));
+    }
+
+    .bar-score{
+      text-align:right;
+      color:#d8e5ff;
+      font-weight:800;
     }
 
     .search-grid{
@@ -439,6 +533,7 @@
       .grid-4{grid-template-columns:1fr}
       .toolbar{flex-direction:column}
       .btn{width:100%}
+      .score-chip{min-width:100%}
     }
   </style>
 </head>
@@ -476,12 +571,12 @@
         </div>
 
         <div class="toolbar">
-          <a class="btn orange" href="./index.html">← กลับหน้า Landing</a>
-          <a class="btn blue" href="./random.html">🎲 ไปหน้า Lucky Drop</a>
-          <button class="btn blue" id="refreshBtn">Refresh Data</button>
-          <button class="btn purple" id="runBtn">Run AI</button>
-          <button class="btn green" id="bundleBtn">Auto Generate ชุด</button>
-          <button class="btn orange" id="copyBtn">Copy ชุดเลข</button>
+          <a class="btn nav" href="./index.html">← กลับหน้า Landing</a>
+          <a class="btn primary" href="./random.html">🎲 ไปหน้า Lucky Drop</a>
+          <button class="btn secondary" id="refreshBtn">Refresh Data</button>
+          <button class="btn run" id="runBtn">Run AI</button>
+          <button class="btn success" id="bundleBtn">Auto Generate ชุด</button>
+          <button class="btn secondary" id="copyBtn">Copy ชุดเลข</button>
         </div>
       </div>
 
@@ -525,10 +620,10 @@
         <h2 class="section-title">Filter การดูผล</h2>
         <p class="section-sub">เลือกเฉพาะส่วนที่อยากโฟกัส</p>
         <div class="toolbar">
-          <button class="btn small blue" data-filter="all">ทั้งหมด</button>
-          <button class="btn small blue" data-filter="two">2 ตัว</button>
-          <button class="btn small blue" data-filter="top">3 ตัวบน</button>
-          <button class="btn small blue" data-filter="bottom">3 ตัวล่าง</button>
+          <button class="btn small primary" data-filter="all">ทั้งหมด</button>
+          <button class="btn small primary" data-filter="two">2 ตัว</button>
+          <button class="btn small primary" data-filter="top">3 ตัวบน</button>
+          <button class="btn small primary" data-filter="bottom">3 ตัวล่าง</button>
         </div>
         <div class="analysis" id="filterInfo">ตอนนี้แสดง: ทั้งหมด</div>
       </div></div>
@@ -936,7 +1031,7 @@
           <div class="bar-track">
             <div class="bar-fill" style="width:${(item.value / max) * 100}%"></div>
           </div>
-          <div>${item.value}</div>
+          <div class="bar-score">${item.value}%</div>
         </div>
       `).join("");
     }
@@ -946,7 +1041,7 @@
 
       if (scores2.length) {
         document.getElementById("statTop2").textContent = scores2[0].number;
-        document.getElementById("statTop2Meta").textContent = `คะแนน ${scores2[0].score} | ออก ${scores2[0].totalCount} ครั้ง`;
+        document.getElementById("statTop2Meta").textContent = `คะแนน ${scores2[0].score}% | ออก ${scores2[0].totalCount} ครั้ง`;
       } else {
         document.getElementById("statTop2").textContent = "--";
         document.getElementById("statTop2Meta").textContent = "ยังไม่มีข้อมูล";
@@ -954,7 +1049,7 @@
 
       if (scoresTop.length) {
         document.getElementById("statTopTop3").textContent = scoresTop[0].number;
-        document.getElementById("statTopTop3Meta").textContent = `คะแนน ${scoresTop[0].score}`;
+        document.getElementById("statTopTop3Meta").textContent = `คะแนน ${scoresTop[0].score}%`;
       } else {
         document.getElementById("statTopTop3").textContent = "---";
         document.getElementById("statTopTop3Meta").textContent = "ยังไม่มีข้อมูล";
@@ -962,7 +1057,7 @@
 
       if (scoresBottom.length) {
         document.getElementById("statTopBottom3").textContent = scoresBottom[0].number;
-        document.getElementById("statTopBottom3Meta").textContent = `คะแนน ${scoresBottom[0].score}`;
+        document.getElementById("statTopBottom3Meta").textContent = `คะแนน ${scoresBottom[0].score}%`;
       } else {
         document.getElementById("statTopBottom3").textContent = "---";
         document.getElementById("statTopBottom3Meta").textContent = "ยังไม่มีข้อมูล";
@@ -1040,6 +1135,23 @@
       `).join("");
     }
 
+    function scoreCard(item, index, colorClass, subText = "") {
+      return `
+        <div class="score-chip ${colorClass}">
+          <div class="score-top">
+            <span class="score-rank">#${index + 1}</span>
+            <span class="score-value">${item.score}%</span>
+          </div>
+          <div class="score-number">${item.number}</div>
+          <div class="score-sub">${subText}</div>
+        </div>
+      `;
+    }
+
+    function miniChip(text, colorClass) {
+      return `<span class="mini-chip ${colorClass}">${text}</span>`;
+    }
+
     function updateSummaryBox() {
       const top2 = cached2Scores.slice(0, 3).map(x => x.number).join(", ") || "-";
       const top3Top = cachedHybridTop.slice(0, 3).map(x => x.number).join(", ") || "-";
@@ -1074,23 +1186,23 @@
       renderStats(cached2Scores, cachedHybridTop, cachedHybridBottom);
 
       document.getElementById("ranking2Box").innerHTML = cached2Scores.length
-        ? cached2Scores.slice(0, 10).map((x, i) => `<span class="chip green">#${i + 1} ${x.number} · ${x.score}</span>`).join("")
+        ? cached2Scores.slice(0, 10).map((x, i) => scoreCard(x, i, "green", `ออก ${x.totalCount} ครั้ง`)).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
       document.getElementById("rankingTop3Box").innerHTML = cachedHybridTop.length
-        ? cachedHybridTop.slice(0, 10).map((x, i) => `<span class="chip gold">#${i + 1} ${x.number} · ${x.score}</span>`).join("")
+        ? cachedHybridTop.slice(0, 10).map((x, i) => scoreCard(x, i, "gold", `วิเคราะห์ 3 ตัวบน`)).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
       document.getElementById("rankingBottom3Box").innerHTML = cachedHybridBottom.length
-        ? cachedHybridBottom.slice(0, 10).map((x, i) => `<span class="chip pink">#${i + 1} ${x.number} · ${x.score}</span>`).join("")
+        ? cachedHybridBottom.slice(0, 10).map((x, i) => scoreCard(x, i, "pink", `วิเคราะห์ 3 ตัวล่าง`)).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
       document.getElementById("topPredictBox").innerHTML = cachedHybridTop.length
-        ? cachedHybridTop.slice(0, 5).map((x, i) => `<span class="chip gold">บน ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
+        ? cachedHybridTop.slice(0, 5).map((x, i) => miniChip(`บน ${i + 1} · ${x.number} · ${x.score}%`, "gold")).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
       document.getElementById("bottomPredictBox").innerHTML = cachedHybridBottom.length
-        ? cachedHybridBottom.slice(0, 5).map((x, i) => `<span class="chip pink">ล่าง ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
+        ? cachedHybridBottom.slice(0, 5).map((x, i) => miniChip(`ล่าง ${i + 1} · ${x.number} · ${x.score}%`, "pink")).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
       const hybridMerge = [...new Map(
@@ -1099,7 +1211,7 @@
       ).values()].sort((a, b) => b.score - a.score).slice(0, 8);
 
       document.getElementById("hybridPredictBox").innerHTML = hybridMerge.length
-        ? hybridMerge.map((x, i) => `<span class="chip purple">Hybrid ${i + 1}: ${x.number} · ${x.score}</span>`).join("")
+        ? hybridMerge.map((x, i) => miniChip(`Hybrid ${i + 1} · ${x.number} · ${x.score}%`, "purple")).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
       document.getElementById("predictInsight").textContent =
@@ -1147,16 +1259,16 @@ Top 3 ตัวล่าง: ${cachedHybridBottom.slice(0, 5).map(x => x.number)
       const bottomSet = cachedHybridBottom.slice(0, 5).map(x => x.number);
 
       document.getElementById("bundle2MainBox").innerHTML =
-        twoMain.map((x, i) => `<span class="chip green">2 ตัวเด่น ${i + 1}: ${x}</span>`).join("");
+        twoMain.map((x, i) => miniChip(`2 ตัวเด่น ${i + 1} · ${x}`, "green")).join("");
 
       document.getElementById("bundle2SubBox").innerHTML =
-        twoSub.map((x, i) => `<span class="chip orange">2 ตัวรอง ${i + 1}: ${x}</span>`).join("");
+        twoSub.map((x, i) => miniChip(`2 ตัวรอง ${i + 1} · ${x}`, "orange")).join("");
 
       document.getElementById("bundleTop3Box").innerHTML =
-        topSet.map((x, i) => `<span class="chip gold">บน ${i + 1}: ${x}</span>`).join("");
+        topSet.map((x, i) => miniChip(`บน ${i + 1} · ${x}`, "gold")).join("");
 
       document.getElementById("bundleBottom3Box").innerHTML =
-        bottomSet.map((x, i) => `<span class="chip pink">ล่าง ${i + 1}: ${x}</span>`).join("");
+        bottomSet.map((x, i) => miniChip(`ล่าง ${i + 1} · ${x}`, "pink")).join("");
 
       lastBundleText =
 `2 ตัวเด่น: ${twoMain.join(", ")}
