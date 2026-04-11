@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สุ่มเฮง</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+}
+
+.container{
+  width:100%;
+  max-width:500px;
+  text-align:center;
+}
+
+h1{
+  font-size:32px;
+  margin-bottom:10px;
+}
+
+.select{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin:20px 0;
+}
+
+.select button{
+  padding:10px 14px;
+  border-radius:10px;
+  border:none;
+  background:#334155;
+  color:white;
+  font-weight:bold;
+}
+
+.select button.active{
+  background:#f59e0b;
+}
+
+.main-btn{
+  background:linear-gradient(135deg,#f59e0b,#ef4444);
+  border:none;
+  padding:14px;
+  border-radius:12px;
+  font-size:18px;
+  font-weight:bold;
+  width:100%;
+}
+
+.result{
+  margin-top:30px;
+  font-size:60px;
+  font-weight:900;
+  letter-spacing:5px;
+}
+
+.actions{
+  margin-top:20px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.actions button{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:#334155;
+  color:white;
+}
+
+.hidden{
+  position:fixed;
+  left:-9999px;
+  top:0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🎲 สุ่มเฮง</h1>
+<p>สุ่มเลขนำโชค 100%</p>
+
+<div class="select">
+  <button onclick="setDigit(1)">1 ตัว</button>
+  <button onclick="setDigit(2)" class="active">2 ตัว</button>
+  <button onclick="setDigit(3)">3 ตัว</button>
+  <button onclick="setDigit(4)">4 ตัว</button>
+  <button onclick="setDigit(5)">5 ตัว</button>
+  <button onclick="setDigit(6)">6 ตัว</button>
+</div>
+
+<button class="main-btn" onclick="spin()">🎲 สุ่มเลย</button>
+
+<div class="result" id="result">--</div>
+
+<div class="actions">
+  <button onclick="copyNum()">Copy</button>
+  <button onclick="saveImg()">Save</button>
+  <button onclick="share()">Share</button>
+  <button onclick="line()">LINE</button>
+</div>
+
+</div>
+
+<!-- hidden export -->
+<div id="export" class="hidden"></div>
+
+<script>
+let digit = 2;
+let current = "--";
+
+function setDigit(d){
+  digit = d;
+  document.querySelectorAll(".select button").forEach(b=>b.classList.remove("active"));
+  event.target.classList.add("active");
+}
+
+function rand(max){
+  const arr = new Uint32Array(1);
+  crypto.getRandomValues(arr);
+  return arr[0] % max;
+}
+
+function pad(n,size){
+  return String(n).padStart(size,"0");
+}
+
+async function spin(){
+  const el = document.getElementById("result");
+  const max = Math.pow(10,digit);
+  const final = pad(rand(max),digit);
+  current = final;
+
+  let t = 0;
+  const interval = setInterval(()=>{
+    el.innerText = pad(rand(max),digit);
+    t++;
+    if(t>10){
+      clearInterval(interval);
+      el.innerText = final;
+    }
+  },80);
+}
+
+async function copyNum(){
+  if(!current) return;
+  await navigator.clipboard.writeText(current);
+  alert("copy แล้ว");
+}
+
+async function saveImg(){
+  const root = document.getElementById("export");
+
+  root.innerHTML = `
+  <div id="card" style="
+    width:1080px;
+    height:1080px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    background:linear-gradient(135deg,#1e293b,#0f172a);
+    color:white;
+    font-family:sans-serif;
+  ">
+    <div style="font-size:40px;">🎲 สุ่มเฮง</div>
+    <div style="font-size:160px;font-weight:900;">${current}</div>
+    <div style="font-size:24px;">Random 100%</div>
+  </div>`;
+
+  const canvas = await html2canvas(document.getElementById("card"));
+  const link = document.createElement("a");
+  link.download = "lucky.png";
+  link.href = canvas.toDataURL();
+  link.click();
+}
+
+async function share(){
+  if(navigator.share){
+    await navigator.share({
+      text:"เลขนำโชค: "+current
+    });
+  }
+}
+
+function line(){
+  const text = encodeURIComponent("เลขนำโชค: "+current);
+  window.open("https://line.me/R/msg/text/?"+text);
+}
+</script>
+
+</body>
+</html>
