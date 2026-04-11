@@ -1,212 +1,789 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>สุ่มเฮง</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-<style>
-body{
-  margin:0;
-  font-family:sans-serif;
-  background:linear-gradient(135deg,#0f172a,#1e293b);
-  color:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  min-height:100vh;
-}
-
-.container{
-  width:100%;
-  max-width:500px;
-  text-align:center;
-}
-
-h1{
-  font-size:32px;
-  margin-bottom:10px;
-}
-
-.select{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  justify-content:center;
-  margin:20px 0;
-}
-
-.select button{
-  padding:10px 14px;
-  border-radius:10px;
-  border:none;
-  background:#334155;
-  color:white;
-  font-weight:bold;
-}
-
-.select button.active{
-  background:#f59e0b;
-}
-
-.main-btn{
-  background:linear-gradient(135deg,#f59e0b,#ef4444);
-  border:none;
-  padding:14px;
-  border-radius:12px;
-  font-size:18px;
-  font-weight:bold;
-  width:100%;
-}
-
-.result{
-  margin-top:30px;
-  font-size:60px;
-  font-weight:900;
-  letter-spacing:5px;
-}
-
-.actions{
-  margin-top:20px;
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.actions button{
-  flex:1;
-  padding:10px;
-  border:none;
-  border-radius:10px;
-  background:#334155;
-  color:white;
-}
-
-.hidden{
-  position:fixed;
-  left:-9999px;
-  top:0;
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<h1>🎲 สุ่มเฮง</h1>
-<p>สุ่มเลขนำโชค 100%</p>
-
-<div class="select">
-  <button onclick="setDigit(1)">1 ตัว</button>
-  <button onclick="setDigit(2)" class="active">2 ตัว</button>
-  <button onclick="setDigit(3)">3 ตัว</button>
-  <button onclick="setDigit(4)">4 ตัว</button>
-  <button onclick="setDigit(5)">5 ตัว</button>
-  <button onclick="setDigit(6)">6 ตัว</button>
-</div>
-
-<button class="main-btn" onclick="spin()">🎲 สุ่มเลย</button>
-
-<div class="result" id="result">--</div>
-
-<div class="actions">
-  <button onclick="copyNum()">Copy</button>
-  <button onclick="saveImg()">Save</button>
-  <button onclick="share()">Share</button>
-  <button onclick="line()">LINE</button>
-</div>
-
-</div>
-
-<!-- hidden export -->
-<div id="export" class="hidden"></div>
-
-<script>
-let digit = 2;
-let current = "--";
-
-function setDigit(d){
-  digit = d;
-  document.querySelectorAll(".select button").forEach(b=>b.classList.remove("active"));
-  event.target.classList.add("active");
-}
-
-function rand(max){
-  const arr = new Uint32Array(1);
-  crypto.getRandomValues(arr);
-  return arr[0] % max;
-}
-
-function pad(n,size){
-  return String(n).padStart(size,"0");
-}
-
-async function spin(){
-  const el = document.getElementById("result");
-  const max = Math.pow(10,digit);
-  const final = pad(rand(max),digit);
-  current = final;
-
-  let t = 0;
-  const interval = setInterval(()=>{
-    el.innerText = pad(rand(max),digit);
-    t++;
-    if(t>10){
-      clearInterval(interval);
-      el.innerText = final;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>สุ่มเฮง</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root{
+      --bg:#050816;
+      --bg2:#0d1631;
+      --text:#f8fbff;
+      --muted:#a9bdd8;
+      --line:rgba(255,255,255,.10);
+      --glass:rgba(255,255,255,.08);
+      --glass2:rgba(255,255,255,.06);
+      --shadow:0 30px 80px rgba(0,0,0,.45);
+      --gold:#f8d56b;
+      --pink:#ff67c8;
+      --blue:#63a4ff;
+      --cyan:#5eead4;
+      --violet:#8b5cf6;
+      --orange:#fb923c;
     }
-  },80);
-}
 
-async function copyNum(){
-  if(!current) return;
-  await navigator.clipboard.writeText(current);
-  alert("copy แล้ว");
-}
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+      color:var(--text);
+      min-height:100vh;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(99,164,255,.18), transparent 22%),
+        radial-gradient(circle at 80% 20%, rgba(255,103,200,.16), transparent 24%),
+        radial-gradient(circle at 50% 80%, rgba(94,234,212,.12), transparent 26%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      overflow-x:hidden;
+    }
 
-async function saveImg(){
-  const root = document.getElementById("export");
+    .page{
+      max-width:1280px;
+      margin:0 auto;
+      padding:20px 14px 32px;
+    }
 
-  root.innerHTML = `
-  <div id="card" style="
-    width:1080px;
-    height:1080px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    background:linear-gradient(135deg,#1e293b,#0f172a);
-    color:white;
-    font-family:sans-serif;
-  ">
-    <div style="font-size:40px;">🎲 สุ่มเฮง</div>
-    <div style="font-size:160px;font-weight:900;">${current}</div>
-    <div style="font-size:24px;">Random 100%</div>
-  </div>`;
+    .hero{
+      border:1px solid var(--line);
+      background:linear-gradient(135deg, rgba(99,164,255,.14), rgba(255,103,200,.08));
+      border-radius:32px;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(16px);
+      position:relative;
+      overflow:hidden;
+      padding:24px;
+    }
 
-  const canvas = await html2canvas(document.getElementById("card"));
-  const link = document.createElement("a");
-  link.download = "lucky.png";
-  link.href = canvas.toDataURL();
-  link.click();
-}
+    .hero:before{
+      content:"";
+      position:absolute;
+      right:-90px;
+      top:-90px;
+      width:260px;
+      height:260px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(248,213,107,.20), transparent 70%);
+      pointer-events:none;
+    }
 
-async function share(){
-  if(navigator.share){
-    await navigator.share({
-      text:"เลขนำโชค: "+current
+    .hero:after{
+      content:"";
+      position:absolute;
+      left:-90px;
+      bottom:-90px;
+      width:240px;
+      height:240px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(99,164,255,.16), transparent 70%);
+      pointer-events:none;
+    }
+
+    .row{
+      display:flex;
+      gap:16px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      position:relative;
+      z-index:1;
+    }
+
+    .brand{
+      display:flex;
+      gap:14px;
+      align-items:center;
+    }
+
+    .logo{
+      width:62px;
+      height:62px;
+      border-radius:20px;
+      display:grid;
+      place-items:center;
+      font-size:28px;
+      font-weight:900;
+      background:linear-gradient(135deg, var(--gold), #ffb454);
+      color:#111827;
+      box-shadow:0 18px 40px rgba(248,213,107,.18);
+    }
+
+    .eyebrow{
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:8px;
+      letter-spacing:.3px;
+    }
+
+    h1{
+      margin:0;
+      font-size:clamp(34px, 6vw, 72px);
+      line-height:1;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+
+    .sub{
+      margin:12px 0 0;
+      max-width:760px;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.7;
+    }
+
+    .hero-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border:0;
+      cursor:pointer;
+      border-radius:16px;
+      padding:14px 18px;
+      color:#fff;
+      font-weight:900;
+      font-size:14px;
+      box-shadow:0 12px 28px rgba(0,0,0,.18);
+      transition:transform .18s ease, opacity .18s ease;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{background:linear-gradient(135deg, #f59e0b, #fb7185)}
+    .btn.secondary{background:linear-gradient(135deg, #4f8cff, #7c3aed)}
+    .btn.ghost{
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .main-grid{
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .panel{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      border-radius:30px;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(16px);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .panel-inner{
+      padding:22px;
+      position:relative;
+      z-index:1;
+    }
+
+    .title{
+      margin:0 0 8px;
+      font-size:24px;
+      font-weight:900;
+    }
+
+    .desc{
+      margin:0 0 18px;
+      color:var(--muted);
+      line-height:1.7;
+      font-size:14px;
+    }
+
+    .digit-grid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:12px;
+    }
+
+    .digit-btn{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.06);
+      color:#fff;
+      border-radius:18px;
+      min-height:72px;
+      font-size:20px;
+      font-weight:900;
+      cursor:pointer;
+      transition:all .18s ease;
+    }
+
+    .digit-btn.active{
+      background:linear-gradient(135deg, rgba(248,213,107,.28), rgba(255,103,200,.22));
+      border-color:rgba(248,213,107,.40);
+      box-shadow:0 16px 34px rgba(248,213,107,.10);
+      transform:translateY(-1px);
+    }
+
+    .control-box{
+      margin-top:18px;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .spin-big{
+      width:100%;
+      border:0;
+      cursor:pointer;
+      border-radius:22px;
+      padding:18px 20px;
+      font-size:20px;
+      font-weight:900;
+      color:#fff;
+      background:linear-gradient(135deg, #f59e0b, #fb7185, #7c3aed);
+      box-shadow:0 20px 44px rgba(124,58,237,.22);
+      transition:transform .18s ease, opacity .18s ease;
+    }
+
+    .spin-big:hover{transform:translateY(-1px)}
+
+    .result-stage{
+      min-height:100%;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      position:relative;
+    }
+
+    .glow-ring{
+      position:absolute;
+      width:360px;
+      height:360px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(255,255,255,.15), transparent 66%);
+      filter:blur(10px);
+      pointer-events:none;
+      animation:floatPulse 3.4s ease-in-out infinite;
+    }
+
+    .glow-ring.r2{
+      width:520px;
+      height:520px;
+      opacity:.55;
+      animation-duration:4.2s;
+    }
+
+    @keyframes floatPulse{
+      0%,100%{transform:scale(1);opacity:.82}
+      50%{transform:scale(1.08);opacity:.55}
+    }
+
+    .result-top{
+      color:var(--muted);
+      font-size:16px;
+      font-weight:700;
+      margin-bottom:18px;
+      letter-spacing:.4px;
+    }
+
+    .number-wrap{
+      position:relative;
+      padding:20px 10px;
+    }
+
+    .number{
+      font-size:clamp(86px, 16vw, 220px);
+      line-height:1;
+      font-weight:900;
+      letter-spacing:10px;
+      text-shadow:
+        0 8px 20px rgba(0,0,0,.22),
+        0 0 16px rgba(255,255,255,.12),
+        0 0 34px rgba(99,164,255,.16);
+      transition:transform .18s ease;
+    }
+
+    .number.flash{
+      animation:numberPop .28s ease;
+    }
+
+    @keyframes numberPop{
+      0%{transform:scale(.96);opacity:.85}
+      60%{transform:scale(1.04);opacity:1}
+      100%{transform:scale(1)}
+    }
+
+    .digit-meta{
+      margin-top:12px;
+      color:var(--muted);
+      font-size:15px;
+      font-weight:700;
+    }
+
+    .actions{
+      margin-top:22px;
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+      width:100%;
+      max-width:520px;
+    }
+
+    .mini-btn{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      border-radius:16px;
+      padding:14px 12px;
+      font-size:14px;
+      font-weight:900;
+      cursor:pointer;
+      transition:all .18s ease;
+    }
+
+    .mini-btn:hover{transform:translateY(-1px)}
+
+    .info-grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+    }
+
+    .info-card{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      border-radius:24px;
+      padding:18px;
+    }
+
+    .info-card h3{
+      margin:0 0 8px;
+      font-size:18px;
+    }
+
+    .info-card p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.7;
+      font-size:14px;
+    }
+
+    .history-box{
+      margin-top:18px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      border-radius:24px;
+      padding:18px;
+    }
+
+    .history-title{
+      margin:0 0 12px;
+      font-size:18px;
+      font-weight:900;
+    }
+
+    .history-list{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .history-chip{
+      padding:10px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      font-weight:800;
+      font-size:14px;
+      color:#f8fbff;
+    }
+
+    .foot-note{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .hidden-export{
+      position:fixed;
+      left:-99999px;
+      top:0;
+      z-index:-1;
+    }
+
+    @media (max-width:1100px){
+      .main-grid{grid-template-columns:1fr}
+    }
+
+    @media (max-width:700px){
+      .page{padding:14px 10px 24px}
+      .digit-grid{grid-template-columns:repeat(2, minmax(0, 1fr))}
+      .actions{grid-template-columns:1fr}
+      .info-grid{grid-template-columns:1fr}
+      .number{letter-spacing:6px}
+      .hero-actions{width:100%}
+      .hero-actions .btn{width:100%}
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <div class="row">
+        <div>
+          <div class="brand">
+            <div class="logo">🎲</div>
+            <div>
+              <div class="eyebrow">Random 100% • ไม่เกี่ยวกับ AI</div>
+              <h1>สุ่มเฮง</h1>
+            </div>
+          </div>
+          <p class="sub">
+            หน้าเว็บสุ่มเลขนำโชคแบบเร็วและตรงไปตรงมา เลือกจำนวนหลัก กดสุ่ม แล้วเอาเลขไปเสี่ยงดวงได้เลย
+            รองรับเลข 1 ตัว ถึง 6 ตัว
+          </p>
+        </div>
+
+        <div class="hero-actions">
+          <a class="btn ghost" href="./index.html">← กลับหน้า AI</a>
+          <button class="btn secondary" id="saveStoryBtnTop">Save Story</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="main-grid">
+      <div class="panel">
+        <div class="panel-inner">
+          <h2 class="title">เลือกจำนวนตัวเลข</h2>
+          <p class="desc">
+            เลือกได้ตั้งแต่ 1 ตัว ถึง 6 ตัว แล้วกดสุ่ม ระบบจะสุ่มจริงทุกครั้ง
+          </p>
+
+          <div class="digit-grid" id="digitGrid">
+            <button class="digit-btn" data-digit="1">1 ตัว</button>
+            <button class="digit-btn active" data-digit="2">2 ตัว</button>
+            <button class="digit-btn" data-digit="3">3 ตัว</button>
+            <button class="digit-btn" data-digit="4">4 ตัว</button>
+            <button class="digit-btn" data-digit="5">5 ตัว</button>
+            <button class="digit-btn" data-digit="6">6 ตัว</button>
+          </div>
+
+          <div class="control-box">
+            <button class="spin-big" id="spinBtn">🎲 สุ่มเลย</button>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-card">
+              <h3>เหมาะกับอะไร</h3>
+              <p>
+                ใช้สุ่มเลขแบบสนุก ๆ ได้ทั้งหวยไทย หวยลาว หวยฮานอย หรือใช้เป็นเลขนำโชคส่วนตัว
+              </p>
+            </div>
+
+            <div class="info-card">
+              <h3>หลักการสุ่ม</h3>
+              <p>
+                ใช้การสุ่มจาก browser โดยตรง ไม่อิงสถิติ ไม่อิง AI และไม่ล็อคผลลัพธ์
+              </p>
+            </div>
+          </div>
+
+          <div class="history-box">
+            <div class="history-title">เลขล่าสุด</div>
+            <div class="history-list" id="historyList">
+              <span class="history-chip">ยังไม่มีข้อมูล</span>
+            </div>
+            <div class="foot-note">
+              เก็บไว้ดูเล่นเฉพาะบนเครื่องนี้ เพื่อให้คุณย้อนดูเลขที่เพิ่งสุ่มได้
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-inner result-stage">
+          <div class="glow-ring"></div>
+          <div class="glow-ring r2"></div>
+
+          <div class="result-top">Lucky Random • Full Random</div>
+
+          <div class="number-wrap">
+            <div class="number" id="resultNumber">--</div>
+          </div>
+
+          <div class="digit-meta" id="digitMeta">ตอนนี้เลือก: 2 ตัว</div>
+
+          <div class="actions">
+            <button class="mini-btn" id="copyBtn">Copy</button>
+            <button class="mini-btn" id="saveSquareBtn">Save Square</button>
+            <button class="mini-btn" id="saveStoryBtn">Save Story</button>
+            <button class="mini-btn" id="shareBtn">Share</button>
+            <button class="mini-btn" id="lineBtn">LINE</button>
+            <button class="mini-btn" id="spinAgainBtn">สุ่มอีกครั้ง</button>
+          </div>
+
+          <div class="foot-note" style="max-width:520px; text-align:center;">
+            เลขนี้เป็นการสุ่มล้วน 100% ถ้าซ้ำก็ถือว่าเป็นผลจากการสุ่มจริง
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="exportRoot" class="hidden-export"></div>
+
+  <script>
+    const APP_NAME = "สุ่มเฮง";
+
+    let selectedDigit = 2;
+    let currentNumber = "--";
+    let historyItems = [];
+
+    function randomInt(maxExclusive) {
+      const arr = new Uint32Array(1);
+      crypto.getRandomValues(arr);
+      return arr[0] % maxExclusive;
+    }
+
+    function padNum(num, size) {
+      return String(num).padStart(size, "0");
+    }
+
+    function setDigit(digit) {
+      selectedDigit = digit;
+      document.querySelectorAll(".digit-btn").forEach(btn => {
+        btn.classList.toggle("active", Number(btn.dataset.digit) === digit);
+      });
+      document.getElementById("digitMeta").textContent = `ตอนนี้เลือก: ${digit} ตัว`;
+      document.getElementById("resultNumber").textContent = digit === 1 ? "-" : "-".repeat(digit);
+      currentNumber = digit === 1 ? "-" : "-".repeat(digit);
+    }
+
+    function saveHistory(number, digit) {
+      historyItems.unshift({
+        number,
+        digit,
+        time: new Date().toISOString()
+      });
+
+      historyItems = historyItems.slice(0, 12);
+      localStorage.setItem("random_heang_history", JSON.stringify(historyItems));
+      renderHistory();
+    }
+
+    function loadHistory() {
+      try {
+        const raw = localStorage.getItem("random_heang_history");
+        historyItems = raw ? JSON.parse(raw) : [];
+      } catch (error) {
+        historyItems = [];
+      }
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const box = document.getElementById("historyList");
+      if (!historyItems.length) {
+        box.innerHTML = '<span class="history-chip">ยังไม่มีข้อมูล</span>';
+        return;
+      }
+
+      box.innerHTML = historyItems.map(item => {
+        return `<span class="history-chip">${item.number} • ${item.digit} ตัว</span>`;
+      }).join("");
+    }
+
+    async function animateSpin(finalValue, digit) {
+      const el = document.getElementById("resultNumber");
+      const max = Math.pow(10, digit);
+      const duration = 1100;
+      const start = performance.now();
+
+      return new Promise(resolve => {
+        function frame(now) {
+          const elapsed = now - start;
+          const progress = elapsed / duration;
+
+          if (progress < 1) {
+            el.textContent = padNum(randomInt(max), digit);
+            requestAnimationFrame(frame);
+          } else {
+            el.textContent = finalValue;
+            el.classList.remove("flash");
+            void el.offsetWidth;
+            el.classList.add("flash");
+            resolve();
+          }
+        }
+        requestAnimationFrame(frame);
+      });
+    }
+
+    async function spinNumber() {
+      const max = Math.pow(10, selectedDigit);
+      const finalValue = padNum(randomInt(max), selectedDigit);
+      currentNumber = finalValue;
+      await animateSpin(finalValue, selectedDigit);
+      saveHistory(finalValue, selectedDigit);
+    }
+
+    async function copyNumber() {
+      if (!currentNumber || currentNumber.includes("-")) {
+        alert("ยังไม่มีเลขให้คัดลอก");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(currentNumber);
+        alert("คัดลอกเลขแล้ว");
+      } catch (error) {
+        alert("คัดลอกไม่สำเร็จ");
+      }
+    }
+
+    function buildExportCard(type = "square") {
+      const root = document.getElementById("exportRoot");
+      const isStory = type === "story";
+
+      root.innerHTML = `
+        <div id="exportCard" style="
+          width:1080px;
+          height:${isStory ? "1920px" : "1080px"};
+          padding:48px;
+          display:flex;
+          flex-direction:column;
+          justify-content:space-between;
+          color:white;
+          font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+          background:
+            radial-gradient(circle at 20% 20%, rgba(99,164,255,.18), transparent 22%),
+            radial-gradient(circle at 80% 20%, rgba(255,103,200,.16), transparent 24%),
+            radial-gradient(circle at 50% 80%, rgba(94,234,212,.12), transparent 26%),
+            linear-gradient(180deg, #050816, #0d1631);
+          border-radius:40px;
+          overflow:hidden;
+          position:relative;
+        ">
+          <div style="
+            position:absolute; right:-90px; top:-90px; width:280px; height:280px; border-radius:50%;
+            background:radial-gradient(circle, rgba(248,213,107,.20), transparent 70%);
+          "></div>
+
+          <div style="
+            position:absolute; left:-90px; bottom:-90px; width:240px; height:240px; border-radius:50%;
+            background:radial-gradient(circle, rgba(99,164,255,.16), transparent 70%);
+          "></div>
+
+          <div style="position:relative; z-index:1;">
+            <div style="display:flex; align-items:center; gap:16px;">
+              <div style="
+                width:76px; height:76px; border-radius:24px; display:grid; place-items:center;
+                font-size:34px; font-weight:900; color:#111827;
+                background:linear-gradient(135deg, #f8d56b, #ffb454);
+              ">🎲</div>
+              <div>
+                <div style="font-size:22px; color:rgba(255,255,255,.78); font-weight:700;">Random 100%</div>
+                <div style="font-size:62px; font-weight:900; line-height:1;">${APP_NAME}</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="
+            position:relative; z-index:1; text-align:center;
+            border-radius:36px;
+            padding:${isStory ? "60px 40px" : "46px 40px"};
+            background:rgba(255,255,255,.08);
+            border:1px solid rgba(255,255,255,.12);
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+          ">
+            <div style="font-size:34px; color:rgba(255,255,255,.78); font-weight:800; margin-bottom:24px;">
+              เลขนำโชค ${selectedDigit} ตัว
+            </div>
+            <div style="
+              font-size:${isStory ? "210px" : "180px"};
+              font-weight:900;
+              line-height:1;
+              letter-spacing:10px;
+              text-shadow:0 12px 26px rgba(0,0,0,.25);
+            ">${currentNumber}</div>
+          </div>
+
+          <div style="position:relative; z-index:1;">
+            <div style="font-size:24px; color:rgba(255,255,255,.84); font-weight:700;">
+              สุ่มจริง • ไม่เกี่ยวกับ AI
+            </div>
+            <div style="margin-top:10px; font-size:20px; color:rgba(255,255,255,.70);">
+              ${new Date().toLocaleDateString("th-TH")}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function saveImage(type = "square") {
+      if (!currentNumber || currentNumber.includes("-")) {
+        alert("ยังไม่มีเลขให้บันทึก");
+        return;
+      }
+
+      buildExportCard(type);
+      const card = document.getElementById("exportCard");
+
+      try {
+        const canvas = await html2canvas(card, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: null
+        });
+
+        const link = document.createElement("a");
+        link.download = type === "story" ? "sum-heng-story.png" : "sum-heng-square.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      } catch (error) {
+        alert("บันทึกรูปไม่สำเร็จ");
+      }
+    }
+
+    async function shareNumber() {
+      if (!currentNumber || currentNumber.includes("-")) {
+        alert("ยังไม่มีเลขให้แชร์");
+        return;
+      }
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: APP_NAME,
+            text: `เลขนำโชค ${selectedDigit} ตัว: ${currentNumber}`
+          });
+        } catch (error) {}
+      } else {
+        alert("อุปกรณ์นี้ยังไม่รองรับ Share โดยตรง");
+      }
+    }
+
+    function shareLine() {
+      if (!currentNumber || currentNumber.includes("-")) {
+        alert("ยังไม่มีเลขให้แชร์");
+        return;
+      }
+
+      const text = encodeURIComponent(`เลขนำโชค ${selectedDigit} ตัว: ${currentNumber}`);
+      window.open(`https://line.me/R/msg/text/?${text}`, "_blank");
+    }
+
+    document.getElementById("spinBtn").addEventListener("click", spinNumber);
+    document.getElementById("spinAgainBtn").addEventListener("click", spinNumber);
+    document.getElementById("copyBtn").addEventListener("click", copyNumber);
+    document.getElementById("saveSquareBtn").addEventListener("click", () => saveImage("square"));
+    document.getElementById("saveStoryBtn").addEventListener("click", () => saveImage("story"));
+    document.getElementById("saveStoryBtnTop").addEventListener("click", () => saveImage("story"));
+    document.getElementById("shareBtn").addEventListener("click", shareNumber);
+    document.getElementById("lineBtn").addEventListener("click", shareLine);
+
+    document.querySelectorAll(".digit-btn").forEach(btn => {
+      btn.addEventListener("click", () => setDigit(Number(btn.dataset.digit)));
     });
-  }
-}
 
-function line(){
-  const text = encodeURIComponent("เลขนำโชค: "+current);
-  window.open("https://line.me/R/msg/text/?"+text);
-}
-</script>
-
+    setDigit(2);
+    loadHistory();
+  </script>
 </body>
 </html>
