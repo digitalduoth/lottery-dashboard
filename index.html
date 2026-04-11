@@ -70,7 +70,7 @@
     h1{margin:0;font-size:clamp(28px,4vw,42px);line-height:1.05}
     .sub{margin:10px 0 0;color:var(--muted);max-width:760px;line-height:1.65;font-size:15px}
     .kicker{color:var(--muted);font-size:13px;margin-bottom:8px}
-    .big{font-size:clamp(28px,4vw,40px);font-weight:900;margin:0}
+    .big{font-size:clamp(28px,4vw,40px);font-weight:900;margin:0;word-break:break-word}
     .note{margin-top:8px;color:#c9d7ef;font-size:13px}
     .section-title{margin:0 0 8px;font-size:20px}
     .section-sub{margin:0 0 14px;color:var(--muted);font-size:14px}
@@ -189,7 +189,7 @@
           </div>
           <p class="sub">
             Dashboard หวยแบบไม่ใช้ Google Sheets อ่านข้อมูลจาก data.json โดยตรง
-            มี scoring, ranking และ auto insight ใช้ได้บน iPad ผ่าน Safari
+            มี scoring, ranking, auto insight และ AI ทำนายเลขงวดถัดไป ใช้ได้บน iPad ผ่าน Safari
           </p>
         </div>
 
@@ -244,6 +244,25 @@
 
           <div style="height:18px;"></div>
 
+          <h2 class="section-title">AI ทำนายเลขงวดถัดไป</h2>
+          <p class="section-sub">คัดเลขจาก scoring + pattern ล่าสุด</p>
+
+          <div class="toolbar">
+            <button class="btn" id="predictBtn">Generate Prediction</button>
+          </div>
+
+          <div id="predictionBox" class="chips" style="margin-top:12px;">
+            <span class="empty">ยังกดทำนาย</span>
+          </div>
+
+          <div style="height:12px;"></div>
+
+          <div class="analysis" id="predictionInsight">
+            ระบบจะเลือกเลขจากคะแนนสูงสุดและรูปแบบที่เด่นในข้อมูลย้อนหลัง
+          </div>
+
+          <div style="height:18px;"></div>
+
           <h2 class="section-title">สูตร Scoring</h2>
           <div class="analysis">คะแนนรวมของเลขท้าย 2 ตัว =
 
@@ -252,10 +271,11 @@
 + (ความเด่นของเลขท้ายตัวเดียว × 0.15)
 + (โบนัสเลขเบิ้ล × 0.10)
 
-สรุป:
-- scoring = ให้คะแนน
-- ranking = เรียงคะแนน
-- auto insight = สรุปสิ่งที่เด่นให้อ่านง่าย</div>
+Prediction score เพิ่มอีกชั้นจาก:
+- digit pattern
+- recent trend
+- total trend
+- double number bonus</div>
         </div>
       </div>
 
@@ -410,6 +430,88 @@
       });
 
       return scores.sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
+    }
+
+    function getDigitFrequencyFromLast2(records) {
+      const map = {};
+      for (const r of records) {
+        if (!r.last2) continue;
+        for (const ch of r.last2) {
+          map[ch] = (map[ch] || 0) + 1;
+        }
+      }
+      return map;
+    }
+
+    function generateCandidateNumbers() {
+      const digitFreq = getDigitFrequencyFromLast2(records);
+      const recent = getLastNRecords(12);
+      const recentFreq = countBy(recent, r => r.last2);
+      const allFreq = countBy(records, r => r.last2);
+
+      const candidates = [];
+
+      for (let i = 0; i <= 9; i++) {
+        for (let j = 0; j <= 9; j++) {
+          const num = `${i}${j}`;
+          const totalFreq = allFreq[num] || 0;
+          const recentScore = recentFreq[num] || 0;
+          const digitScore = (digitFreq[String(i)] || 0) + (digitFreq[String(j)] || 0);
+          const doubleBonus = i === j ? 0.6 : 0;
+
+          const score =
+            (totalFreq * 0.40) +
+            (recentScore * 0.35) +
+            (digitScore * 0.20) +
+            doubleBonus;
+
+          candidates.push({
+            number: num,
+            score: Number(score.toFixed(2)),
+            totalFreq,
+            recentScore,
+            digitScore,
+            isDouble: i === j
+          });
+        }
+      }
+
+      return candidates.sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
+    }
+
+    function generatePrediction() {
+      if (!records.length) {
+        document.getElementById("predictionBox").innerHTML = '<span class="empty">ยังไม่มีข้อมูล</span>';
+        document.getElementById("predictionInsight").textContent = "ยังไม่มีข้อมูลพอสำหรับวิเคราะห์";
+        return;
+      }
+
+      const ranked = generateCandidateNumbers();
+      const top = ranked.slice(0, 8);
+
+      document.getElementById("predictionBox").innerHTML = top
+        .map((item, index) => `<span class="chip">#${index + 1} ${item.number} · ${item.score}</span>`)
+        .join("");
+
+      const strongest = top[0];
+      const nextGroup = top.slice(1, 4).map(x => x.number).join(", ");
+      const recent = getLastNRecords(5).map(x => x.last2).join(", ");
+
+      document.getElementById("predictionInsight").textContent =
+`เลขเด่นที่สุดของรอบนี้คือ ${strongest.number} คะแนน ${strongest.score}
+
+เหตุผล:
+- ความถี่รวม ${strongest.totalFreq} ครั้ง
+- 12 งวดล่าสุดออก ${strongest.recentScore} ครั้ง
+- ตัวเลขในชุดนี้มีความเด่นเชิงหลักเลข
+${strongest.isDouble ? "- เป็นเลขเบิ้ล จึงได้โบนัสพิเศษ" : ""}
+
+กลุ่มรองที่ควรจับตา: ${nextGroup}
+เลข 5 งวดล่าสุด: ${recent}
+
+หมายเหตุ:
+นี่คือการจัดอันดับเชิงสถิติจากข้อมูลย้อนหลัง
+ใช้เพื่อดูเลขน่าสนใจ ไม่ใช่การยืนยันผลจริงในอนาคต`;
     }
 
     function renderStats() {
@@ -592,11 +694,18 @@ Top 5 Ranking: ${top5}
       renderTable();
     }
 
-    document.getElementById("refreshBtn").addEventListener("click", loadData);
+    document.getElementById("refreshBtn").addEventListener("click", async () => {
+      await loadData();
+      generatePrediction();
+    });
+
+    document.getElementById("predictBtn").addEventListener("click", generatePrediction);
     document.getElementById("searchInput").addEventListener("input", renderTable);
     document.getElementById("sortSelect").addEventListener("change", renderTable);
 
-    loadData();
+    loadData().then(() => {
+      generatePrediction();
+    });
   </script>
 </body>
 </html>
