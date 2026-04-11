@@ -22,12 +22,9 @@
       --blue:#3b82f6;
       --blue2:#60a5fa;
       --purple:#8b5cf6;
-      --pink:#ec4899;
       --green:#22c55e;
-      --orange:#f59e0b;
       --gold:#f4d06f;
-      --slate:#1e293b;
-      --slate2:#334155;
+      --pink:#ec4899;
 
       --shadow:0 28px 70px rgba(0,0,0,.42);
     }
@@ -173,6 +170,13 @@
       justify-content:center;
       box-shadow:0 10px 24px rgba(0,0,0,.18);
       min-height:50px;
+      transition:transform .15s ease, opacity .15s ease, border-color .15s ease;
+    }
+
+    .btn:hover{
+      transform:translateY(-1px);
+      opacity:.97;
+      border-color:rgba(255,255,255,.16);
     }
 
     .btn.nav{
@@ -180,15 +184,15 @@
     }
 
     .btn.primary{
-      background:linear-gradient(135deg,var(--blue),var(--blue2));
+      background:linear-gradient(135deg,#2563eb,#60a5fa);
     }
 
     .btn.run{
-      background:linear-gradient(135deg,#7c3aed,var(--purple));
+      background:linear-gradient(135deg,#6d28d9,#8b5cf6);
     }
 
     .btn.success{
-      background:linear-gradient(135deg,#15803d,var(--green));
+      background:linear-gradient(135deg,#166534,#22c55e);
     }
 
     .btn.secondary{
@@ -298,16 +302,6 @@
       border-color:rgba(236,72,153,.18);
     }
 
-    .score-chip.orange{
-      background:rgba(245,158,11,.10);
-      border-color:rgba(245,158,11,.18);
-    }
-
-    .score-chip.purple{
-      background:rgba(139,92,246,.12);
-      border-color:rgba(139,92,246,.18);
-    }
-
     .score-top{
       display:flex;
       align-items:center;
@@ -318,13 +312,8 @@
       font-weight:800;
     }
 
-    .score-rank{
-      opacity:.82;
-    }
-
-    .score-value{
-      opacity:.92;
-    }
+    .score-rank{opacity:.82}
+    .score-value{opacity:.92}
 
     .score-number{
       font-size:28px;
@@ -341,44 +330,56 @@
     }
 
     .mini-chip{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      border-radius:999px;
-      padding:10px 14px;
-      font-size:13px;
-      font-weight:800;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      min-width:170px;
+      padding:10px 12px;
+      border-radius:16px;
       border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.03);
+    }
+
+    .mini-chip-row{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      font-size:12px;
+      font-weight:800;
+      color:#d7e2f7;
+    }
+
+    .mini-chip-number{
+      font-size:24px;
+      line-height:1;
+      font-weight:900;
+      color:#fff;
+    }
+
+    .mini-chip-label{
+      font-size:12px;
+      color:#d7e2f7;
+      opacity:.92;
     }
 
     .mini-chip.green{
       background:rgba(34,197,94,.12);
       border-color:rgba(34,197,94,.18);
-      color:#dcfce7;
     }
 
     .mini-chip.gold{
       background:rgba(244,208,111,.12);
       border-color:rgba(244,208,111,.18);
-      color:#fde68a;
     }
 
     .mini-chip.pink{
       background:rgba(236,72,153,.12);
       border-color:rgba(236,72,153,.18);
-      color:#fbcfe8;
-    }
-
-    .mini-chip.orange{
-      background:rgba(245,158,11,.12);
-      border-color:rgba(245,158,11,.18);
-      color:#fde68a;
     }
 
     .mini-chip.purple{
       background:rgba(139,92,246,.14);
       border-color:rgba(139,92,246,.20);
-      color:#ddd6fe;
     }
 
     .bars{
@@ -533,7 +534,7 @@
       .grid-4{grid-template-columns:1fr}
       .toolbar{flex-direction:column}
       .btn{width:100%}
-      .score-chip{min-width:100%}
+      .score-chip,.mini-chip{min-width:100%}
     }
   </style>
 </head>
@@ -772,8 +773,6 @@
     let allCombined3 = [];
 
     let cached2Scores = [];
-    let cachedTop3Scores = [];
-    let cachedBottom3Scores = [];
     let cachedHybridTop = [];
     let cachedHybridBottom = [];
     let lastBundleText = "";
@@ -787,66 +786,6 @@
 
     function sortDateDesc(a, b) {
       return String(b.date || "").localeCompare(String(a.date || ""));
-    }
-
-    async function loadData() {
-      const statusBox = document.getElementById("statusBox");
-      statusBox.textContent = "กำลังโหลดข้อมูลจาก data.json...";
-
-      try {
-        const response = await fetch("./data.json", { cache: "no-store" });
-        if (!response.ok) throw new Error("โหลดข้อมูลไม่สำเร็จ");
-
-        const raw = await response.json();
-
-        records = raw.map((row, index) => {
-          const last2 = normalizeNumber(row.last2, 2);
-
-          let top3 = Array.isArray(row.top3)
-            ? row.top3.map(x => normalizeNumber(x, 3)).filter(Boolean)
-            : [];
-
-          let bottom3 = Array.isArray(row.bottom3)
-            ? row.bottom3.map(x => normalizeNumber(x, 3)).filter(Boolean)
-            : [];
-
-          if ((!top3.length && !bottom3.length) && Array.isArray(row.last3)) {
-            const normalized = row.last3.map(x => normalizeNumber(x, 3)).filter(Boolean);
-            top3 = normalized.slice(0, 2);
-            bottom3 = normalized.slice(2, 4);
-          }
-
-          return {
-            id: index + 1,
-            date: String(row.date || "").trim(),
-            last2,
-            top3,
-            bottom3,
-            last3: [...top3, ...bottom3]
-          };
-        }).filter(r => r.date && r.last2);
-
-        allTop3 = records.flatMap(r => r.top3);
-        allBottom3 = records.flatMap(r => r.bottom3);
-        allCombined3 = records.flatMap(r => r.last3);
-
-        cached2Scores = [];
-        cachedTop3Scores = [];
-        cachedBottom3Scores = [];
-        cachedHybridTop = [];
-        cachedHybridBottom = [];
-        lastBundleText = "";
-
-        statusBox.textContent = `โหลดข้อมูลสำเร็จ ${records.length} งวด | top3 ${allTop3.length} | bottom3 ${allBottom3.length}`;
-        render();
-      } catch (error) {
-        statusBox.innerHTML = '<span class="error">โหลด data.json ไม่สำเร็จ</span>';
-        records = [];
-        allTop3 = [];
-        allBottom3 = [];
-        allCombined3 = [];
-        render();
-      }
     }
 
     function countBy(items, fn) {
@@ -910,6 +849,64 @@
       };
     }
 
+    async function loadData() {
+      const statusBox = document.getElementById("statusBox");
+      statusBox.textContent = "กำลังโหลดข้อมูลจาก data.json...";
+
+      try {
+        const response = await fetch("./data.json?v=" + Date.now(), { cache: "no-store" });
+        if (!response.ok) throw new Error("โหลดข้อมูลไม่สำเร็จ");
+
+        const raw = await response.json();
+
+        records = raw.map((row, index) => {
+          const last2 = normalizeNumber(row.last2, 2);
+
+          let top3 = Array.isArray(row.top3)
+            ? row.top3.map(x => normalizeNumber(x, 3)).filter(Boolean)
+            : [];
+
+          let bottom3 = Array.isArray(row.bottom3)
+            ? row.bottom3.map(x => normalizeNumber(x, 3)).filter(Boolean)
+            : [];
+
+          if ((!top3.length && !bottom3.length) && Array.isArray(row.last3)) {
+            const normalized = row.last3.map(x => normalizeNumber(x, 3)).filter(Boolean);
+            top3 = normalized.slice(0, 2);
+            bottom3 = normalized.slice(2, 4);
+          }
+
+          return {
+            id: index + 1,
+            date: String(row.date || "").trim(),
+            last2,
+            top3,
+            bottom3,
+            last3: [...top3, ...bottom3]
+          };
+        }).filter(r => r.date && r.last2);
+
+        allTop3 = records.flatMap(r => r.top3);
+        allBottom3 = records.flatMap(r => r.bottom3);
+        allCombined3 = records.flatMap(r => r.last3);
+
+        cached2Scores = [];
+        cachedHybridTop = [];
+        cachedHybridBottom = [];
+        lastBundleText = "";
+
+        statusBox.textContent = `โหลดข้อมูลสำเร็จ ${records.length} งวด | top3 ${allTop3.length} | bottom3 ${allBottom3.length}`;
+        render();
+      } catch (error) {
+        statusBox.innerHTML = '<span class="error">โหลด data.json ไม่สำเร็จ</span>';
+        records = [];
+        allTop3 = [];
+        allBottom3 = [];
+        allCombined3 = [];
+        render();
+      }
+    }
+
     function calculate2Scores() {
       const allFreq = countBy(records, r => r.last2);
       const recent12 = getLastNRecords(12);
@@ -935,8 +932,7 @@
         return {
           number: num,
           score: Number((finalScore * 100).toFixed(2)),
-          totalCount: allFreq[num] || 0,
-          recentCount: recentFreq[num] || 0
+          totalCount: allFreq[num] || 0
         };
       }).sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
     }
@@ -980,14 +976,12 @@
 
         return {
           number: num,
-          score: Number((finalScore * 100).toFixed(2)),
-          totalCount: allFreq[num] || 0,
-          recentCount: recentFreq[num] || 0
+          score: Number((finalScore * 100).toFixed(2))
         };
       }).sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
     }
 
-    function mergeHybridScores(baseScores, targetScores, oppositeScores, type) {
+    function mergeHybridScores(baseScores, targetScores, oppositeScores) {
       const baseMap = Object.fromEntries(baseScores.map(x => [x.number, x.score]));
       const targetMap = Object.fromEntries(targetScores.map(x => [x.number, x.score]));
       const oppositeMap = Object.fromEntries(oppositeScores.map(x => [x.number, x.score]));
@@ -997,24 +991,16 @@
         ...Object.keys(targetMap)
       ]);
 
-      const results = [...candidateSet].map(number => {
+      return [...candidateSet].map(number => {
         const base = baseMap[number] || 0;
         const target = targetMap[number] || 0;
         const opposite = oppositeMap[number] || 0;
 
-        const score =
-          (base * 0.45) +
-          (target * 0.45) +
-          (opposite * 0.10);
-
         return {
           number,
-          score: Number(score.toFixed(2)),
-          type
+          score: Number(((base * 0.45) + (target * 0.45) + (opposite * 0.10)).toFixed(2))
         };
-      });
-
-      return results.sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
+      }).sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
     }
 
     function renderBars(containerId, entries) {
@@ -1034,6 +1020,45 @@
           <div class="bar-score">${item.value}%</div>
         </div>
       `).join("");
+    }
+
+    function scoreCard(item, index, colorClass, subText = "") {
+      return `
+        <div class="score-chip ${colorClass}">
+          <div class="score-top">
+            <span class="score-rank">#${index + 1}</span>
+            <span class="score-value">${item.score}%</span>
+          </div>
+          <div class="score-number">${item.number}</div>
+          <div class="score-sub">${subText}</div>
+        </div>
+      `;
+    }
+
+    function statChip(label, index, item, colorClass) {
+      return `
+        <div class="mini-chip ${colorClass}">
+          <div class="mini-chip-row">
+            <span>${label} ${index + 1}</span>
+            <span>${item.score}%</span>
+          </div>
+          <div class="mini-chip-number">${item.number}</div>
+          <div class="mini-chip-label">คะแนนวิเคราะห์</div>
+        </div>
+      `;
+    }
+
+    function plainChip(label, index, number, colorClass) {
+      return `
+        <div class="mini-chip ${colorClass}">
+          <div class="mini-chip-row">
+            <span>${label} ${index + 1}</span>
+            <span>ชุดเลข</span>
+          </div>
+          <div class="mini-chip-number">${number}</div>
+          <div class="mini-chip-label">พร้อมใช้งาน</div>
+        </div>
+      `;
     }
 
     function renderStats(scores2, scoresTop, scoresBottom) {
@@ -1062,6 +1087,24 @@
         document.getElementById("statTopBottom3").textContent = "---";
         document.getElementById("statTopBottom3Meta").textContent = "ยังไม่มีข้อมูล";
       }
+    }
+
+    function updateSummaryBox() {
+      const top2 = cached2Scores.slice(0, 3).map(x => x.number).join(", ") || "-";
+      const top3Top = cachedHybridTop.slice(0, 3).map(x => x.number).join(", ") || "-";
+      const top3Bottom = cachedHybridBottom.slice(0, 3).map(x => x.number).join(", ") || "-";
+
+      document.getElementById("summaryBox").textContent =
+`สรุปงวดนี้:
+- 2 ตัวเด่น: ${top2}
+- 3 ตัวบนเด่น: ${top3Top}
+- 3 ตัวล่างเด่น: ${top3Bottom}
+
+แนวใช้เร็ว:
+- ถ้าจะเน้น 2 ตัว ให้ดู Top 3 ก่อน
+- ถ้าจะเน้น 3 ตัวบน ให้ดูกล่อง 3 ตัวบนเด่น
+- ถ้าจะเน้น 3 ตัวล่าง ให้ดูกล่อง 3 ตัวล่างเด่น
+- ถ้าเลขไปซ้ำหลายกล่อง ถือว่าแรงในระบบ`;
     }
 
     function renderMonthlyChart() {
@@ -1135,41 +1178,6 @@
       `).join("");
     }
 
-    function scoreCard(item, index, colorClass, subText = "") {
-      return `
-        <div class="score-chip ${colorClass}">
-          <div class="score-top">
-            <span class="score-rank">#${index + 1}</span>
-            <span class="score-value">${item.score}%</span>
-          </div>
-          <div class="score-number">${item.number}</div>
-          <div class="score-sub">${subText}</div>
-        </div>
-      `;
-    }
-
-    function miniChip(text, colorClass) {
-      return `<span class="mini-chip ${colorClass}">${text}</span>`;
-    }
-
-    function updateSummaryBox() {
-      const top2 = cached2Scores.slice(0, 3).map(x => x.number).join(", ") || "-";
-      const top3Top = cachedHybridTop.slice(0, 3).map(x => x.number).join(", ") || "-";
-      const top3Bottom = cachedHybridBottom.slice(0, 3).map(x => x.number).join(", ") || "-";
-
-      document.getElementById("summaryBox").textContent =
-`สรุปงวดนี้:
-- 2 ตัวเด่น: ${top2}
-- 3 ตัวบนเด่น: ${top3Top}
-- 3 ตัวล่างเด่น: ${top3Bottom}
-
-แนวใช้เร็ว:
-- ถ้าจะเน้น 2 ตัว ให้ดู Top 3 ก่อน
-- ถ้าจะเน้น 3 ตัวบน ให้ดูกล่อง 3 ตัวบนเด่น
-- ถ้าจะเน้น 3 ตัวล่าง ให้ดูกล่อง 3 ตัวล่างเด่น
-- ถ้าเลขไปซ้ำหลายกล่อง ถือว่าแรงในระบบ`;
-    }
-
     function runAI() {
       cached2Scores = calculate2Scores();
 
@@ -1177,11 +1185,8 @@
       const topScores = calculate3ScoresFromList(allTop3, getLastNTop3(20));
       const bottomScores = calculate3ScoresFromList(allBottom3, getLastNBottom3(20));
 
-      cachedTop3Scores = topScores;
-      cachedBottom3Scores = bottomScores;
-
-      cachedHybridTop = mergeHybridScores(combinedScores, topScores, bottomScores, "top");
-      cachedHybridBottom = mergeHybridScores(combinedScores, bottomScores, topScores, "bottom");
+      cachedHybridTop = mergeHybridScores(combinedScores, topScores, bottomScores);
+      cachedHybridBottom = mergeHybridScores(combinedScores, bottomScores, topScores);
 
       renderStats(cached2Scores, cachedHybridTop, cachedHybridBottom);
 
@@ -1198,11 +1203,11 @@
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
       document.getElementById("topPredictBox").innerHTML = cachedHybridTop.length
-        ? cachedHybridTop.slice(0, 5).map((x, i) => miniChip(`บน ${i + 1} · ${x.number} · ${x.score}%`, "gold")).join("")
+        ? cachedHybridTop.slice(0, 5).map((x, i) => statChip("บน", i, x, "gold")).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
       document.getElementById("bottomPredictBox").innerHTML = cachedHybridBottom.length
-        ? cachedHybridBottom.slice(0, 5).map((x, i) => miniChip(`ล่าง ${i + 1} · ${x.number} · ${x.score}%`, "pink")).join("")
+        ? cachedHybridBottom.slice(0, 5).map((x, i) => statChip("ล่าง", i, x, "pink")).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
       const hybridMerge = [...new Map(
@@ -1211,7 +1216,7 @@
       ).values()].sort((a, b) => b.score - a.score).slice(0, 8);
 
       document.getElementById("hybridPredictBox").innerHTML = hybridMerge.length
-        ? hybridMerge.map((x, i) => miniChip(`Hybrid ${i + 1} · ${x.number} · ${x.score}%`, "purple")).join("")
+        ? hybridMerge.map((x, i) => statChip("Hybrid", i, x, "purple")).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
       document.getElementById("predictInsight").textContent =
@@ -1259,16 +1264,16 @@ Top 3 ตัวล่าง: ${cachedHybridBottom.slice(0, 5).map(x => x.number)
       const bottomSet = cachedHybridBottom.slice(0, 5).map(x => x.number);
 
       document.getElementById("bundle2MainBox").innerHTML =
-        twoMain.map((x, i) => miniChip(`2 ตัวเด่น ${i + 1} · ${x}`, "green")).join("");
+        twoMain.map((x, i) => plainChip("2 ตัวเด่น", i, x, "green")).join("");
 
       document.getElementById("bundle2SubBox").innerHTML =
-        twoSub.map((x, i) => miniChip(`2 ตัวรอง ${i + 1} · ${x}`, "orange")).join("");
+        twoSub.map((x, i) => plainChip("2 ตัวรอง", i, x, "gold")).join("");
 
       document.getElementById("bundleTop3Box").innerHTML =
-        topSet.map((x, i) => miniChip(`บน ${i + 1} · ${x}`, "gold")).join("");
+        topSet.map((x, i) => plainChip("บน", i, x, "gold")).join("");
 
       document.getElementById("bundleBottom3Box").innerHTML =
-        bottomSet.map((x, i) => miniChip(`ล่าง ${i + 1} · ${x}`, "pink")).join("");
+        bottomSet.map((x, i) => plainChip("ล่าง", i, x, "pink")).join("");
 
       lastBundleText =
 `2 ตัวเด่น: ${twoMain.join(", ")}
@@ -1301,6 +1306,7 @@ Top 3 ตัวล่าง: ${cachedHybridBottom.slice(0, 5).map(x => x.number)
     function applyFilter(mode) {
       currentFilter = mode;
       const blocks = document.querySelectorAll(".filter-block");
+
       blocks.forEach(el => {
         const show =
           mode === "all" ||
