@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lottery AI PRO MAX Hybrid Top/Bottom</title>
+  <title>Lottery AI PRO MAX V6</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root{
       --bg:#07111f;
@@ -34,7 +35,7 @@
       min-height:100vh;
     }
 
-    .app{max-width:1380px;margin:0 auto;padding:18px 14px 40px}
+    .app{max-width:1400px;margin:0 auto;padding:18px 14px 40px}
     .hero,.card{
       background:var(--panel);
       border:1px solid var(--line);
@@ -86,12 +87,13 @@
     .btn.alt{background:linear-gradient(135deg,var(--pink),#8b5cf6)}
     .btn.green{background:linear-gradient(135deg,var(--green),#22c55e)}
     .btn.orange{background:linear-gradient(135deg,var(--orange),#f97316)}
+    .btn.small{padding:9px 12px;border-radius:12px;font-size:13px}
 
     .grid-4,.grid-main,.grid-2,.grid-3{
       display:grid;gap:16px;margin-top:16px
     }
     .grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
-    .grid-main{grid-template-columns:1.12fr .88fr}
+    .grid-main{grid-template-columns:1.1fr .9fr}
     .grid-2{grid-template-columns:1fr 1fr}
     .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
     .card-inner{padding:18px}
@@ -196,6 +198,228 @@
     .empty{color:var(--muted);padding:8px 0}
     .error{color:#fecaca}
 
+    /* Lucky Modal */
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(2,6,23,.78);
+      backdrop-filter:blur(12px);
+      z-index:9999;
+      padding:18px;
+    }
+    .modal.show{display:flex}
+
+    .lucky-wrap{
+      width:min(100%,1180px);
+      min-height:min(90vh,900px);
+      border-radius:40px;
+      padding:28px;
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 30px 90px rgba(0,0,0,.5);
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+    .lucky-theme-1{background:linear-gradient(135deg,#0b1733,#172554,#3b0764)}
+    .lucky-theme-2{background:linear-gradient(135deg,#102a43,#0f766e,#082f49)}
+    .lucky-theme-3{background:linear-gradient(135deg,#1e1b4b,#4c1d95,#701a75)}
+    .lucky-theme-4{background:linear-gradient(135deg,#1f2937,#0f766e,#14532d)}
+    .lucky-theme-5{background:linear-gradient(135deg,#3f0d12,#7c2d12,#451a03)}
+    .lucky-theme-6{background:linear-gradient(135deg,#111827,#1d4ed8,#0f172a)}
+    .lucky-theme-7{background:linear-gradient(135deg,#3b0764,#831843,#1d4ed8)}
+    .lucky-theme-8{background:linear-gradient(135deg,#2d1b00,#8b5e00,#1f2937)}
+
+    .lucky-wrap:before{
+      content:"";
+      position:absolute;
+      right:-140px;
+      top:-140px;
+      width:360px;
+      height:360px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(255,255,255,.16), transparent 70%);
+      pointer-events:none;
+    }
+    .lucky-wrap:after{
+      content:"";
+      position:absolute;
+      left:-140px;
+      bottom:-140px;
+      width:360px;
+      height:360px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(255,255,255,.10), transparent 70%);
+      pointer-events:none;
+    }
+
+    .spark{
+      position:absolute;
+      width:180px;
+      height:180px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(255,255,255,.16), transparent 70%);
+      filter:blur(4px);
+      pointer-events:none;
+      opacity:.9;
+    }
+    .spark.s1{top:8%;left:10%}
+    .spark.s2{top:18%;right:8%}
+    .spark.s3{bottom:12%;left:14%}
+    .spark.s4{bottom:10%;right:10%}
+
+    .lucky-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      position:relative;
+      z-index:1;
+    }
+
+    .lucky-brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .lucky-brand-badge{
+      width:56px;height:56px;border-radius:18px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.18);
+      display:grid;place-items:center;
+      font-size:24px;font-weight:900;
+    }
+
+    .lucky-title{
+      font-size:clamp(32px,4.2vw,58px);
+      font-weight:900;
+      margin:0;
+      letter-spacing:.5px;
+    }
+    .lucky-sub{
+      margin-top:8px;
+      color:rgba(255,255,255,.78);
+      font-size:15px;
+      line-height:1.65;
+      max-width:620px;
+    }
+
+    .close-btn{
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.16);
+      color:#fff;
+      border-radius:16px;
+      padding:12px 16px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .lucky-center{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:20px;
+      margin:22px 0;
+      position:relative;
+      z-index:1;
+    }
+
+    .lucky-card{
+      border-radius:30px;
+      padding:24px;
+      min-height:320px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+      text-align:center;
+    }
+
+    .lucky-label{
+      color:rgba(255,255,255,.82);
+      font-size:20px;
+      margin-bottom:18px;
+      font-weight:800;
+    }
+
+    .lucky-number{
+      font-size:clamp(74px,12vw,170px);
+      line-height:1;
+      font-weight:900;
+      letter-spacing:4px;
+      text-shadow:0 14px 34px rgba(0,0,0,.28);
+    }
+
+    .lucky-footer{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      position:relative;
+      z-index:1;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .lucky-actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .lucky-btn{
+      border:0;
+      cursor:pointer;
+      border-radius:18px;
+      padding:14px 18px;
+      font-weight:900;
+      color:#fff;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow:0 10px 24px rgba(0,0,0,.18);
+    }
+
+    .lucky-btn.primary{
+      background:linear-gradient(135deg,#f59e0b,#fb7185);
+    }
+
+    .lucky-meta{
+      margin-top:10px;
+      color:rgba(255,255,255,.75);
+      font-size:14px;
+    }
+
+    .export-card{
+      position:fixed;
+      left:-99999px;
+      top:0;
+      width:1080px;
+      height:1920px;
+      overflow:hidden;
+      z-index:-1;
+    }
+    .export-square{
+      width:1080px;
+      height:1080px;
+    }
+
+    .share-note{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:8px;
+    }
+
+    @media (max-width:900px){
+      .lucky-center{grid-template-columns:1fr}
+      .lucky-card{min-height:240px}
+      .lucky-footer{flex-direction:column;align-items:flex-start}
+    }
+
     @media (max-width:1100px){
       .grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}
       .grid-main,.grid-2,.grid-3{grid-template-columns:1fr}
@@ -206,6 +430,8 @@
       .grid-4{grid-template-columns:1fr}
       .toolbar{flex-direction:column}
       .btn{width:100%}
+      .lucky-wrap{padding:20px}
+      .lucky-title{font-size:34px}
     }
   </style>
 </head>
@@ -217,13 +443,13 @@
           <div class="brand">
             <div class="logo">LP</div>
             <div>
-              <div class="kicker">PRO MAX Hybrid Top/Bottom + Auto Bundle + 3D Real Train</div>
-              <h1>Lottery AI PRO MAX</h1>
+              <div class="kicker">PRO MAX V6 + Lucky Card Export + Share</div>
+              <h1>Lottery AI PRO MAX V6</h1>
             </div>
           </div>
           <p class="sub">
-            Dashboard เวอร์ชันเต็มแบบ Hybrid บน/ล่าง ใช้ AI รวม + AI 3 ตัวบน + AI 3 ตัวล่าง
-            เพื่อให้ผลวิเคราะห์ตรงการใช้งานจริงมากขึ้น แต่ยังคงความนิ่งของระบบจากข้อมูลรวม
+            เวอร์ชัน V6 เพิ่ม Lucky Card แบบเซฟเป็นรูปได้ทั้ง Story 9:16 และ Square 1:1
+            พร้อมปุ่ม Share และ LINE โดยแยกจากระบบ AI อย่างชัดเจน
           </p>
         </div>
 
@@ -231,6 +457,8 @@
           <button class="btn" id="refreshBtn">Refresh Data</button>
           <button class="btn alt" id="runBtn">Run AI</button>
           <button class="btn green" id="bundleBtn">Auto Generate ชุด</button>
+          <button class="btn orange" id="copyBtn">Copy ชุดเลข</button>
+          <button class="btn" id="openLuckyBtn">🎲 Lucky Random</button>
         </div>
       </div>
 
@@ -263,62 +491,92 @@
       </div></div>
     </section>
 
+    <section class="grid-2">
+      <div class="card"><div class="card-inner">
+        <h2 class="section-title">สรุปเลขเด่นประจำงวด</h2>
+        <p class="section-sub">อ่านเร็ว ใช้ตัดสินใจไว</p>
+        <div class="analysis" id="summaryBox">ยังกด Run AI อยู่</div>
+      </div></div>
+
+      <div class="card"><div class="card-inner">
+        <h2 class="section-title">Filter การดูผล</h2>
+        <p class="section-sub">เลือกเฉพาะส่วนที่อยากโฟกัส</p>
+        <div class="toolbar">
+          <button class="btn small" data-filter="all">ทั้งหมด</button>
+          <button class="btn small" data-filter="two">2 ตัว</button>
+          <button class="btn small" data-filter="top">3 ตัวบน</button>
+          <button class="btn small" data-filter="bottom">3 ตัวล่าง</button>
+        </div>
+        <div class="analysis" id="filterInfo">ตอนนี้แสดง: ทั้งหมด</div>
+      </div></div>
+    </section>
+
     <section class="grid-main">
       <div class="card">
         <div class="card-inner">
-          <h2 class="section-title">Auto Insight</h2>
-          <div class="analysis" id="analysisBox">ยังไม่มีข้อมูลสำหรับวิเคราะห์</div>
+          <div class="filter-block filter-all">
+            <h2 class="section-title">Auto Insight</h2>
+            <div class="analysis" id="analysisBox">ยังไม่มีข้อมูลสำหรับวิเคราะห์</div>
+          </div>
 
           <div style="height:18px;"></div>
 
-          <h2 class="section-title">เลข 2 ตัวเด่น</h2>
-          <div id="ranking2Box" class="chips"><span class="empty">ยังไม่มีข้อมูล</span></div>
+          <div class="filter-block filter-two filter-all">
+            <h2 class="section-title">เลข 2 ตัวเด่น</h2>
+            <div id="ranking2Box" class="chips"><span class="empty">ยังไม่มีข้อมูล</span></div>
+          </div>
 
           <div style="height:18px;"></div>
 
-          <h2 class="section-title">3 ตัวบนเด่น</h2>
-          <div id="rankingTop3Box" class="chips"><span class="empty">ยังไม่มีข้อมูล</span></div>
+          <div class="filter-block filter-top filter-all">
+            <h2 class="section-title">3 ตัวบนเด่น</h2>
+            <div id="rankingTop3Box" class="chips"><span class="empty">ยังไม่มีข้อมูล</span></div>
+          </div>
 
           <div style="height:18px;"></div>
 
-          <h2 class="section-title">3 ตัวล่างเด่น</h2>
-          <div id="rankingBottom3Box" class="chips"><span class="empty">ยังไม่มีข้อมูล</span></div>
+          <div class="filter-block filter-bottom filter-all">
+            <h2 class="section-title">3 ตัวล่างเด่น</h2>
+            <div id="rankingBottom3Box" class="chips"><span class="empty">ยังไม่มีข้อมูล</span></div>
+          </div>
 
           <div style="height:18px;"></div>
 
-          <h2 class="section-title">Hybrid AI Prediction</h2>
+          <div class="filter-block filter-all">
+            <h2 class="section-title">Hybrid AI Prediction</h2>
 
-          <div class="kicker">Top 3 ตัวบน</div>
-          <div id="topPredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
+            <div class="kicker">Top 3 ตัวบน</div>
+            <div id="topPredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
 
-          <div style="height:12px;"></div>
+            <div style="height:12px;"></div>
 
-          <div class="kicker">Bottom 3 ตัวล่าง</div>
-          <div id="bottomPredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
+            <div class="kicker">Bottom 3 ตัวล่าง</div>
+            <div id="bottomPredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
 
-          <div style="height:12px;"></div>
+            <div style="height:12px;"></div>
 
-          <div class="kicker">เลขรวม Hybrid</div>
-          <div id="hybridPredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
+            <div class="kicker">เลขรวม Hybrid</div>
+            <div id="hybridPredictBox" class="chips"><span class="empty">ยังไม่ได้รัน</span></div>
 
-          <div style="height:12px;"></div>
+            <div style="height:12px;"></div>
 
-          <div class="analysis" id="predictInsight">ระบบจะวิเคราะห์เมื่อกด Run AI</div>
+            <div class="analysis" id="predictInsight">ระบบจะวิเคราะห์เมื่อกด Run AI</div>
+          </div>
         </div>
       </div>
 
       <div class="grid-3" style="grid-template-columns:1fr;">
-        <div class="card"><div class="card-inner">
+        <div class="card filter-block filter-two filter-all"><div class="card-inner">
           <h2 class="section-title">Top 10 เลข 2 ตัว</h2>
           <div id="bars2" class="bars"><div class="empty">ยังไม่มีข้อมูล</div></div>
         </div></div>
 
-        <div class="card"><div class="card-inner">
+        <div class="card filter-block filter-top filter-all"><div class="card-inner">
           <h2 class="section-title">Top 10 3 ตัวบน</h2>
           <div id="barsTop3" class="bars"><div class="empty">ยังไม่มีข้อมูล</div></div>
         </div></div>
 
-        <div class="card"><div class="card-inner">
+        <div class="card filter-block filter-bottom filter-all"><div class="card-inner">
           <h2 class="section-title">Top 10 3 ตัวล่าง</h2>
           <div id="barsBottom3" class="bars"><div class="empty">ยังไม่มีข้อมูล</div></div>
         </div></div>
@@ -388,30 +646,77 @@
       </div></div>
 
       <div class="card"><div class="card-inner">
-        <h2 class="section-title">รูปแบบข้อมูลที่รองรับ</h2>
-        <div class="analysis">แบบใหม่ที่แนะนำ:
-{
-  "date": "2026-04-16",
-  "last2": "55",
-  "top3": ["111","222"],
-  "bottom3": ["333","444"]
-}
-
-แบบเก่าที่ยังรองรับ:
-{
-  "date": "2026-04-16",
-  "last2": "55",
-  "last3": ["111","222","333","444"]
-}
-
-หมายเหตุ:
-- ถ้าใช้แบบเก่า ระบบจะถือว่า 2 ตัวแรกของ last3 = top3
-- และ 2 ตัวหลังของ last3 = bottom3</div>
+        <h2 class="section-title">Lucky Random</h2>
+        <div class="analysis">Lucky Random เป็นโหมดสุ่มจริง 100%
+- ไม่เกี่ยวกับ AI
+- เลข 2 ตัวออกได้ 00-99
+- เลข 3 ตัวออกได้ 000-999
+- Save ได้ทั้ง Story และ Square
+- Share ได้ผ่าน Web Share และ LINE</div>
+        <div class="share-note">แก้ชื่อแบรนด์ได้ในตัวแปร APP_BRAND_NAME ในโค้ด</div>
       </div></div>
     </section>
   </div>
 
+  <!-- Lucky Modal -->
+  <div id="luckyModal" class="modal" aria-hidden="true">
+    <div id="luckyWrap" class="lucky-wrap lucky-theme-1">
+      <div class="spark s1"></div>
+      <div class="spark s2"></div>
+      <div class="spark s3"></div>
+      <div class="spark s4"></div>
+
+      <div class="lucky-top">
+        <div>
+          <div class="lucky-brand">
+            <div class="lucky-brand-badge">🎲</div>
+            <div>
+              <div class="kicker" style="color:rgba(255,255,255,.85);font-size:15px;" id="brandLabel">Lucky Random • LP Studio</div>
+              <h2 class="lucky-title">เลขนำโชคของคุณ</h2>
+            </div>
+          </div>
+          <div class="lucky-sub">
+            โหมดนี้ไม่เกี่ยวกับ AI และไม่อิงข้อมูลย้อนหลัง  
+            เป็นการสุ่มจริงสำหรับความสนุกและเสี่ยงดวง
+          </div>
+        </div>
+        <button class="close-btn" id="closeLuckyBtn">ปิด</button>
+      </div>
+
+      <div class="lucky-center">
+        <div class="lucky-card">
+          <div class="lucky-label">เลขนำโชค 2 ตัว</div>
+          <div id="lucky2" class="lucky-number">--</div>
+        </div>
+
+        <div class="lucky-card">
+          <div class="lucky-label">เลขนำโชค 3 ตัว</div>
+          <div id="lucky3" class="lucky-number">---</div>
+        </div>
+      </div>
+
+      <div style="position:relative;z-index:1;">
+        <div class="lucky-footer">
+          <div class="lucky-actions">
+            <button class="lucky-btn primary" id="spinLuckyBtn">สุ่มใหม่</button>
+            <button class="lucky-btn" id="copyLuckyBtn">คัดลอกเลข</button>
+            <button class="lucky-btn" id="saveStoryBtn">Save Story</button>
+            <button class="lucky-btn" id="saveSquareBtn">Save Square</button>
+            <button class="lucky-btn" id="shareLuckyBtn">Share</button>
+            <button class="lucky-btn" id="lineLuckyBtn">LINE</button>
+          </div>
+        </div>
+        <div class="lucky-meta">Random จริง • ไม่ล็อค • ไม่กันซ้ำ • ไม่เกี่ยวกับระบบวิเคราะห์</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Area -->
+  <div id="exportRoot" style="position:fixed;left:-99999px;top:0;z-index:-1;"></div>
+
   <script>
+    const APP_BRAND_NAME = "LP Studio";
+
     let records = [];
     let allTop3 = [];
     let allBottom3 = [];
@@ -422,6 +727,12 @@
     let cachedBottom3Scores = [];
     let cachedHybridTop = [];
     let cachedHybridBottom = [];
+    let lastBundleText = "";
+    let currentFilter = "all";
+    let lastLuckyText = "";
+    let currentLuckyTheme = "lucky-theme-1";
+    let currentLucky2 = "--";
+    let currentLucky3 = "---";
 
     function normalizeNumber(value, size) {
       const cleaned = String(value || "").replace(/[^\d]/g, "").trim();
@@ -479,6 +790,7 @@
         cachedBottom3Scores = [];
         cachedHybridTop = [];
         cachedHybridBottom = [];
+        lastBundleText = "";
 
         statusBox.textContent = `โหลดข้อมูลสำเร็จ ${records.length} งวด | top3 ${allTop3.length} | bottom3 ${allBottom3.length}`;
         render();
@@ -500,10 +812,6 @@
         map[key] = (map[key] || 0) + 1;
       }
       return map;
-    }
-
-    function sortEntriesDesc(obj) {
-      return Object.entries(obj).sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0])));
     }
 
     function getLastNRecords(n) {
@@ -555,24 +863,6 @@
         hasDouble: a === b || b === c || a === c,
         allSame: a === b && b === c
       };
-    }
-
-    function buildMarkov3(list) {
-      const markov = {};
-      for (let i = 0; i < list.length - 1; i++) {
-        const current = list[i];
-        const next = list[i + 1];
-
-        for (let pos = 0; pos < 3; pos++) {
-          const a = current[pos];
-          const b = next[pos];
-
-          if (!markov[pos]) markov[pos] = {};
-          if (!markov[pos][a]) markov[pos][a] = {};
-          markov[pos][a][b] = (markov[pos][a][b] || 0) + 1;
-        }
-      }
-      return markov;
     }
 
     function calculate2Scores() {
@@ -800,6 +1090,24 @@
       `).join("");
     }
 
+    function updateSummaryBox() {
+      const top2 = cached2Scores.slice(0, 3).map(x => x.number).join(", ") || "-";
+      const top3Top = cachedHybridTop.slice(0, 3).map(x => x.number).join(", ") || "-";
+      const top3Bottom = cachedHybridBottom.slice(0, 3).map(x => x.number).join(", ") || "-";
+
+      document.getElementById("summaryBox").textContent =
+`สรุปงวดนี้:
+- 2 ตัวเด่น: ${top2}
+- 3 ตัวบนเด่น: ${top3Top}
+- 3 ตัวล่างเด่น: ${top3Bottom}
+
+แนวใช้เร็ว:
+- ถ้าจะเน้น 2 ตัว ให้ดู Top 3 ก่อน
+- ถ้าจะเน้น 3 ตัวบน ให้ดูกล่อง 3 ตัวบนเด่น
+- ถ้าจะเน้น 3 ตัวล่าง ให้ดูกล่อง 3 ตัวล่างเด่น
+- ถ้าเลขไปซ้ำหลายกล่อง ถือว่าแรงในระบบ`;
+    }
+
     function runAI() {
       cached2Scores = calculate2Scores();
 
@@ -851,12 +1159,7 @@
 - AI ล่าง = โฟกัส bottom3
 
 Final score บน = รวม 45% + บน 45% + ล่าง 10%
-Final score ล่าง = รวม 45% + ล่าง 45% + บน 10%
-
-สรุป:
-- ถ้าอยากดู 3 ตัวบน ให้ดูกล่องบน
-- ถ้าอยากดู 3 ตัวล่าง ให้ดูกล่องล่าง
-- ถ้าอยากดูภาพรวม ให้ดูกล่อง Hybrid`;
+Final score ล่าง = รวม 45% + ล่าง 45% + บน 10%`;
 
       document.getElementById("analysisBox").textContent =
 `จากข้อมูลทั้งหมด ${records.length} งวด
@@ -867,14 +1170,17 @@ Top 2 ตัว: ${cached2Scores.slice(0, 5).map(x => x.number).join(", ")}
 Top 3 ตัวบน: ${cachedHybridTop.slice(0, 5).map(x => x.number).join(", ")}
 Top 3 ตัวล่าง: ${cachedHybridBottom.slice(0, 5).map(x => x.number).join(", ")}
 
-ข้อดีของ Hybrid:
-- ยังใช้ข้อมูลรวม ทำให้ระบบไม่นิ่งน้อยลง
-- แต่เวลาแสดงผล แยกบน/ล่างชัดเจน
-- ใช้งานจริงตรงกว่าแบบรวมล้วน`;
+ข้อดีของ V6:
+- แยกบน/ล่างชัด
+- Lucky Card save/share ได้
+- ยังคง AI วิเคราะห์ครบ`;
 
       renderBars("bars2", cached2Scores.slice(0, 10).map(x => ({ label: x.number, value: x.score })));
       renderBars("barsTop3", cachedHybridTop.slice(0, 10).map(x => ({ label: x.number, value: x.score })));
       renderBars("barsBottom3", cachedHybridBottom.slice(0, 10).map(x => ({ label: x.number, value: x.score })));
+
+      updateSummaryBox();
+      applyFilter(currentFilter);
       renderMonthlyChart();
       renderTable();
     }
@@ -902,29 +1208,287 @@ Top 3 ตัวล่าง: ${cachedHybridBottom.slice(0, 5).map(x => x.number)
       document.getElementById("bundleBottom3Box").innerHTML =
         bottomSet.map((x, i) => `<span class="chip pink">ล่าง ${i + 1}: ${x}</span>`).join("");
 
+      lastBundleText =
+`2 ตัวเด่น: ${twoMain.join(", ")}
+2 ตัวรอง: ${twoSub.join(", ")}
+3 ตัวบน: ${topSet.join(", ")}
+3 ตัวล่าง: ${bottomSet.join(", ")}`;
+
       document.getElementById("bundleInsight").textContent =
 `Auto Generate ชุด:
 - 2 ตัวเด่น: ${twoMain.join(", ")}
 - 2 ตัวรอง: ${twoSub.join(", ")}
 - 3 ตัวบน: ${topSet.join(", ")}
-- 3 ตัวล่าง: ${bottomSet.join(", ")}
+- 3 ตัวล่าง: ${bottomSet.join(", ")}`;
+    }
 
-แนวคิด:
-- เอา Top ranking มาสร้างชุดแบบพร้อมใช้งาน
-- ถ้าจะเล่นบน ให้ดูชุดบนเป็นหลัก
-- ถ้าจะเล่นล่าง ให้ดูชุดล่างเป็นหลัก`;
+    async function copyBundles() {
+      if (!lastBundleText) {
+        alert("ให้กด Auto Generate ชุด ก่อน");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(lastBundleText);
+        alert("คัดลอกชุดเลขแล้ว");
+      } catch (error) {
+        alert("คัดลอกไม่สำเร็จ ลองกดค้างเพื่อ copy ด้วยตัวเอง");
+      }
+    }
+
+    function applyFilter(mode) {
+      currentFilter = mode;
+      const blocks = document.querySelectorAll(".filter-block");
+      blocks.forEach(el => {
+        const show =
+          mode === "all" ||
+          el.classList.contains(`filter-${mode}`) ||
+          el.classList.contains("filter-all");
+
+        el.style.display = show ? "" : "none";
+      });
+
+      const labelMap = {
+        all: "ทั้งหมด",
+        two: "2 ตัว",
+        top: "3 ตัวบน",
+        bottom: "3 ตัวล่าง"
+      };
+
+      document.getElementById("filterInfo").textContent = `ตอนนี้แสดง: ${labelMap[mode] || "ทั้งหมด"}`;
+    }
+
+    // Lucky Random
+    function randomInt(maxExclusive) {
+      const arr = new Uint32Array(1);
+      crypto.getRandomValues(arr);
+      return arr[0] % maxExclusive;
+    }
+
+    function padNum(num, size) {
+      return String(num).padStart(size, "0");
+    }
+
+    function randomThemeClass() {
+      const themes = [
+        "lucky-theme-1","lucky-theme-2","lucky-theme-3","lucky-theme-4",
+        "lucky-theme-5","lucky-theme-6","lucky-theme-7","lucky-theme-8"
+      ];
+      return themes[randomInt(themes.length)];
+    }
+
+    function animateLuckyNumber(element, size, finalValue, duration = 850) {
+      return new Promise(resolve => {
+        const start = performance.now();
+
+        function frame(now) {
+          const elapsed = now - start;
+          const progress = elapsed / duration;
+
+          if (progress < 1) {
+            const max = size === 2 ? 100 : 1000;
+            element.textContent = padNum(randomInt(max), size);
+            requestAnimationFrame(frame);
+          } else {
+            element.textContent = finalValue;
+            resolve();
+          }
+        }
+
+        requestAnimationFrame(frame);
+      });
+    }
+
+    async function spinLucky() {
+      currentLucky2 = padNum(randomInt(100), 2);
+      currentLucky3 = padNum(randomInt(1000), 3);
+      currentLuckyTheme = randomThemeClass();
+
+      const wrap = document.getElementById("luckyWrap");
+      wrap.className = `lucky-wrap ${currentLuckyTheme}`;
+
+      document.getElementById("brandLabel").textContent = `Lucky Random • ${APP_BRAND_NAME}`;
+
+      const el2 = document.getElementById("lucky2");
+      const el3 = document.getElementById("lucky3");
+
+      await Promise.all([
+        animateLuckyNumber(el2, 2, currentLucky2, 900),
+        animateLuckyNumber(el3, 3, currentLucky3, 1100)
+      ]);
+
+      lastLuckyText = `เลขนำโชค 2 ตัว: ${currentLucky2}
+เลขนำโชค 3 ตัว: ${currentLucky3}`;
+    }
+
+    function openLuckyModal() {
+      const modal = document.getElementById("luckyModal");
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden", "false");
+      spinLucky();
+    }
+
+    function closeLuckyModal() {
+      const modal = document.getElementById("luckyModal");
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    async function copyLucky() {
+      if (!lastLuckyText) {
+        alert("ยังไม่มีเลขนำโชค");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(lastLuckyText);
+        alert("คัดลอกเลขนำโชคแล้ว");
+      } catch (error) {
+        alert("คัดลอกไม่สำเร็จ ลองกดค้างเพื่อ copy ด้วยตัวเอง");
+      }
+    }
+
+    function buildExportCard(type = "story") {
+      const root = document.getElementById("exportRoot");
+      const isStory = type === "story";
+
+      root.innerHTML = `
+        <div id="exportCard" class="lucky-wrap ${currentLuckyTheme} ${isStory ? "" : "export-square"}" style="
+          width:1080px;
+          height:${isStory ? "1920px" : "1080px"};
+          min-height:${isStory ? "1920px" : "1080px"};
+          padding:48px;
+          position:relative;
+          overflow:hidden;
+          display:flex;
+          flex-direction:column;
+          justify-content:space-between;
+        ">
+          <div class="spark s1"></div>
+          <div class="spark s2"></div>
+          <div class="spark s3"></div>
+          <div class="spark s4"></div>
+
+          <div style="position:relative;z-index:1;">
+            <div style="display:flex;align-items:center;gap:16px;">
+              <div style="width:74px;height:74px;border-radius:24px;background:rgba(255,255,255,.14);display:grid;place-items:center;font-size:30px;font-weight:900;border:1px solid rgba(255,255,255,.18);">🎲</div>
+              <div>
+                <div style="font-size:22px;color:rgba(255,255,255,.82);font-weight:700;">${APP_BRAND_NAME}</div>
+                <div style="font-size:54px;font-weight:900;line-height:1.05;margin-top:4px;">Lucky Random</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="position:relative;z-index:1;display:grid;grid-template-columns:1fr;gap:24px;">
+            <div style="border-radius:34px;padding:34px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);text-align:center;">
+              <div style="font-size:30px;color:rgba(255,255,255,.82);font-weight:800;margin-bottom:20px;">เลขนำโชค 2 ตัว</div>
+              <div style="font-size:${isStory ? "190px" : "170px"};font-weight:900;line-height:1;">${currentLucky2}</div>
+            </div>
+
+            <div style="border-radius:34px;padding:34px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);text-align:center;">
+              <div style="font-size:30px;color:rgba(255,255,255,.82);font-weight:800;margin-bottom:20px;">เลขนำโชค 3 ตัว</div>
+              <div style="font-size:${isStory ? "190px" : "170px"};font-weight:900;line-height:1;">${currentLucky3}</div>
+            </div>
+          </div>
+
+          <div style="position:relative;z-index:1;">
+            <div style="font-size:26px;color:rgba(255,255,255,.84);font-weight:700;">Random 100% • ไม่เกี่ยวกับ AI</div>
+            <div style="margin-top:10px;font-size:20px;color:rgba(255,255,255,.72);">${new Date().toLocaleDateString("th-TH")}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function saveLuckyCard(type = "story") {
+      if (!currentLucky2 || !currentLucky3) {
+        alert("ยังไม่มีเลขนำโชค");
+        return;
+      }
+
+      buildExportCard(type);
+      const node = document.getElementById("exportCard");
+
+      try {
+        const canvas = await html2canvas(node, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: null
+        });
+
+        const link = document.createElement("a");
+        link.download = type === "story" ? "lucky-story.png" : "lucky-square.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      } catch (err) {
+        alert("Save ไม่สำเร็จ");
+      }
+    }
+
+    async function shareLucky() {
+      if (!currentLucky2 || !currentLucky3) {
+        alert("ยังไม่มีเลขนำโชค");
+        return;
+      }
+
+      const text = `เลขนำโชคของฉัน
+2 ตัว: ${currentLucky2}
+3 ตัว: ${currentLucky3}`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: "Lucky Random",
+            text
+          });
+        } catch (err) {}
+      } else {
+        alert("อุปกรณ์นี้ยังไม่รองรับ Share โดยตรง");
+      }
+    }
+
+    function shareLineLucky() {
+      if (!currentLucky2 || !currentLucky3) {
+        alert("ยังไม่มีเลขนำโชค");
+        return;
+      }
+
+      const text = encodeURIComponent(`เลขนำโชคของฉัน\n2 ตัว: ${currentLucky2}\n3 ตัว: ${currentLucky3}`);
+      window.open(`https://line.me/R/msg/text/?${text}`, "_blank");
     }
 
     function render() {
       renderMonthlyChart();
       renderTable();
+      applyFilter(currentFilter);
     }
 
     document.getElementById("refreshBtn").addEventListener("click", loadData);
     document.getElementById("runBtn").addEventListener("click", runAI);
     document.getElementById("bundleBtn").addEventListener("click", generateBundles);
+    document.getElementById("copyBtn").addEventListener("click", copyBundles);
     document.getElementById("searchInput").addEventListener("input", renderTable);
     document.getElementById("sortSelect").addEventListener("change", renderTable);
+
+    document.querySelectorAll("[data-filter]").forEach(btn => {
+      btn.addEventListener("click", () => applyFilter(btn.dataset.filter));
+    });
+
+    document.getElementById("openLuckyBtn").addEventListener("click", openLuckyModal);
+    document.getElementById("closeLuckyBtn").addEventListener("click", closeLuckyModal);
+    document.getElementById("spinLuckyBtn").addEventListener("click", spinLucky);
+    document.getElementById("copyLuckyBtn").addEventListener("click", copyLucky);
+    document.getElementById("saveStoryBtn").addEventListener("click", () => saveLuckyCard("story"));
+    document.getElementById("saveSquareBtn").addEventListener("click", () => saveLuckyCard("square"));
+    document.getElementById("shareLuckyBtn").addEventListener("click", shareLucky);
+    document.getElementById("lineLuckyBtn").addEventListener("click", shareLineLucky);
+
+    document.getElementById("luckyModal").addEventListener("click", (e) => {
+      if (e.target.id === "luckyModal") closeLuckyModal();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeLuckyModal();
+    });
 
     loadData();
   </script>
