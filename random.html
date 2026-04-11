@@ -7,18 +7,18 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root{
-      --bg:#060816;
-      --bg2:#0c1226;
-      --panel:rgba(16,22,42,.74);
-      --line:rgba(255,255,255,.11);
-      --text:#fffaf2;
-      --muted:#b9c4dc;
+      --bg:#040714;
+      --bg2:#090f22;
+      --text:#fff8ef;
+      --muted:#b9c5dc;
       --gold:#ffd86f;
       --pink:#ff4db8;
       --purple:#8b5cf6;
       --blue:#63a9ff;
       --cyan:#2de2ff;
       --orange:#ff9f43;
+      --panel:rgba(16,22,42,.50);
+      --line:rgba(255,255,255,.10);
       --shadow:0 30px 90px rgba(0,0,0,.42);
     }
 
@@ -29,55 +29,28 @@
       color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
       background:
-        radial-gradient(circle at 12% 15%, rgba(99,169,255,.24), transparent 20%),
-        radial-gradient(circle at 88% 16%, rgba(255,77,184,.20), transparent 24%),
-        radial-gradient(circle at 50% 88%, rgba(45,226,255,.14), transparent 20%),
+        radial-gradient(circle at 12% 18%, rgba(99,169,255,.22), transparent 18%),
+        radial-gradient(circle at 88% 16%, rgba(255,77,184,.18), transparent 20%),
+        radial-gradient(circle at 50% 88%, rgba(45,226,255,.12), transparent 18%),
         linear-gradient(180deg,var(--bg),var(--bg2));
       overflow-x:hidden;
     }
 
     .app{
-      max-width:1320px;
+      max-width:1280px;
       margin:0 auto;
-      padding:18px 14px 24px;
+      padding:20px 16px 24px;
       min-height:100vh;
-      display:flex;
-      flex-direction:column;
-      gap:16px;
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      gap:18px;
     }
 
-    .hero,.stage{
-      border:1px solid var(--line);
-      border-radius:34px;
-      background:var(--panel);
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(18px);
-    }
-
-    .hero{
-      padding:22px;
-      position:relative;
-      overflow:hidden;
-      background:linear-gradient(135deg, rgba(99,169,255,.24), rgba(255,77,184,.20));
-    }
-
-    .hero::before{
-      content:"";
-      position:absolute;
-      width:240px;
-      height:240px;
-      border-radius:50%;
-      right:-60px;
-      top:-60px;
-      background:radial-gradient(circle, rgba(255,216,111,.26), transparent 70%);
-      pointer-events:none;
-    }
-
-    .hero-top{
+    .topbar{
       display:flex;
       align-items:flex-start;
       justify-content:space-between;
-      gap:14px;
+      gap:16px;
       flex-wrap:wrap;
     }
 
@@ -88,44 +61,44 @@
     }
 
     .brand-logo{
-      width:66px;
-      height:66px;
+      width:72px;
+      height:72px;
       border-radius:22px;
       display:grid;
       place-items:center;
       background:linear-gradient(135deg,var(--gold),#ffb84d);
       color:#111827;
-      font-size:30px;
+      font-size:32px;
       font-weight:900;
-      box-shadow:0 12px 28px rgba(255,216,111,.28);
+      box-shadow:0 14px 34px rgba(255,216,111,.22);
       flex:0 0 auto;
     }
 
     .kicker{
-      font-size:13px;
+      font-size:14px;
       color:#eef4ff;
-      opacity:.92;
-      margin-bottom:6px;
+      opacity:.9;
       font-weight:900;
       letter-spacing:.02em;
+      margin-bottom:4px;
     }
 
     h1{
       margin:0;
-      font-size:clamp(38px,6vw,76px);
+      font-size:clamp(44px,7vw,80px);
       line-height:.95;
-      letter-spacing:-1.2px;
+      letter-spacing:-1.4px;
     }
 
     .sub{
-      margin:12px 0 0;
-      max-width:820px;
+      margin:10px 0 0;
+      max-width:720px;
       color:var(--muted);
       font-size:15px;
-      line-height:1.6;
+      line-height:1.55;
     }
 
-    .hero-actions{
+    .top-actions{
       display:flex;
       gap:10px;
       flex-wrap:wrap;
@@ -134,109 +107,39 @@
     .btn{
       border:0;
       cursor:pointer;
-      border-radius:16px;
+      border-radius:18px;
       padding:13px 18px;
       font-weight:900;
       color:white;
       text-decoration:none;
-      background:linear-gradient(135deg,#4f8cff,#7c3aed);
-      box-shadow:0 10px 24px rgba(79,140,255,.22);
-      font-size:15px;
-    }
-
-    .btn.ghost{
       background:rgba(255,255,255,.08);
       border:1px solid rgba(255,255,255,.10);
-      box-shadow:none;
+      font-size:15px;
+      backdrop-filter:blur(10px);
     }
 
-    .stage{
-      padding:18px;
-      min-height:76vh;
-      display:grid;
-      grid-template-rows:auto 1fr auto;
-      gap:18px;
-      position:relative;
-      overflow:hidden;
-      background:
-        radial-gradient(circle at 15% 14%, rgba(255,255,255,.05), transparent 18%),
-        radial-gradient(circle at 85% 22%, rgba(255,77,184,.12), transparent 22%),
-        radial-gradient(circle at 50% 100%, rgba(45,226,255,.08), transparent 20%),
-        linear-gradient(135deg, rgba(8,12,26,.98), rgba(18,26,54,.96));
-    }
-
-    .stage::before{
-      content:"";
-      position:absolute;
-      width:360px;
-      height:360px;
-      border-radius:50%;
-      right:-120px;
-      bottom:-120px;
-      background:radial-gradient(circle, rgba(99,169,255,.18), transparent 70%);
-      pointer-events:none;
-    }
-
-    .stage::after{
-      content:"";
-      position:absolute;
-      width:280px;
-      height:280px;
-      border-radius:50%;
-      left:-90px;
-      top:42%;
-      background:radial-gradient(circle, rgba(255,77,184,.14), transparent 70%);
-      pointer-events:none;
-    }
-
-    .stage-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      flex-wrap:wrap;
-      position:relative;
-      z-index:1;
-    }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 15px;
-      border-radius:999px;
-      font-size:13px;
-      font-weight:900;
-      color:#edf4ff;
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.08);
-    }
-
-    .digit-picks{
+    .mode-row{
       display:grid;
       grid-template-columns:repeat(6,minmax(0,1fr));
       gap:12px;
-      position:relative;
-      z-index:1;
     }
 
-    .digit-btn{
-      border:1px solid rgba(255,255,255,.10);
+    .mode-btn{
+      min-height:76px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.11);
       background:rgba(255,255,255,.05);
       color:var(--text);
-      border-radius:22px;
-      padding:15px 10px;
       font-size:clamp(18px,2vw,26px);
       font-weight:900;
       cursor:pointer;
-      min-height:78px;
       transition:.18s ease;
       box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
     }
 
-    .digit-btn.active{
-      background:linear-gradient(135deg, rgba(255,159,67,.42), rgba(255,77,184,.34));
-      border-color:rgba(255,216,111,.55);
+    .mode-btn.active{
+      background:linear-gradient(135deg, rgba(255,159,67,.42), rgba(255,77,184,.36));
+      border-color:rgba(255,216,111,.54);
       box-shadow:
         0 0 0 2px rgba(255,216,111,.12) inset,
         0 18px 44px rgba(255,77,184,.22),
@@ -244,70 +147,80 @@
       transform:translateY(-1px);
     }
 
-    .result-wrap{
+    .hero-stage{
       position:relative;
-      z-index:1;
+      min-height:56vh;
       display:flex;
-      align-items:center;
-      justify-content:center;
-      min-height:320px;
-    }
-
-    .result-card{
-      width:100%;
-      min-height:440px;
-      border-radius:38px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
       flex-direction:column;
-      padding:28px 24px;
-      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-      border:1px solid rgba(255,255,255,.12);
-      overflow:hidden;
-      position:relative;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.05),
-        0 20px 50px rgba(0,0,0,.20);
-    }
-
-    .result-card::before{
-      content:"";
-      position:absolute;
-      width:320px;
-      height:320px;
-      border-radius:50%;
-      left:-80px;
-      bottom:-80px;
-      background:radial-gradient(circle, rgba(255,255,255,.07), transparent 70%);
-      pointer-events:none;
-    }
-
-    .result-card::after{
-      content:"";
-      position:absolute;
-      width:320px;
-      height:320px;
-      border-radius:50%;
-      right:-90px;
-      top:-90px;
-      background:radial-gradient(circle, rgba(255,216,111,.11), transparent 70%);
-      pointer-events:none;
-    }
-
-    .result-label{
-      color:#edf4ff;
-      font-size:clamp(18px,2vw,24px);
-      font-weight:900;
-      opacity:.96;
-      margin-bottom:18px;
+      align-items:center;
+      justify-content:center;
       text-align:center;
-      letter-spacing:.01em;
+      overflow:hidden;
+      border-radius:40px;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.03), transparent 32%),
+        linear-gradient(180deg, rgba(16,22,42,.22), rgba(16,22,42,.08));
+      border:1px solid rgba(255,255,255,.06);
+    }
+
+    .hero-stage::before{
+      content:"";
+      position:absolute;
+      width:380px;
+      height:380px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(99,169,255,.15), transparent 70%);
+      left:-120px;
+      top:10%;
+      pointer-events:none;
+    }
+
+    .hero-stage::after{
+      content:"";
+      position:absolute;
+      width:420px;
+      height:420px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(255,77,184,.13), transparent 70%);
+      right:-150px;
+      top:6%;
+      pointer-events:none;
+    }
+
+    .stage-center{
       position:relative;
+      z-index:2;
+      width:100%;
+      max-width:1100px;
+      padding:20px 20px 10px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      min-height:52vh;
+    }
+
+    .number-label{
+      font-size:clamp(24px,3vw,34px);
+      font-weight:900;
+      color:#edf3ff;
+      opacity:.95;
+      margin-bottom:20px;
+    }
+
+    .number-glow{
+      position:absolute;
+      width:min(74vw,760px);
+      height:min(34vw,260px);
+      background:radial-gradient(circle, rgba(255,216,111,.16), transparent 72%);
+      filter:blur(18px);
+      pointer-events:none;
       z-index:1;
     }
 
     .result-number{
+      position:relative;
+      z-index:2;
       width:100%;
       text-align:center;
       line-height:1;
@@ -315,38 +228,38 @@
       white-space:nowrap;
       font-variant-numeric:tabular-nums;
       letter-spacing:.03em;
-      color:#fff8ee;
-      text-shadow:
-        0 0 14px rgba(255,255,255,.16),
-        0 0 34px rgba(255,216,111,.12),
-        0 18px 44px rgba(0,0,0,.34);
-      transition:transform .12s ease, opacity .12s ease, filter .12s ease;
+      color:#fff8ef;
+      background:linear-gradient(180deg,#fffefb,#ffe7bf 70%,#fffefb);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      text-shadow:none;
+      filter:
+        drop-shadow(0 4px 0 rgba(255,255,255,.05))
+        drop-shadow(0 14px 26px rgba(0,0,0,.28))
+        drop-shadow(0 0 18px rgba(255,216,111,.16));
+      transform-origin:center center;
+      transition:transform .12s ease, filter .12s ease, opacity .12s ease;
       overflow:hidden;
-      position:relative;
-      z-index:1;
+      padding:8px 0;
     }
 
-    .result-number.flash{
-      filter:brightness(1.14);
-      text-shadow:
-        0 0 18px rgba(255,255,255,.24),
-        0 0 44px rgba(255,216,111,.20),
-        0 20px 50px rgba(0,0,0,.36);
+    .result-number.final-pop{
+      transform:scale(1.08);
+      filter:
+        drop-shadow(0 4px 0 rgba(255,255,255,.08))
+        drop-shadow(0 16px 30px rgba(0,0,0,.34))
+        drop-shadow(0 0 24px rgba(255,216,111,.24))
+        drop-shadow(0 0 44px rgba(255,77,184,.12));
     }
 
     .result-meta{
-      margin-top:16px;
+      margin-top:18px;
       color:var(--muted);
-      font-size:15px;
+      font-size:16px;
       font-weight:800;
-      text-align:center;
-      position:relative;
-      z-index:1;
     }
 
     .action-row{
-      position:relative;
-      z-index:1;
       display:flex;
       gap:12px;
       flex-wrap:wrap;
@@ -359,7 +272,7 @@
       cursor:pointer;
       border-radius:24px;
       min-height:68px;
-      padding:16px 30px;
+      padding:16px 32px;
       font-size:24px;
       font-weight:900;
       color:white;
@@ -367,7 +280,7 @@
       box-shadow:
         0 20px 44px rgba(255,77,184,.22),
         0 0 40px rgba(255,159,67,.18);
-      min-width:290px;
+      min-width:300px;
     }
 
     .action-btn{
@@ -381,7 +294,7 @@
       color:white;
       background:rgba(255,255,255,.07);
       min-width:132px;
-      backdrop-filter:blur(6px);
+      backdrop-filter:blur(8px);
     }
 
     .hidden-export{
@@ -392,75 +305,67 @@
     }
 
     @media (max-width:1080px){
-      .digit-picks{grid-template-columns:repeat(3,minmax(0,1fr))}
-      .result-card{min-height:360px}
+      .mode-row{grid-template-columns:repeat(3,minmax(0,1fr))}
     }
 
     @media (max-width:700px){
-      .app{padding:12px 10px 18px}
-      .digit-picks{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .app{padding:14px 10px 18px}
+      .mode-row{grid-template-columns:repeat(2,minmax(0,1fr))}
       .spin-btn,.action-btn{width:100%}
       .action-row{justify-content:stretch}
-      .result-card{min-height:300px;padding:22px 16px}
+      .hero-stage{min-height:52vh}
+      .stage-center{min-height:46vh}
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <section class="hero">
-      <div class="hero-top">
-        <div>
-          <div class="brand">
-            <div class="brand-logo">🎲</div>
-            <div>
-              <div class="kicker">Random 100% • ไม่เกี่ยวกับ AI</div>
-              <h1>Lucky Drop</h1>
-            </div>
+    <div class="topbar">
+      <div>
+        <div class="brand">
+          <div class="brand-logo">🎲</div>
+          <div>
+            <div class="kicker">Random 100% • ไม่เกี่ยวกับ AI</div>
+            <h1>Lucky Drop</h1>
           </div>
-          <p class="sub">
-            เลือกจำนวนหลักแล้วกดสุ่มได้ทันที ใช้กับเลขนำโชค หวยไทย หวยลาว หวยฮานอย
-            หรือส่งลิงก์ให้ลูกค้าเล่นแบบหน้าเดียวจบ
-          </p>
         </div>
+        <p class="sub">
+          เลือกจำนวนหลักแล้วกดสุ่มได้ทันที ใช้กับเลขนำโชค หวยไทย หวยลาว หวยฮานอย
+          หรือส่งลิงก์ให้ลูกค้าเล่นแบบหน้าเดียวจบ
+        </p>
+      </div>
 
-        <div class="hero-actions">
-          <a class="btn ghost" href="./index.html">← กลับหน้า AI</a>
-        </div>
+      <div class="top-actions">
+        <a class="btn" href="./index.html">← กลับหน้า AI</a>
+      </div>
+    </div>
+
+    <div class="mode-row">
+      <button class="mode-btn" data-digit="1">1 ตัว</button>
+      <button class="mode-btn active" data-digit="2">2 ตัว</button>
+      <button class="mode-btn" data-digit="3">3 ตัว</button>
+      <button class="mode-btn" data-digit="4">4 ตัว</button>
+      <button class="mode-btn" data-digit="5">5 ตัว</button>
+      <button class="mode-btn" data-digit="6">6 ตัว</button>
+    </div>
+
+    <section class="hero-stage">
+      <div class="stage-center" id="captureArea">
+        <div class="number-label" id="numberLabel">เลขนำโชค 2 ตัว</div>
+        <div class="number-glow"></div>
+        <div class="result-number" id="resultNumber">--</div>
+        <div class="result-meta" id="resultMeta">กดสุ่มเพื่อเริ่ม</div>
       </div>
     </section>
 
-    <section class="stage">
-      <div class="stage-head">
-        <div class="pill">Lucky Random • Full Random</div>
-        <div class="pill" id="currentModePill">ตอนนี้เลือก: 2 ตัว</div>
-      </div>
-
-      <div class="digit-picks">
-        <button class="digit-btn" data-digit="1">1 ตัว</button>
-        <button class="digit-btn active" data-digit="2">2 ตัว</button>
-        <button class="digit-btn" data-digit="3">3 ตัว</button>
-        <button class="digit-btn" data-digit="4">4 ตัว</button>
-        <button class="digit-btn" data-digit="5">5 ตัว</button>
-        <button class="digit-btn" data-digit="6">6 ตัว</button>
-      </div>
-
-      <div class="result-wrap">
-        <div class="result-card" id="captureArea">
-          <div class="result-label">เลขนำโชคของคุณ</div>
-          <div class="result-number" id="resultNumber">--</div>
-          <div class="result-meta" id="resultMeta">กดสุ่มเพื่อเริ่ม</div>
-        </div>
-      </div>
-
-      <div class="action-row">
-        <button class="spin-btn" id="spinBtn">🎲 สุ่มเลย</button>
-        <button class="action-btn" id="copyBtn">Copy</button>
-        <button class="action-btn" id="saveStoryBtn">Save Story</button>
-        <button class="action-btn" id="saveSquareBtn">Save Square</button>
-        <button class="action-btn" id="shareBtn">Share</button>
-        <button class="action-btn" id="lineBtn">LINE</button>
-      </div>
-    </section>
+    <div class="action-row">
+      <button class="spin-btn" id="spinBtn">🎲 สุ่มเลย</button>
+      <button class="action-btn" id="copyBtn">Copy</button>
+      <button class="action-btn" id="saveStoryBtn">Save Story</button>
+      <button class="action-btn" id="saveSquareBtn">Save Square</button>
+      <button class="action-btn" id="shareBtn">Share</button>
+      <button class="action-btn" id="lineBtn">LINE</button>
+    </div>
   </div>
 
   <div id="exportRoot" class="hidden-export"></div>
@@ -473,7 +378,7 @@
 
     const resultNumber = document.getElementById("resultNumber");
     const resultMeta = document.getElementById("resultMeta");
-    const currentModePill = document.getElementById("currentModePill");
+    const numberLabel = document.getElementById("numberLabel");
     const spinBtn = document.getElementById("spinBtn");
 
     function randomInt(maxExclusive) {
@@ -492,40 +397,33 @@
 
     function getFontSizePx(digit, width) {
       const rules = {
-        1: Math.min(width * 0.42, 280),
-        2: Math.min(width * 0.35, 245),
-        3: Math.min(width * 0.28, 202),
-        4: Math.min(width * 0.225, 166),
-        5: Math.min(width * 0.185, 136),
-        6: Math.min(width * 0.155, 116)
+        1: Math.min(width * 0.36, 290),
+        2: Math.min(width * 0.31, 250),
+        3: Math.min(width * 0.25, 212),
+        4: Math.min(width * 0.205, 176),
+        5: Math.min(width * 0.17, 144),
+        6: Math.min(width * 0.145, 124)
       };
       return rules[digit] || 100;
     }
 
     function updateResultFont() {
-      const boxWidth = resultNumber.parentElement.clientWidth || 700;
+      const boxWidth = resultNumber.parentElement.clientWidth || 900;
       const size = getFontSizePx(selectedDigit, boxWidth);
       resultNumber.style.fontSize = `${size}px`;
-      resultNumber.style.letterSpacing = selectedDigit >= 5 ? ".01em" : ".03em";
+      resultNumber.style.letterSpacing = selectedDigit >= 5 ? ".012em" : ".03em";
     }
 
     function updateModeUI() {
-      document.querySelectorAll(".digit-btn").forEach(btn => {
+      document.querySelectorAll(".mode-btn").forEach(btn => {
         btn.classList.toggle("active", Number(btn.dataset.digit) === selectedDigit);
       });
-      currentModePill.textContent = `ตอนนี้เลือก: ${selectedDigit} ตัว`;
+      numberLabel.textContent = `เลขนำโชค ${selectedDigit} ตัว`;
       updateResultFont();
     }
 
-    function endFlash() {
-      resultNumber.classList.add("flash");
-      resultNumber.style.transform = "scale(1.075)";
-      setTimeout(() => {
-        resultNumber.style.transform = "scale(1)";
-      }, 160);
-      setTimeout(() => {
-        resultNumber.classList.remove("flash");
-      }, 620);
+    function rollingValue(max, digit) {
+      return padNumber(randomInt(max), digit);
     }
 
     function setRollingVisual(scale, opacity) {
@@ -533,8 +431,12 @@
       resultNumber.style.opacity = opacity;
     }
 
-    function rollingValue(max, digit) {
-      return padNumber(randomInt(max), digit);
+    function finalPop() {
+      resultNumber.classList.add("final-pop");
+      setTimeout(() => {
+        resultNumber.classList.remove("final-pop");
+        resultNumber.style.transform = "scale(1)";
+      }, 230);
     }
 
     function spin() {
@@ -556,11 +458,10 @@
 
       function runPhase1() {
         resultNumber.textContent = rollingValue(max, selectedDigit);
-        setRollingVisual(1.045, ".93");
+        setRollingVisual(1.05, ".92");
         phase1++;
-
-        if (phase1 < 24) {
-          setTimeout(runPhase1, 32);
+        if (phase1 < 26) {
+          setTimeout(runPhase1, 28);
         } else {
           runPhase2();
         }
@@ -568,11 +469,10 @@
 
       function runPhase2() {
         resultNumber.textContent = rollingValue(max, selectedDigit);
-        setRollingVisual(1.028, ".97");
+        setRollingVisual(1.028, ".96");
         phase2++;
-
-        if (phase2 < 10) {
-          setTimeout(runPhase2, 66);
+        if (phase2 < 12) {
+          setTimeout(runPhase2, 56);
         } else {
           runPhase3();
         }
@@ -580,18 +480,17 @@
 
       function runPhase3() {
         resultNumber.textContent = rollingValue(max, selectedDigit);
-        setRollingVisual(1.012, ".99");
+        setRollingVisual(1.014, ".99");
         phase3++;
-
-        if (phase3 < 5) {
-          setTimeout(runPhase3, 120 + (phase3 * 30));
+        if (phase3 < 6) {
+          setTimeout(runPhase3, 110 + (phase3 * 34));
         } else {
           resultNumber.textContent = finalValue;
           resultNumber.style.opacity = "1";
           resultNumber.style.transform = "scale(1)";
           currentValue = finalValue;
           resultMeta.textContent = `ตอนนี้เลือก: ${selectedDigit} ตัว`;
-          endFlash();
+          finalPop();
           isSpinning = false;
           spinBtn.disabled = false;
           spinBtn.style.opacity = "1";
@@ -623,67 +522,110 @@
         <div id="exportCard" style="
           width:1080px;
           height:${isStory ? "1920px" : "1080px"};
-          padding:56px;
-          border-radius:42px;
-          color:#ffffff;
+          padding:${isStory ? "64px 56px" : "54px"};
+          color:#fff8ef;
           font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
           background:
-            radial-gradient(circle at 12% 15%, rgba(99,169,255,.24), transparent 20%),
-            radial-gradient(circle at 88% 16%, rgba(255,77,184,.20), transparent 24%),
-            radial-gradient(circle at 50% 88%, rgba(45,226,255,.14), transparent 20%),
-            linear-gradient(180deg,#060816,#0c1226);
+            radial-gradient(circle at 12% 18%, rgba(99,169,255,.22), transparent 18%),
+            radial-gradient(circle at 88% 16%, rgba(255,77,184,.18), transparent 20%),
+            radial-gradient(circle at 50% 88%, rgba(45,226,255,.12), transparent 18%),
+            linear-gradient(180deg,#040714,#090f22);
+          position:relative;
+          overflow:hidden;
           display:flex;
           flex-direction:column;
           justify-content:space-between;
-          border:1px solid rgba(255,255,255,.08);
-          overflow:hidden;
-          position:relative;
+          border-radius:0;
         ">
           <div style="
-            position:absolute;right:-100px;top:-100px;width:320px;height:320px;border-radius:50%;
-            background:radial-gradient(circle, rgba(255,216,111,.20), transparent 70%);
+            position:absolute;left:50%;bottom:-130px;transform:translateX(-50%);
+            width:520px;height:520px;border-radius:50%;
+            background:radial-gradient(circle, rgba(45,226,255,.15), transparent 70%);
+            filter:blur(10px);
           "></div>
 
-          <div style="position:relative;z-index:1;">
+          <div style="
+            position:absolute;left:-140px;top:140px;
+            width:340px;height:340px;border-radius:50%;
+            background:radial-gradient(circle, rgba(99,169,255,.18), transparent 70%);
+          "></div>
+
+          <div style="
+            position:absolute;right:-140px;top:120px;
+            width:360px;height:360px;border-radius:50%;
+            background:radial-gradient(circle, rgba(255,77,184,.16), transparent 70%);
+          "></div>
+
+          <div style="position:relative;z-index:2;">
             <div style="display:flex;align-items:center;gap:16px;">
               <div style="
                 width:88px;height:88px;border-radius:26px;display:grid;place-items:center;
-                background:linear-gradient(135deg,#ffd86f,#ffb84d);color:#111827;font-size:38px;font-weight:900;
+                background:linear-gradient(135deg,#ffd86f,#ffb84d);
+                color:#111827;font-size:38px;font-weight:900;
+                box-shadow:0 14px 34px rgba(255,216,111,.20);
               ">🎲</div>
               <div>
-                <div style="font-size:24px;color:rgba(255,255,255,.78);font-weight:900;">Random 100% • ไม่เกี่ยวกับ AI</div>
-                <div style="font-size:72px;font-weight:900;line-height:1;margin-top:6px;">${APP_NAME}</div>
+                <div style="font-size:24px;color:rgba(255,255,255,.80);font-weight:900;">Random 100% • ไม่เกี่ยวกับ AI</div>
+                <div style="font-size:74px;font-weight:900;line-height:1;margin-top:4px;">Lucky Drop</div>
               </div>
             </div>
           </div>
 
           <div style="
-            position:relative;z-index:1;
-            display:flex;align-items:center;justify-content:center;flex-direction:column;
-            border-radius:38px;
-            padding:40px 28px;
-            background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-            border:1px solid rgba(255,255,255,.12);
-            min-height:${isStory ? "860px" : "520px"};
+            position:relative;z-index:2;
+            display:flex;flex-direction:column;align-items:center;justify-content:center;
+            text-align:center;
+            flex:1;
+            padding:${isStory ? "80px 0 70px" : "40px 0 30px"};
           ">
-            <div style="font-size:28px;color:rgba(255,255,255,.84);font-weight:900;margin-bottom:24px;">เลขนำโชค ${selectedDigit} ตัว</div>
             <div style="
+              font-size:${isStory ? "34px" : "28px"};
+              color:rgba(255,255,255,.86);
+              font-weight:900;
+              margin-bottom:18px;
+            ">เลขนำโชค ${selectedDigit} ตัว</div>
+
+            <div style="
+              position:absolute;
+              width:${isStory ? "760px" : "680px"};
+              height:${isStory ? "250px" : "210px"};
+              border-radius:50%;
+              background:radial-gradient(circle, rgba(255,216,111,.18), transparent 72%);
+              filter:blur(18px);
+            "></div>
+
+            <div style="
+              position:relative;
+              z-index:3;
               font-weight:900;
               line-height:1;
-              letter-spacing:${selectedDigit >= 5 ? ".01em" : ".03em"};
+              letter-spacing:${selectedDigit >= 5 ? ".012em" : ".03em"};
               font-size:${isStory
-                ? (selectedDigit <= 2 ? "250px" : selectedDigit === 3 ? "210px" : selectedDigit === 4 ? "180px" : selectedDigit === 5 ? "145px" : "126px")
-                : (selectedDigit <= 2 ? "210px" : selectedDigit === 3 ? "185px" : selectedDigit === 4 ? "155px" : selectedDigit === 5 ? "128px" : "112px")
+                ? (selectedDigit === 1 ? "330px" :
+                   selectedDigit === 2 ? "290px" :
+                   selectedDigit === 3 ? "245px" :
+                   selectedDigit === 4 ? "205px" :
+                   selectedDigit === 5 ? "170px" : "148px")
+                : (selectedDigit === 1 ? "250px" :
+                   selectedDigit === 2 ? "220px" :
+                   selectedDigit === 3 ? "190px" :
+                   selectedDigit === 4 ? "158px" :
+                   selectedDigit === 5 ? "132px" : "116px")
               };
-              text-align:center;
+              color:#fff8ef;
+              background:linear-gradient(180deg,#fffefb,#ffe7bf 72%,#fffefb);
+              -webkit-background-clip:text;
+              -webkit-text-fill-color:transparent;
               white-space:nowrap;
-              color:#fff8ee;
-              text-shadow:0 0 18px rgba(255,255,255,.20), 0 0 40px rgba(255,216,111,.16), 0 18px 44px rgba(0,0,0,.32);
+              filter:
+                drop-shadow(0 4px 0 rgba(255,255,255,.05))
+                drop-shadow(0 18px 28px rgba(0,0,0,.32))
+                drop-shadow(0 0 20px rgba(255,216,111,.20));
             ">${currentValue}</div>
           </div>
 
-          <div style="position:relative;z-index:1;">
-            <div style="font-size:28px;font-weight:900;color:rgba(255,255,255,.86);">Lucky Random • Full Random</div>
+          <div style="position:relative;z-index:2;">
+            <div style="font-size:30px;font-weight:900;color:rgba(255,255,255,.90);">Lucky Random • Full Random</div>
             <div style="font-size:22px;color:rgba(255,255,255,.68);margin-top:10px;">${new Date().toLocaleDateString("th-TH")}</div>
           </div>
         </div>
@@ -745,7 +687,7 @@
       window.open(`https://line.me/R/msg/text/?${text}`, "_blank");
     }
 
-    document.querySelectorAll(".digit-btn").forEach(btn => {
+    document.querySelectorAll(".mode-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         if (isSpinning) return;
         selectedDigit = Number(btn.dataset.digit);
