@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lucky Drop AI Analysis</title>
+  <title>AI Analysis</title>
   <style>
     :root{
       --bg1:#030712;
@@ -29,6 +29,9 @@
       --green:#22c55e;
       --gold:#f4d06f;
       --pink:#ec4899;
+      --slate1:#334155;
+      --slate2:#1e293b;
+      --danger:#ef4444;
 
       --shadow:0 28px 70px rgba(0,0,0,.42);
     }
@@ -175,6 +178,7 @@
       box-shadow:0 10px 24px rgba(0,0,0,.18);
       min-height:50px;
       transition:transform .15s ease, opacity .15s ease, border-color .15s ease;
+      background:transparent;
     }
 
     .btn:hover{
@@ -200,7 +204,7 @@
     }
 
     .btn.secondary{
-      background:linear-gradient(135deg,#334155,#1e293b);
+      background:linear-gradient(135deg,var(--slate1),var(--slate2));
     }
 
     .btn.small{
@@ -324,9 +328,6 @@
       font-weight:800;
     }
 
-    .score-rank{opacity:.82}
-    .score-value{opacity:.92}
-
     .score-number{
       font-size:28px;
       line-height:1;
@@ -392,6 +393,11 @@
     .mini-chip.purple{
       background:rgba(139,92,246,.14);
       border-color:rgba(139,92,246,.20);
+    }
+
+    .mini-chip.red{
+      background:rgba(239,68,68,.14);
+      border-color:rgba(239,68,68,.20);
     }
 
     .bars{
@@ -526,6 +532,51 @@
       font-weight:800;
     }
 
+    .accuracy-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+      margin-top:12px;
+    }
+
+    .accuracy-badge{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      padding:14px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.03);
+    }
+
+    .accuracy-badge.hit{
+      background:rgba(34,197,94,.12);
+      border-color:rgba(34,197,94,.20);
+    }
+
+    .accuracy-badge.miss{
+      background:rgba(239,68,68,.12);
+      border-color:rgba(239,68,68,.20);
+    }
+
+    .accuracy-title{
+      font-size:13px;
+      color:#dbe7ff;
+      font-weight:800;
+    }
+
+    .accuracy-status{
+      font-size:24px;
+      font-weight:900;
+      color:#fff;
+    }
+
+    .accuracy-sub{
+      font-size:12px;
+      color:#d7e2f7;
+      opacity:.92;
+    }
+
     .empty{
       color:var(--muted);
       padding:8px 0;
@@ -539,6 +590,7 @@
       .grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}
       .grid-main,.grid-2{grid-template-columns:1fr}
       .search-grid{grid-template-columns:1fr}
+      .accuracy-grid{grid-template-columns:1fr}
     }
 
     @media (max-width:700px){
@@ -578,8 +630,7 @@
             </div>
           </div>
           <p class="sub">
-            หน้าวิเคราะห์เลขแยกจาก Lucky Drop อย่างชัดเจน ใช้ข้อมูลย้อนหลังและ scoring
-            เพื่อดูเลขเด่น แนวโน้ม และชุดเลขที่ระบบสร้างให้อัตโนมัติ
+            วิเคราะห์เลขจากข้อมูลย้อนหลัง แยก 2 ตัว / 3 ตัวบน / 3 ตัวล่าง พร้อม Hybrid และระบบวัดความแม่นจากงวดล่าสุด
           </p>
         </div>
 
@@ -589,8 +640,15 @@
           <button class="btn secondary" id="refreshBtn">Refresh Data</button>
           <button class="btn run" id="runBtn">Run AI</button>
           <button class="btn success" id="bundleBtn">Auto Generate ชุด</button>
+          <button class="btn secondary" id="accuracyBtn">Check Accuracy</button>
           <button class="btn secondary" id="copyBtn">Copy ชุดเลข</button>
         </div>
+      </div>
+
+      <div class="toolbar">
+        <button class="btn small primary active" data-mode="balanced">Balanced</button>
+        <button class="btn small secondary" data-mode="stable">Stable</button>
+        <button class="btn small secondary" data-mode="dynamic">Dynamic</button>
       </div>
 
       <div id="statusBox" class="status">กำลังเตรียมโหลดข้อมูล...</div>
@@ -639,6 +697,19 @@
           <button class="btn small primary" data-filter="bottom">3 ตัวล่าง</button>
         </div>
         <div class="analysis" id="filterInfo">ตอนนี้แสดง: ทั้งหมด</div>
+      </div></div>
+    </section>
+
+    <section class="grid-2">
+      <div class="card filter-block filter-all"><div class="card-inner">
+        <h2 class="section-title">AI Accuracy</h2>
+        <p class="section-sub">ทดสอบย้อนหลัง โดยเอางวดล่าสุดออก แล้วใช้ประวัติก่อนหน้าวิเคราะห์</p>
+        <div id="accuracyBox" class="analysis">กด Check Accuracy เพื่อดูผล</div>
+      </div></div>
+
+      <div class="card filter-block filter-all"><div class="card-inner">
+        <h2 class="section-title">Mode ปัจจุบัน</h2>
+        <div class="analysis" id="modeInfo">Balanced: สมดุลระหว่างความนิ่งและความไว</div>
       </div></div>
     </section>
 
@@ -779,6 +850,42 @@
   </div>
 
   <script>
+    const MODES = {
+      stable: {
+        label: "Stable",
+        desc: "เน้นความนิ่ง ข้อมูลใหม่มีผลน้อยกว่า",
+        recentWindow2D: 16,
+        recentWindow3D: 24,
+        weight2D: { total: 0.50, recent: 0.25, digit: 0.17, double: 0.08 },
+        weight3D: { total: 0.36, recent: 0.24, digit: 0.18, pair: 0.14, pattern: 0.08 }
+      },
+      balanced: {
+        label: "Balanced",
+        desc: "สมดุลระหว่างความนิ่งและความไว",
+        recentWindow2D: 12,
+        recentWindow3D: 18,
+        weight2D: { total: 0.42, recent: 0.33, digit: 0.17, double: 0.08 },
+        weight3D: { total: 0.30, recent: 0.28, digit: 0.18, pair: 0.16, pattern: 0.08 }
+      },
+      dynamic: {
+        label: "Dynamic",
+        desc: "ตอบสนองกับงวดล่าสุดไวกว่า",
+        recentWindow2D: 8,
+        recentWindow3D: 12,
+        weight2D: { total: 0.35, recent: 0.40, digit: 0.17, double: 0.08 },
+        weight3D: { total: 0.26, recent: 0.34, digit: 0.18, pair: 0.14, pattern: 0.08 }
+      }
+    };
+
+    const HYBRID = {
+      combined: 0.40,
+      target: 0.50,
+      opposite: 0.10
+    };
+
+    let currentMode = "balanced";
+    let currentFilter = "all";
+
     let records = [];
     let allTop3 = [];
     let allBottom3 = [];
@@ -788,7 +895,6 @@
     let cachedHybridTop = [];
     let cachedHybridBottom = [];
     let lastBundleText = "";
-    let currentFilter = "all";
 
     function normalizeNumber(value, size) {
       const cleaned = String(value || "").replace(/[^\d]/g, "").trim();
@@ -810,25 +916,13 @@
       return map;
     }
 
-    function getLastNRecords(n) {
-      return [...records].sort(sortDateDesc).slice(0, n);
+    function getLastNRecords(sourceRecords, n) {
+      return [...sourceRecords].sort(sortDateDesc).slice(0, n);
     }
 
-    function getLastNTop3(n) {
-      return getLastNRecords(n).flatMap(r => r.top3);
-    }
-
-    function getLastNBottom3(n) {
-      return getLastNRecords(n).flatMap(r => r.bottom3);
-    }
-
-    function getLastNCombined3(n) {
-      return getLastNRecords(n).flatMap(r => r.last3);
-    }
-
-    function digitFreq2() {
+    function digitFreq2(sourceRecords) {
       const map = {};
-      records.forEach(r => r.last2.split("").forEach(d => map[d] = (map[d] || 0) + 1));
+      sourceRecords.forEach(r => r.last2.split("").forEach(d => map[d] = (map[d] || 0) + 1));
       return map;
     }
 
@@ -909,6 +1003,7 @@
 
         statusBox.textContent = `โหลดข้อมูลสำเร็จ ${records.length} งวด | top3 ${allTop3.length} | bottom3 ${allBottom3.length}`;
         render();
+        updateModeInfo();
       } catch (error) {
         statusBox.innerHTML = '<span class="error">โหลด data.json ไม่สำเร็จ</span>';
         records = [];
@@ -919,11 +1014,12 @@
       }
     }
 
-    function calculate2Scores() {
-      const allFreq = countBy(records, r => r.last2);
-      const recent12 = getLastNRecords(12);
-      const recentFreq = countBy(recent12, r => r.last2);
-      const digitFreq = digitFreq2();
+    function calculate2Scores(sourceRecords) {
+      const cfg = MODES[currentMode];
+      const allFreq = countBy(sourceRecords, r => r.last2);
+      const recentRecords = getLastNRecords(sourceRecords, cfg.recentWindow2D);
+      const recentFreq = countBy(recentRecords, r => r.last2);
+      const digitFreq = digitFreq2(sourceRecords);
 
       const maxAll = Math.max(...Object.values(allFreq), 1);
       const maxRecent = Math.max(...Object.values(recentFreq), 1);
@@ -932,14 +1028,17 @@
       return Object.keys(allFreq).map(num => {
         const totalScore = (allFreq[num] || 0) / maxAll;
         const recentScore = (recentFreq[num] || 0) / maxRecent;
-        const digitScore = (((digitFreq[num[0]] || 0) / maxDigit) + ((digitFreq[num[1]] || 0) / maxDigit)) / 2;
+        const digitScore = (
+          ((digitFreq[num[0]] || 0) / maxDigit) +
+          ((digitFreq[num[1]] || 0) / maxDigit)
+        ) / 2;
         const doubleBonus = isDouble2(num) ? 1 : 0;
 
         const finalScore =
-          (totalScore * 0.35) +
-          (recentScore * 0.35) +
-          (digitScore * 0.20) +
-          (doubleBonus * 0.10);
+          (totalScore * cfg.weight2D.total) +
+          (recentScore * cfg.weight2D.recent) +
+          (digitScore * cfg.weight2D.digit) +
+          (doubleBonus * cfg.weight2D.double);
 
         return {
           number: num,
@@ -949,11 +1048,12 @@
       }).sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
     }
 
-    function calculate3ScoresFromList(list, recentList) {
+    function calculate3ScoresFromList(list, recentWindow) {
       if (!list.length) return [];
 
+      const cfg = MODES[currentMode];
       const allFreq = countBy(list, x => x);
-      const recentFreq = countBy(recentList, x => x);
+      const recentFreq = countBy(list.slice(-recentWindow), x => x);
       const digitFreq = digitFreq3(list);
       const pairFreq = pairFreq3(list);
 
@@ -965,26 +1065,29 @@
       return Object.keys(allFreq).map(num => {
         const totalScore = (allFreq[num] || 0) / maxAll;
         const recentScore = (recentFreq[num] || 0) / maxRecent;
-        const digitScore =
-          (((digitFreq[num[0]] || 0) / maxDigit) +
-           ((digitFreq[num[1]] || 0) / maxDigit) +
-           ((digitFreq[num[2]] || 0) / maxDigit)) / 3;
 
-        const pairScore =
-          (((pairFreq[num.slice(0,2)] || 0) / maxPair) +
-           ((pairFreq[num.slice(1,3)] || 0) / maxPair)) / 2;
+        const digitScore = (
+          ((digitFreq[num[0]] || 0) / maxDigit) +
+          ((digitFreq[num[1]] || 0) / maxDigit) +
+          ((digitFreq[num[2]] || 0) / maxDigit)
+        ) / 3;
+
+        const pairScore = (
+          ((pairFreq[num.slice(0, 2)] || 0) / maxPair) +
+          ((pairFreq[num.slice(1, 3)] || 0) / maxPair)
+        ) / 2;
 
         const pattern = hasPattern3(num);
-        const doubleBonus = pattern.hasDouble ? 0.08 : 0;
-        const sameBonus = pattern.allSame ? 0.05 : 0;
+        let patternScore = 0;
+        if (pattern.hasDouble) patternScore += 0.05;
+        if (pattern.allSame) patternScore += 0.03;
 
         const finalScore =
-          (totalScore * 0.34) +
-          (recentScore * 0.26) +
-          (digitScore * 0.18) +
-          (pairScore * 0.17) +
-          doubleBonus +
-          sameBonus;
+          (totalScore * cfg.weight3D.total) +
+          (recentScore * cfg.weight3D.recent) +
+          (digitScore * cfg.weight3D.digit) +
+          (pairScore * cfg.weight3D.pair) +
+          (patternScore * cfg.weight3D.pattern);
 
         return {
           number: num,
@@ -1008,9 +1111,14 @@
         const target = targetMap[number] || 0;
         const opposite = oppositeMap[number] || 0;
 
+        const finalScore =
+          (base * HYBRID.combined) +
+          (target * HYBRID.target) +
+          (opposite * HYBRID.opposite);
+
         return {
           number,
-          score: Number(((base * 0.45) + (target * 0.45) + (opposite * 0.10)).toFixed(2))
+          score: Number(finalScore.toFixed(2))
         };
       }).sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
     }
@@ -1038,8 +1146,8 @@
       return `
         <div class="score-chip ${colorClass}">
           <div class="score-top">
-            <span class="score-rank">#${index + 1}</span>
-            <span class="score-value">${item.score}%</span>
+            <span>#${index + 1}</span>
+            <span>${item.score}%</span>
           </div>
           <div class="score-number">${item.number}</div>
           <div class="score-sub">${subText}</div>
@@ -1107,7 +1215,7 @@
       const top3Bottom = cachedHybridBottom.slice(0, 3).map(x => x.number).join(", ") || "-";
 
       document.getElementById("summaryBox").textContent =
-`สรุปงวดนี้:
+`โหมดปัจจุบัน: ${MODES[currentMode].label}
 - 2 ตัวเด่น: ${top2}
 - 3 ตัวบนเด่น: ${top3Top}
 - 3 ตัวล่างเด่น: ${top3Bottom}
@@ -1117,6 +1225,10 @@
 - ถ้าจะเน้น 3 ตัวบน ให้ดูกล่อง 3 ตัวบนเด่น
 - ถ้าจะเน้น 3 ตัวล่าง ให้ดูกล่อง 3 ตัวล่างเด่น
 - ถ้าเลขไปซ้ำหลายกล่อง ถือว่าแรงในระบบ`;
+    }
+
+    function updateModeInfo() {
+      document.getElementById("modeInfo").textContent = `${MODES[currentMode].label}: ${MODES[currentMode].desc}`;
     }
 
     function renderMonthlyChart() {
@@ -1191,11 +1303,15 @@
     }
 
     function runAI() {
-      cached2Scores = calculate2Scores();
+      if (!records.length) return;
 
-      const combinedScores = calculate3ScoresFromList(allCombined3, getLastNCombined3(20));
-      const topScores = calculate3ScoresFromList(allTop3, getLastNTop3(20));
-      const bottomScores = calculate3ScoresFromList(allBottom3, getLastNBottom3(20));
+      const cfg = MODES[currentMode];
+
+      cached2Scores = calculate2Scores(records);
+
+      const combinedScores = calculate3ScoresFromList(allCombined3, cfg.recentWindow3D);
+      const topScores = calculate3ScoresFromList(allTop3, cfg.recentWindow3D);
+      const bottomScores = calculate3ScoresFromList(allBottom3, cfg.recentWindow3D);
 
       cachedHybridTop = mergeHybridScores(combinedScores, topScores, bottomScores);
       cachedHybridBottom = mergeHybridScores(combinedScores, bottomScores, topScores);
@@ -1232,13 +1348,11 @@
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
       document.getElementById("predictInsight").textContent =
-`Hybrid บน/ล่าง ทำงานแบบนี้:
-- AI รวม = ใช้เพื่อความนิ่ง
-- AI บน = โฟกัส top3
-- AI ล่าง = โฟกัส bottom3
-
-Final score บน = รวม 45% + บน 45% + ล่าง 10%
-Final score ล่าง = รวม 45% + ล่าง 45% + บน 10%`;
+`โหมด ${MODES[currentMode].label}
+- 2 ตัว ใช้ total + recent + digit + double
+- 3 ตัว ใช้ total + recent + digit + pair + pattern
+- Hybrid บน = รวม 40% + บน 50% + ล่าง 10%
+- Hybrid ล่าง = รวม 40% + ล่าง 50% + บน 10%`;
 
       document.getElementById("analysisBox").textContent =
 `จากข้อมูลทั้งหมด ${records.length} งวด
@@ -1249,16 +1363,15 @@ Top 2 ตัว: ${cached2Scores.slice(0, 5).map(x => x.number).join(", ")}
 Top 3 ตัวบน: ${cachedHybridTop.slice(0, 5).map(x => x.number).join(", ")}
 Top 3 ตัวล่าง: ${cachedHybridBottom.slice(0, 5).map(x => x.number).join(", ")}
 
-ข้อดีของระบบนี้:
-- แยกบน/ล่างชัด
-- อ่านผลได้เร็ว
-- ใช้ดูแนวโน้มได้สะดวก`;
+โหมดวิเคราะห์: ${MODES[currentMode].label}
+${MODES[currentMode].desc}`;
 
       renderBars("bars2", cached2Scores.slice(0, 10).map(x => ({ label: x.number, value: x.score })));
       renderBars("barsTop3", cachedHybridTop.slice(0, 10).map(x => ({ label: x.number, value: x.score })));
       renderBars("barsBottom3", cachedHybridBottom.slice(0, 10).map(x => ({ label: x.number, value: x.score })));
 
       updateSummaryBox();
+      updateModeInfo();
       applyFilter(currentFilter);
       renderMonthlyChart();
       renderTable();
@@ -1288,7 +1401,8 @@ Top 3 ตัวล่าง: ${cachedHybridBottom.slice(0, 5).map(x => x.number)
         bottomSet.map((x, i) => plainChip("ล่าง", i, x, "pink")).join("");
 
       lastBundleText =
-`2 ตัวเด่น: ${twoMain.join(", ")}
+`Mode: ${MODES[currentMode].label}
+2 ตัวเด่น: ${twoMain.join(", ")}
 2 ตัวรอง: ${twoSub.join(", ")}
 3 ตัวบน: ${topSet.join(", ")}
 3 ตัวล่าง: ${bottomSet.join(", ")}`;
@@ -1313,6 +1427,71 @@ Top 3 ตัวล่าง: ${cachedHybridBottom.slice(0, 5).map(x => x.number)
       } catch (error) {
         alert("คัดลอกไม่สำเร็จ ลองกดค้างเพื่อ copy ด้วยตัวเอง");
       }
+    }
+
+    function runAccuracy() {
+      if (records.length < 10) {
+        document.getElementById("accuracyBox").innerHTML = "ข้อมูลน้อยเกินไปสำหรับการวัดความแม่น";
+        return;
+      }
+
+      const history = records.slice(0, -1);
+      const actual = records[records.length - 1];
+      const cfg = MODES[currentMode];
+
+      const histTop3 = history.flatMap(r => r.top3);
+      const histBottom3 = history.flatMap(r => r.bottom3);
+      const histCombined3 = history.flatMap(r => r.last3);
+
+      const predict2 = calculate2Scores(history).slice(0, 5).map(x => x.number);
+
+      const histCombinedScores = calculate3ScoresFromList(histCombined3, cfg.recentWindow3D);
+      const histTopScores = calculate3ScoresFromList(histTop3, cfg.recentWindow3D);
+      const histBottomScores = calculate3ScoresFromList(histBottom3, cfg.recentWindow3D);
+
+      const predictTop = mergeHybridScores(histCombinedScores, histTopScores, histBottomScores)
+        .slice(0, 5).map(x => x.number);
+
+      const predictBottom = mergeHybridScores(histCombinedScores, histBottomScores, histTopScores)
+        .slice(0, 5).map(x => x.number);
+
+      const hit2 = predict2.includes(actual.last2);
+      const hitTop = actual.top3.some(x => predictTop.includes(x));
+      const hitBottom = actual.bottom3.some(x => predictBottom.includes(x));
+
+      document.getElementById("accuracyBox").innerHTML = `
+<div class="analysis">
+งวดที่ใช้ตรวจ: ${actual.date}
+ผลจริง:
+- 2 ตัว: ${actual.last2}
+- 3 ตัวบน: ${actual.top3.join(", ") || "-"}
+- 3 ตัวล่าง: ${actual.bottom3.join(", ") || "-"}
+
+ชุดที่ AI ให้ก่อนงวดออก:
+- 2 ตัว: ${predict2.join(", ")}
+- 3 ตัวบน: ${predictTop.join(", ")}
+- 3 ตัวล่าง: ${predictBottom.join(", ")}
+
+<div class="accuracy-grid">
+  <div class="accuracy-badge ${hit2 ? "hit" : "miss"}">
+    <div class="accuracy-title">2 ตัว</div>
+    <div class="accuracy-status">${hit2 ? "✅ เข้า" : "❌ ไม่เข้า"}</div>
+    <div class="accuracy-sub">ผลจริง ${actual.last2}</div>
+  </div>
+
+  <div class="accuracy-badge ${hitTop ? "hit" : "miss"}">
+    <div class="accuracy-title">3 ตัวบน</div>
+    <div class="accuracy-status">${hitTop ? "✅ เข้า" : "❌ ไม่เข้า"}</div>
+    <div class="accuracy-sub">ผลจริง ${actual.top3.join(", ") || "-"}</div>
+  </div>
+
+  <div class="accuracy-badge ${hitBottom ? "hit" : "miss"}">
+    <div class="accuracy-title">3 ตัวล่าง</div>
+    <div class="accuracy-status">${hitBottom ? "✅ เข้า" : "❌ ไม่เข้า"}</div>
+    <div class="accuracy-sub">ผลจริง ${actual.bottom3.join(", ") || "-"}</div>
+  </div>
+</div>
+</div>`;
     }
 
     function applyFilter(mode) {
@@ -1347,21 +1526,43 @@ Top 3 ตัวล่าง: ${cachedHybridBottom.slice(0, 5).map(x => x.number)
       document.getElementById("filterInfo").textContent = `ตอนนี้แสดง: ${labelMap[mode] || "ทั้งหมด"}`;
     }
 
+    function setMode(mode) {
+      currentMode = mode;
+
+      document.querySelectorAll("[data-mode]").forEach(btn => {
+        btn.classList.remove("primary", "secondary", "active");
+        if (btn.dataset.mode === mode) {
+          btn.classList.add("primary", "active");
+        } else {
+          btn.classList.add("secondary");
+        }
+      });
+
+      updateModeInfo();
+      if (records.length) runAI();
+    }
+
     function render() {
       renderMonthlyChart();
       renderTable();
       applyFilter(currentFilter);
+      updateModeInfo();
     }
 
     document.getElementById("refreshBtn").addEventListener("click", loadData);
     document.getElementById("runBtn").addEventListener("click", runAI);
     document.getElementById("bundleBtn").addEventListener("click", generateBundles);
     document.getElementById("copyBtn").addEventListener("click", copyBundles);
+    document.getElementById("accuracyBtn").addEventListener("click", runAccuracy);
     document.getElementById("searchInput").addEventListener("input", renderTable);
     document.getElementById("sortSelect").addEventListener("change", renderTable);
 
     document.querySelectorAll("[data-filter]").forEach(btn => {
       btn.addEventListener("click", () => applyFilter(btn.dataset.filter));
+    });
+
+    document.querySelectorAll("[data-mode]").forEach(btn => {
+      btn.addEventListener("click", () => setMode(btn.dataset.mode));
     });
 
     loadData();
