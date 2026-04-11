@@ -3,131 +3,123 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>สุ่มเฮง</title>
+  <title>Lucky Drop</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root{
-      --bg:#050816;
-      --bg2:#0d1631;
-      --text:#f8fbff;
-      --muted:#a9bdd8;
-      --line:rgba(255,255,255,.10);
-      --glass:rgba(255,255,255,.08);
-      --glass2:rgba(255,255,255,.06);
-      --shadow:0 30px 80px rgba(0,0,0,.45);
+      --bg:#070b16;
+      --bg2:#0d1426;
+      --panel:rgba(15,22,40,.82);
+      --line:rgba(255,255,255,.09);
+      --text:#f8fafc;
+      --muted:#a5b4cc;
       --gold:#f8d56b;
-      --pink:#ff67c8;
-      --blue:#63a4ff;
-      --cyan:#5eead4;
-      --violet:#8b5cf6;
+      --pink:#ec4899;
+      --blue:#60a5fa;
+      --cyan:#22d3ee;
       --orange:#fb923c;
+      --shadow:0 30px 80px rgba(0,0,0,.42);
     }
 
     *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
     body{
-      margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-      color:var(--text);
       min-height:100vh;
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
       background:
-        radial-gradient(circle at 20% 20%, rgba(99,164,255,.18), transparent 22%),
-        radial-gradient(circle at 80% 20%, rgba(255,103,200,.16), transparent 24%),
-        radial-gradient(circle at 50% 80%, rgba(94,234,212,.12), transparent 26%),
-        linear-gradient(180deg, var(--bg), var(--bg2));
-      overflow-x:hidden;
+        radial-gradient(circle at 15% 20%, rgba(96,165,250,.18), transparent 25%),
+        radial-gradient(circle at 85% 18%, rgba(236,72,153,.16), transparent 28%),
+        radial-gradient(circle at 50% 85%, rgba(34,211,238,.12), transparent 26%),
+        linear-gradient(180deg,var(--bg),var(--bg2));
     }
 
-    .page{
+    .app{
       max-width:1280px;
       margin:0 auto;
-      padding:20px 14px 32px;
+      padding:18px 14px 28px;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+
+    .hero,.stage,.panel{
+      border:1px solid var(--line);
+      border-radius:32px;
+      background:var(--panel);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(16px);
     }
 
     .hero{
-      border:1px solid var(--line);
-      background:linear-gradient(135deg, rgba(99,164,255,.14), rgba(255,103,200,.08));
-      border-radius:32px;
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(16px);
+      padding:22px;
       position:relative;
       overflow:hidden;
-      padding:24px;
+      background:linear-gradient(135deg, rgba(96,165,250,.18), rgba(236,72,153,.14));
     }
 
-    .hero:before{
+    .hero::after{
       content:"";
       position:absolute;
-      right:-90px;
-      top:-90px;
-      width:260px;
-      height:260px;
+      right:-60px;
+      top:-60px;
+      width:220px;
+      height:220px;
       border-radius:50%;
-      background:radial-gradient(circle, rgba(248,213,107,.20), transparent 70%);
+      background:radial-gradient(circle, rgba(248,213,107,.22), transparent 70%);
       pointer-events:none;
     }
 
-    .hero:after{
-      content:"";
-      position:absolute;
-      left:-90px;
-      bottom:-90px;
-      width:240px;
-      height:240px;
-      border-radius:50%;
-      background:radial-gradient(circle, rgba(99,164,255,.16), transparent 70%);
-      pointer-events:none;
-    }
-
-    .row{
+    .hero-top{
       display:flex;
-      gap:16px;
-      flex-wrap:wrap;
-      align-items:center;
+      align-items:flex-start;
       justify-content:space-between;
-      position:relative;
-      z-index:1;
+      gap:14px;
+      flex-wrap:wrap;
     }
 
     .brand{
       display:flex;
-      gap:14px;
       align-items:center;
+      gap:14px;
     }
 
-    .logo{
+    .brand-logo{
       width:62px;
       height:62px;
       border-radius:20px;
       display:grid;
       place-items:center;
+      background:linear-gradient(135deg,var(--gold),#ffb347);
+      color:#111827;
       font-size:28px;
       font-weight:900;
-      background:linear-gradient(135deg, var(--gold), #ffb454);
-      color:#111827;
-      box-shadow:0 18px 40px rgba(248,213,107,.18);
+      box-shadow:0 10px 24px rgba(248,213,107,.22);
+      flex:0 0 auto;
     }
 
-    .eyebrow{
-      color:var(--muted);
+    .kicker{
       font-size:13px;
-      margin-bottom:8px;
-      letter-spacing:.3px;
+      color:#d9e4ff;
+      opacity:.85;
+      margin-bottom:6px;
+      font-weight:700;
     }
 
     h1{
       margin:0;
-      font-size:clamp(34px, 6vw, 72px);
-      line-height:1;
-      font-weight:900;
-      letter-spacing:.2px;
+      font-size:clamp(34px,6vw,72px);
+      line-height:.95;
+      letter-spacing:-1px;
     }
 
     .sub{
       margin:12px 0 0;
-      max-width:760px;
+      max-width:840px;
       color:var(--muted);
-      font-size:15px;
-      line-height:1.7;
+      font-size:16px;
+      line-height:1.6;
     }
 
     .hero-actions{
@@ -140,264 +132,224 @@
       border:0;
       cursor:pointer;
       border-radius:16px;
-      padding:14px 18px;
-      color:#fff;
+      padding:13px 18px;
       font-weight:900;
-      font-size:14px;
-      box-shadow:0 12px 28px rgba(0,0,0,.18);
-      transition:transform .18s ease, opacity .18s ease;
+      color:white;
+      background:linear-gradient(135deg,#4f8cff,#7c3aed);
+      box-shadow:0 10px 24px rgba(79,140,255,.22);
+      font-size:15px;
     }
-    .btn:hover{transform:translateY(-1px)}
-    .btn.primary{background:linear-gradient(135deg, #f59e0b, #fb7185)}
-    .btn.secondary{background:linear-gradient(135deg, #4f8cff, #7c3aed)}
+
     .btn.ghost{
-      background:rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.09);
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow:none;
     }
 
-    .main-grid{
+    .stage{
+      min-height:58vh;
       display:grid;
-      grid-template-columns:1.05fr .95fr;
+      grid-template-rows:auto 1fr auto;
       gap:18px;
-      margin-top:18px;
-    }
-
-    .panel{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.05);
-      border-radius:30px;
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(16px);
+      padding:18px;
       position:relative;
       overflow:hidden;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(255,255,255,.06), transparent 20%),
+        radial-gradient(circle at 80% 25%, rgba(236,72,153,.08), transparent 24%),
+        linear-gradient(135deg, rgba(17,24,39,.96), rgba(25,35,65,.92));
     }
 
-    .panel-inner{
-      padding:22px;
+    .stage::before{
+      content:"";
+      position:absolute;
+      width:320px;
+      height:320px;
+      border-radius:50%;
+      right:-80px;
+      bottom:-80px;
+      background:radial-gradient(circle, rgba(96,165,250,.14), transparent 70%);
+      pointer-events:none;
+    }
+
+    .stage-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
       position:relative;
       z-index:1;
     }
 
-    .title{
-      margin:0 0 8px;
-      font-size:24px;
-      font-weight:900;
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 14px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:800;
+      color:#eaf2ff;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.08);
     }
 
-    .desc{
-      margin:0 0 18px;
-      color:var(--muted);
-      line-height:1.7;
-      font-size:14px;
-    }
-
-    .digit-grid{
+    .digit-picks{
       display:grid;
-      grid-template-columns:repeat(3, minmax(0, 1fr));
+      grid-template-columns:repeat(6,minmax(0,1fr));
       gap:12px;
+      position:relative;
+      z-index:1;
     }
 
     .digit-btn{
       border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.06);
-      color:#fff;
-      border-radius:18px;
-      min-height:72px;
-      font-size:20px;
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      border-radius:20px;
+      padding:16px 10px;
+      font-size:clamp(18px,2vw,26px);
       font-weight:900;
       cursor:pointer;
-      transition:all .18s ease;
+      transition:.18s ease;
+      min-height:78px;
     }
 
     .digit-btn.active{
-      background:linear-gradient(135deg, rgba(248,213,107,.28), rgba(255,103,200,.22));
-      border-color:rgba(248,213,107,.40);
-      box-shadow:0 16px 34px rgba(248,213,107,.10);
+      background:linear-gradient(135deg, rgba(248,213,107,.30), rgba(236,72,153,.24));
+      border-color:rgba(248,213,107,.38);
+      box-shadow:0 0 0 2px rgba(248,213,107,.10) inset, 0 18px 40px rgba(236,72,153,.16);
       transform:translateY(-1px);
     }
 
-    .control-box{
-      margin-top:18px;
+    .result-wrap{
+      position:relative;
+      z-index:1;
       display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-
-    .spin-big{
-      width:100%;
-      border:0;
-      cursor:pointer;
-      border-radius:22px;
-      padding:18px 20px;
-      font-size:20px;
-      font-weight:900;
-      color:#fff;
-      background:linear-gradient(135deg, #f59e0b, #fb7185, #7c3aed);
-      box-shadow:0 20px 44px rgba(124,58,237,.22);
-      transition:transform .18s ease, opacity .18s ease;
-    }
-
-    .spin-big:hover{transform:translateY(-1px)}
-
-    .result-stage{
-      min-height:100%;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
       align-items:center;
-      text-align:center;
+      justify-content:center;
+      min-height:240px;
+      padding:18px;
+    }
+
+    .result-card{
+      width:100%;
+      min-height:320px;
+      border-radius:34px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      padding:24px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+      overflow:hidden;
       position:relative;
     }
 
-    .glow-ring{
+    .result-card::after{
+      content:"";
       position:absolute;
-      width:360px;
-      height:360px;
+      inset:auto auto -30% -10%;
+      width:240px;
+      height:240px;
       border-radius:50%;
-      background:radial-gradient(circle, rgba(255,255,255,.15), transparent 66%);
-      filter:blur(10px);
+      background:radial-gradient(circle, rgba(255,255,255,.08), transparent 70%);
       pointer-events:none;
-      animation:floatPulse 3.4s ease-in-out infinite;
     }
 
-    .glow-ring.r2{
-      width:520px;
-      height:520px;
-      opacity:.55;
-      animation-duration:4.2s;
+    .result-label{
+      color:#d8e4ff;
+      font-size:clamp(15px,2vw,22px);
+      font-weight:800;
+      opacity:.92;
+      margin-bottom:14px;
+      text-align:center;
     }
 
-    @keyframes floatPulse{
-      0%,100%{transform:scale(1);opacity:.82}
-      50%{transform:scale(1.08);opacity:.55}
-    }
-
-    .result-top{
-      color:var(--muted);
-      font-size:16px;
-      font-weight:700;
-      margin-bottom:18px;
-      letter-spacing:.4px;
-    }
-
-    .number-wrap{
-      position:relative;
-      padding:20px 10px;
-    }
-
-    .number{
-      font-size:clamp(86px, 16vw, 220px);
+    .result-number{
+      width:100%;
+      text-align:center;
       line-height:1;
       font-weight:900;
-      letter-spacing:10px;
+      letter-spacing:.03em;
       text-shadow:
-        0 8px 20px rgba(0,0,0,.22),
-        0 0 16px rgba(255,255,255,.12),
-        0 0 34px rgba(99,164,255,.16);
-      transition:transform .18s ease;
+        0 0 14px rgba(255,255,255,.08),
+        0 12px 36px rgba(0,0,0,.28);
+      white-space:nowrap;
+      transform-origin:center center;
+      transition:transform .18s ease, opacity .18s ease;
+      font-variant-numeric:tabular-nums;
+      overflow:hidden;
     }
 
-    .number.flash{
-      animation:numberPop .28s ease;
-    }
-
-    @keyframes numberPop{
-      0%{transform:scale(.96);opacity:.85}
-      60%{transform:scale(1.04);opacity:1}
-      100%{transform:scale(1)}
-    }
-
-    .digit-meta{
-      margin-top:12px;
+    .result-meta{
+      margin-top:16px;
       color:var(--muted);
       font-size:15px;
       font-weight:700;
+      text-align:center;
     }
 
-    .actions{
-      margin-top:22px;
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:10px;
-      width:100%;
-      max-width:520px;
+    .spin-row{
+      position:relative;
+      z-index:1;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:center;
     }
 
-    .mini-btn{
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.08);
-      color:#fff;
-      border-radius:16px;
-      padding:14px 12px;
-      font-size:14px;
-      font-weight:900;
+    .spin-btn{
+      border:0;
       cursor:pointer;
-      transition:all .18s ease;
-    }
-
-    .mini-btn:hover{transform:translateY(-1px)}
-
-    .info-grid{
-      margin-top:18px;
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:18px;
-    }
-
-    .info-card{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.05);
       border-radius:24px;
+      min-height:64px;
+      padding:16px 26px;
+      font-size:22px;
+      font-weight:900;
+      color:white;
+      background:linear-gradient(135deg,var(--orange),var(--pink),#8b5cf6);
+      box-shadow:0 18px 40px rgba(236,72,153,.18);
+      min-width:260px;
+    }
+
+    .action-btn{
+      border:1px solid rgba(255,255,255,.10);
+      cursor:pointer;
+      border-radius:18px;
+      min-height:54px;
+      padding:12px 16px;
+      font-size:15px;
+      font-weight:900;
+      color:white;
+      background:rgba(255,255,255,.06);
+      min-width:132px;
+    }
+
+    .mini-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:16px;
+    }
+
+    .panel{
       padding:18px;
     }
 
-    .info-card h3{
+    .panel h3{
       margin:0 0 8px;
-      font-size:18px;
+      font-size:20px;
     }
 
-    .info-card p{
+    .panel p{
       margin:0;
       color:var(--muted);
-      line-height:1.7;
-      font-size:14px;
-    }
-
-    .history-box{
-      margin-top:18px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.05);
-      border-radius:24px;
-      padding:18px;
-    }
-
-    .history-title{
-      margin:0 0 12px;
-      font-size:18px;
-      font-weight:900;
-    }
-
-    .history-list{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-    }
-
-    .history-chip{
-      padding:10px 12px;
-      border-radius:999px;
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.10);
-      font-weight:800;
-      font-size:14px;
-      color:#f8fbff;
-    }
-
-    .foot-note{
-      margin-top:10px;
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.6;
+      line-height:1.65;
+      font-size:15px;
     }
 
     .hidden-export{
@@ -407,121 +359,109 @@
       z-index:-1;
     }
 
-    @media (max-width:1100px){
-      .main-grid{grid-template-columns:1fr}
+    @media (max-width:1080px){
+      .digit-picks{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .mini-grid{grid-template-columns:1fr 1fr}
     }
 
     @media (max-width:700px){
-      .page{padding:14px 10px 24px}
-      .digit-grid{grid-template-columns:repeat(2, minmax(0, 1fr))}
-      .actions{grid-template-columns:1fr}
-      .info-grid{grid-template-columns:1fr}
-      .number{letter-spacing:6px}
-      .hero-actions{width:100%}
-      .hero-actions .btn{width:100%}
+      .app{padding:12px 10px 20px}
+      .digit-picks{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .mini-grid{grid-template-columns:1fr}
+      .spin-row{justify-content:stretch}
+      .spin-btn,.action-btn{width:100%}
+      .result-card{min-height:250px}
     }
   </style>
 </head>
 <body>
-  <div class="page">
+  <div class="app">
     <section class="hero">
-      <div class="row">
+      <div class="hero-top">
         <div>
           <div class="brand">
-            <div class="logo">🎲</div>
+            <div class="brand-logo">🎲</div>
             <div>
-              <div class="eyebrow">Random 100% • ไม่เกี่ยวกับ AI</div>
-              <h1>สุ่มเฮง</h1>
+              <div class="kicker">Random 100% • ไม่เกี่ยวกับ AI</div>
+              <h1>Lucky Drop</h1>
             </div>
           </div>
           <p class="sub">
-            หน้าเว็บสุ่มเลขนำโชคแบบเร็วและตรงไปตรงมา เลือกจำนวนหลัก กดสุ่ม แล้วเอาเลขไปเสี่ยงดวงได้เลย
-            รองรับเลข 1 ตัว ถึง 6 ตัว
+            หน้าสุ่มเลขแบบโฟกัสเลขอย่างเดียว เลือกจำนวนหลักแล้วกดสุ่ม
+            ใช้สำหรับหวยไทย หวยลาว หวยฮานอย หรือเลขนำโชคส่วนตัวได้ทันที
           </p>
         </div>
 
         <div class="hero-actions">
           <a class="btn ghost" href="./index.html">← กลับหน้า AI</a>
-          <button class="btn secondary" id="saveStoryBtnTop">Save Story</button>
         </div>
       </div>
     </section>
 
-    <section class="main-grid">
-      <div class="panel">
-        <div class="panel-inner">
-          <h2 class="title">เลือกจำนวนตัวเลข</h2>
-          <p class="desc">
-            เลือกได้ตั้งแต่ 1 ตัว ถึง 6 ตัว แล้วกดสุ่ม ระบบจะสุ่มจริงทุกครั้ง
-          </p>
+    <section class="stage" id="captureArea">
+      <div class="stage-head">
+        <div class="pill">Lucky Random • Full Random</div>
+        <div class="pill" id="currentModePill">ตอนนี้เลือก: 2 ตัว</div>
+      </div>
 
-          <div class="digit-grid" id="digitGrid">
-            <button class="digit-btn" data-digit="1">1 ตัว</button>
-            <button class="digit-btn active" data-digit="2">2 ตัว</button>
-            <button class="digit-btn" data-digit="3">3 ตัว</button>
-            <button class="digit-btn" data-digit="4">4 ตัว</button>
-            <button class="digit-btn" data-digit="5">5 ตัว</button>
-            <button class="digit-btn" data-digit="6">6 ตัว</button>
-          </div>
+      <div class="digit-picks">
+        <button class="digit-btn" data-digit="1">1 ตัว</button>
+        <button class="digit-btn active" data-digit="2">2 ตัว</button>
+        <button class="digit-btn" data-digit="3">3 ตัว</button>
+        <button class="digit-btn" data-digit="4">4 ตัว</button>
+        <button class="digit-btn" data-digit="5">5 ตัว</button>
+        <button class="digit-btn" data-digit="6">6 ตัว</button>
+      </div>
 
-          <div class="control-box">
-            <button class="spin-big" id="spinBtn">🎲 สุ่มเลย</button>
-          </div>
-
-          <div class="info-grid">
-            <div class="info-card">
-              <h3>เหมาะกับอะไร</h3>
-              <p>
-                ใช้สุ่มเลขแบบสนุก ๆ ได้ทั้งหวยไทย หวยลาว หวยฮานอย หรือใช้เป็นเลขนำโชคส่วนตัว
-              </p>
-            </div>
-
-            <div class="info-card">
-              <h3>หลักการสุ่ม</h3>
-              <p>
-                ใช้การสุ่มจาก browser โดยตรง ไม่อิงสถิติ ไม่อิง AI และไม่ล็อคผลลัพธ์
-              </p>
-            </div>
-          </div>
-
-          <div class="history-box">
-            <div class="history-title">เลขล่าสุด</div>
-            <div class="history-list" id="historyList">
-              <span class="history-chip">ยังไม่มีข้อมูล</span>
-            </div>
-            <div class="foot-note">
-              เก็บไว้ดูเล่นเฉพาะบนเครื่องนี้ เพื่อให้คุณย้อนดูเลขที่เพิ่งสุ่มได้
-            </div>
-          </div>
+      <div class="result-wrap">
+        <div class="result-card">
+          <div class="result-label">เลขนำโชคของคุณ</div>
+          <div class="result-number" id="resultNumber">--</div>
+          <div class="result-meta" id="resultMeta">กดสุ่มเพื่อเริ่ม</div>
         </div>
       </div>
 
+      <div class="spin-row">
+        <button class="spin-btn" id="spinBtn">🎲 สุ่มเลย</button>
+        <button class="action-btn" id="copyBtn">Copy</button>
+        <button class="action-btn" id="saveStoryBtn">Save Story</button>
+        <button class="action-btn" id="saveSquareBtn">Save Square</button>
+        <button class="action-btn" id="shareBtn">Share</button>
+        <button class="action-btn" id="lineBtn">LINE</button>
+      </div>
+    </section>
+
+    <section class="mini-grid">
       <div class="panel">
-        <div class="panel-inner result-stage">
-          <div class="glow-ring"></div>
-          <div class="glow-ring r2"></div>
+        <h3>ใช้กับอะไรได้บ้าง</h3>
+        <p>
+          ใช้สุ่มเลขเล่นสนุก เลขเสี่ยงดวง หวยไทย หวยลาว หวยฮานอย
+          หรือใช้เป็นเลขนำโชคส่วนตัวแบบไม่อิงสถิติ
+        </p>
+      </div>
 
-          <div class="result-top">Lucky Random • Full Random</div>
+      <div class="panel">
+        <h3>หลักการสุ่ม</h3>
+        <p>
+          ใช้การสุ่มจาก browser โดยตรงผ่าน random จริง
+          ไม่อิง AI ไม่อิงข้อมูลย้อนหลัง และไม่ล็อคผลลัพธ์
+        </p>
+      </div>
 
-          <div class="number-wrap">
-            <div class="number" id="resultNumber">--</div>
-          </div>
+      <div class="panel">
+        <h3>จุดเด่น</h3>
+        <p>
+          หน้าเดียวจบ เลขใหญ่เต็มสายตา รองรับ 1 ถึง 6 ตัว
+          และเซฟเป็นรูปได้ทั้งแนวตั้งกับสี่เหลี่ยม
+        </p>
+      </div>
 
-          <div class="digit-meta" id="digitMeta">ตอนนี้เลือก: 2 ตัว</div>
-
-          <div class="actions">
-            <button class="mini-btn" id="copyBtn">Copy</button>
-            <button class="mini-btn" id="saveSquareBtn">Save Square</button>
-            <button class="mini-btn" id="saveStoryBtn">Save Story</button>
-            <button class="mini-btn" id="shareBtn">Share</button>
-            <button class="mini-btn" id="lineBtn">LINE</button>
-            <button class="mini-btn" id="spinAgainBtn">สุ่มอีกครั้ง</button>
-          </div>
-
-          <div class="foot-note" style="max-width:520px; text-align:center;">
-            เลขนี้เป็นการสุ่มล้วน 100% ถ้าซ้ำก็ถือว่าเป็นผลจากการสุ่มจริง
-          </div>
-        </div>
+      <div class="panel">
+        <h3>แบรนด์</h3>
+        <p>
+          ชื่อที่แนะนำสำหรับหน้านี้คือ Lucky Drop
+          เพราะสั้น จำง่าย และเหมาะกับหน้าไวรัลมากที่สุด
+        </p>
       </div>
     </section>
   </div>
@@ -529,11 +469,13 @@
   <div id="exportRoot" class="hidden-export"></div>
 
   <script>
-    const APP_NAME = "สุ่มเฮง";
-
+    const APP_NAME = "Lucky Drop";
     let selectedDigit = 2;
-    let currentNumber = "--";
-    let historyItems = [];
+    let currentValue = "--";
+
+    const resultNumber = document.getElementById("resultNumber");
+    const resultMeta = document.getElementById("resultMeta");
+    const currentModePill = document.getElementById("currentModePill");
 
     function randomInt(maxExclusive) {
       const arr = new Uint32Array(1);
@@ -541,199 +483,173 @@
       return arr[0] % maxExclusive;
     }
 
-    function padNum(num, size) {
-      return String(num).padStart(size, "0");
+    function padNumber(value, size) {
+      return String(value).padStart(size, "0");
     }
 
-    function setDigit(digit) {
-      selectedDigit = digit;
+    function getMaxByDigit(digit) {
+      return Math.pow(10, digit);
+    }
+
+    function updateModeUI() {
       document.querySelectorAll(".digit-btn").forEach(btn => {
-        btn.classList.toggle("active", Number(btn.dataset.digit) === digit);
+        btn.classList.toggle("active", Number(btn.dataset.digit) === selectedDigit);
       });
-      document.getElementById("digitMeta").textContent = `ตอนนี้เลือก: ${digit} ตัว`;
-      document.getElementById("resultNumber").textContent = digit === 1 ? "-" : "-".repeat(digit);
-      currentNumber = digit === 1 ? "-" : "-".repeat(digit);
+      currentModePill.textContent = `ตอนนี้เลือก: ${selectedDigit} ตัว`;
+      updateResultFont();
     }
 
-    function saveHistory(number, digit) {
-      historyItems.unshift({
-        number,
-        digit,
-        time: new Date().toISOString()
-      });
-
-      historyItems = historyItems.slice(0, 12);
-      localStorage.setItem("random_heang_history", JSON.stringify(historyItems));
-      renderHistory();
+    function getFontSizePx(digit, width) {
+      const rules = {
+        1: Math.min(width * 0.42, 260),
+        2: Math.min(width * 0.34, 230),
+        3: Math.min(width * 0.27, 190),
+        4: Math.min(width * 0.22, 156),
+        5: Math.min(width * 0.18, 128),
+        6: Math.min(width * 0.15, 108)
+      };
+      return rules[digit] || 100;
     }
 
-    function loadHistory() {
-      try {
-        const raw = localStorage.getItem("random_heang_history");
-        historyItems = raw ? JSON.parse(raw) : [];
-      } catch (error) {
-        historyItems = [];
-      }
-      renderHistory();
+    function updateResultFont() {
+      const boxWidth = resultNumber.parentElement.clientWidth || 600;
+      const size = getFontSizePx(selectedDigit, boxWidth);
+      resultNumber.style.fontSize = `${size}px`;
+      resultNumber.style.letterSpacing = selectedDigit >= 5 ? ".01em" : ".03em";
     }
 
-    function renderHistory() {
-      const box = document.getElementById("historyList");
-      if (!historyItems.length) {
-        box.innerHTML = '<span class="history-chip">ยังไม่มีข้อมูล</span>';
-        return;
-      }
+    async function spin() {
+      const max = getMaxByDigit(selectedDigit);
+      const finalValue = padNumber(randomInt(max), selectedDigit);
 
-      box.innerHTML = historyItems.map(item => {
-        return `<span class="history-chip">${item.number} • ${item.digit} ตัว</span>`;
-      }).join("");
-    }
+      resultMeta.textContent = "กำลังสุ่ม...";
+      updateResultFont();
 
-    async function animateSpin(finalValue, digit) {
-      const el = document.getElementById("resultNumber");
-      const max = Math.pow(10, digit);
-      const duration = 1100;
-      const start = performance.now();
+      const loops = selectedDigit >= 5 ? 18 : 16;
+      let step = 0;
 
-      return new Promise(resolve => {
-        function frame(now) {
-          const elapsed = now - start;
-          const progress = elapsed / duration;
+      const interval = setInterval(() => {
+        resultNumber.style.transform = "scale(1.02)";
+        resultNumber.style.opacity = "0.96";
+        resultNumber.textContent = padNumber(randomInt(max), selectedDigit);
+        step += 1;
 
-          if (progress < 1) {
-            el.textContent = padNum(randomInt(max), digit);
-            requestAnimationFrame(frame);
-          } else {
-            el.textContent = finalValue;
-            el.classList.remove("flash");
-            void el.offsetWidth;
-            el.classList.add("flash");
-            resolve();
-          }
+        if (step >= loops) {
+          clearInterval(interval);
+          currentValue = finalValue;
+          resultNumber.textContent = finalValue;
+          resultNumber.style.transform = "scale(1)";
+          resultNumber.style.opacity = "1";
+          resultMeta.textContent = `ตอนนี้เลือก: ${selectedDigit} ตัว`;
         }
-        requestAnimationFrame(frame);
-      });
-    }
-
-    async function spinNumber() {
-      const max = Math.pow(10, selectedDigit);
-      const finalValue = padNum(randomInt(max), selectedDigit);
-      currentNumber = finalValue;
-      await animateSpin(finalValue, selectedDigit);
-      saveHistory(finalValue, selectedDigit);
+      }, 72);
     }
 
     async function copyNumber() {
-      if (!currentNumber || currentNumber.includes("-")) {
-        alert("ยังไม่มีเลขให้คัดลอก");
+      if (!currentValue || currentValue === "--") {
+        alert("ยังไม่มีเลขที่สุ่ม");
         return;
       }
 
       try {
-        await navigator.clipboard.writeText(currentNumber);
+        await navigator.clipboard.writeText(currentValue);
         alert("คัดลอกเลขแล้ว");
       } catch (error) {
         alert("คัดลอกไม่สำเร็จ");
       }
     }
 
-    function buildExportCard(type = "square") {
-      const root = document.getElementById("exportRoot");
+    function buildExportCard(type = "story") {
+      const exportRoot = document.getElementById("exportRoot");
       const isStory = type === "story";
 
-      root.innerHTML = `
+      exportRoot.innerHTML = `
         <div id="exportCard" style="
           width:1080px;
           height:${isStory ? "1920px" : "1080px"};
-          padding:48px;
+          padding:54px;
+          border-radius:42px;
+          color:#ffffff;
+          font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+          background:
+            radial-gradient(circle at 15% 20%, rgba(96,165,250,.18), transparent 25%),
+            radial-gradient(circle at 85% 18%, rgba(236,72,153,.16), transparent 28%),
+            radial-gradient(circle at 50% 85%, rgba(34,211,238,.12), transparent 26%),
+            linear-gradient(180deg,#070b16,#0d1426);
           display:flex;
           flex-direction:column;
           justify-content:space-between;
-          color:white;
-          font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-          background:
-            radial-gradient(circle at 20% 20%, rgba(99,164,255,.18), transparent 22%),
-            radial-gradient(circle at 80% 20%, rgba(255,103,200,.16), transparent 24%),
-            radial-gradient(circle at 50% 80%, rgba(94,234,212,.12), transparent 26%),
-            linear-gradient(180deg, #050816, #0d1631);
-          border-radius:40px;
+          border:1px solid rgba(255,255,255,.08);
           overflow:hidden;
           position:relative;
         ">
           <div style="
-            position:absolute; right:-90px; top:-90px; width:280px; height:280px; border-radius:50%;
-            background:radial-gradient(circle, rgba(248,213,107,.20), transparent 70%);
+            position:absolute;right:-100px;top:-100px;width:320px;height:320px;border-radius:50%;
+            background:radial-gradient(circle, rgba(248,213,107,.18), transparent 70%);
           "></div>
 
-          <div style="
-            position:absolute; left:-90px; bottom:-90px; width:240px; height:240px; border-radius:50%;
-            background:radial-gradient(circle, rgba(99,164,255,.16), transparent 70%);
-          "></div>
-
-          <div style="position:relative; z-index:1;">
-            <div style="display:flex; align-items:center; gap:16px;">
+          <div style="position:relative;z-index:1;">
+            <div style="display:flex;align-items:center;gap:16px;">
               <div style="
-                width:76px; height:76px; border-radius:24px; display:grid; place-items:center;
-                font-size:34px; font-weight:900; color:#111827;
-                background:linear-gradient(135deg, #f8d56b, #ffb454);
+                width:88px;height:88px;border-radius:26px;display:grid;place-items:center;
+                background:linear-gradient(135deg,#f8d56b,#ffb347);color:#111827;font-size:38px;font-weight:900;
               ">🎲</div>
               <div>
-                <div style="font-size:22px; color:rgba(255,255,255,.78); font-weight:700;">Random 100%</div>
-                <div style="font-size:62px; font-weight:900; line-height:1;">${APP_NAME}</div>
+                <div style="font-size:24px;color:rgba(255,255,255,.75);font-weight:800;">Random 100% • ไม่เกี่ยวกับ AI</div>
+                <div style="font-size:72px;font-weight:900;line-height:1;margin-top:6px;">${APP_NAME}</div>
               </div>
             </div>
           </div>
 
           <div style="
-            position:relative; z-index:1; text-align:center;
-            border-radius:36px;
-            padding:${isStory ? "60px 40px" : "46px 40px"};
-            background:rgba(255,255,255,.08);
-            border:1px solid rgba(255,255,255,.12);
-            box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+            position:relative;z-index:1;
+            display:flex;align-items:center;justify-content:center;flex-direction:column;
+            border-radius:38px;
+            padding:40px 28px;
+            background:rgba(255,255,255,.06);
+            border:1px solid rgba(255,255,255,.10);
+            min-height:${isStory ? "860px" : "520px"};
           ">
-            <div style="font-size:34px; color:rgba(255,255,255,.78); font-weight:800; margin-bottom:24px;">
-              เลขนำโชค ${selectedDigit} ตัว
-            </div>
+            <div style="font-size:28px;color:rgba(255,255,255,.82);font-weight:800;margin-bottom:24px;">เลขนำโชค ${selectedDigit} ตัว</div>
             <div style="
-              font-size:${isStory ? "210px" : "180px"};
               font-weight:900;
               line-height:1;
-              letter-spacing:10px;
-              text-shadow:0 12px 26px rgba(0,0,0,.25);
-            ">${currentNumber}</div>
+              letter-spacing:${selectedDigit >= 5 ? ".01em" : ".03em"};
+              font-size:${isStory
+                ? (selectedDigit <= 2 ? "250px" : selectedDigit === 3 ? "210px" : selectedDigit === 4 ? "180px" : selectedDigit === 5 ? "145px" : "126px")
+                : (selectedDigit <= 2 ? "210px" : selectedDigit === 3 ? "185px" : selectedDigit === 4 ? "155px" : selectedDigit === 5 ? "128px" : "112px")
+              };
+              text-align:center;
+              white-space:nowrap;
+            ">${currentValue}</div>
           </div>
 
-          <div style="position:relative; z-index:1;">
-            <div style="font-size:24px; color:rgba(255,255,255,.84); font-weight:700;">
-              สุ่มจริง • ไม่เกี่ยวกับ AI
-            </div>
-            <div style="margin-top:10px; font-size:20px; color:rgba(255,255,255,.70);">
-              ${new Date().toLocaleDateString("th-TH")}
-            </div>
+          <div style="position:relative;z-index:1;">
+            <div style="font-size:28px;font-weight:800;color:rgba(255,255,255,.84);">Lucky Random • Full Random</div>
+            <div style="font-size:22px;color:rgba(255,255,255,.66);margin-top:10px;">${new Date().toLocaleDateString("th-TH")}</div>
           </div>
         </div>
       `;
     }
 
-    async function saveImage(type = "square") {
-      if (!currentNumber || currentNumber.includes("-")) {
-        alert("ยังไม่มีเลขให้บันทึก");
+    async function saveCard(type = "story") {
+      if (!currentValue || currentValue === "--") {
+        alert("ยังไม่มีเลขที่สุ่ม");
         return;
       }
 
       buildExportCard(type);
-      const card = document.getElementById("exportCard");
+      const exportCard = document.getElementById("exportCard");
 
       try {
-        const canvas = await html2canvas(card, {
+        const canvas = await html2canvas(exportCard, {
           scale: 2,
           useCORS: true,
           backgroundColor: null
         });
 
         const link = document.createElement("a");
-        link.download = type === "story" ? "sum-heng-story.png" : "sum-heng-square.png";
+        link.download = type === "story" ? "lucky-drop-story.png" : "lucky-drop-square.png";
         link.href = canvas.toDataURL("image/png");
         link.click();
       } catch (error) {
@@ -742,48 +658,57 @@
     }
 
     async function shareNumber() {
-      if (!currentNumber || currentNumber.includes("-")) {
-        alert("ยังไม่มีเลขให้แชร์");
+      if (!currentValue || currentValue === "--") {
+        alert("ยังไม่มีเลขที่สุ่ม");
         return;
       }
+
+      const text = `${APP_NAME}\nเลขนำโชค ${selectedDigit} ตัว: ${currentValue}`;
 
       if (navigator.share) {
         try {
           await navigator.share({
             title: APP_NAME,
-            text: `เลขนำโชค ${selectedDigit} ตัว: ${currentNumber}`
+            text
           });
         } catch (error) {}
       } else {
-        alert("อุปกรณ์นี้ยังไม่รองรับ Share โดยตรง");
+        alert("อุปกรณ์นี้ยังไม่รองรับ Share");
       }
     }
 
     function shareLine() {
-      if (!currentNumber || currentNumber.includes("-")) {
-        alert("ยังไม่มีเลขให้แชร์");
+      if (!currentValue || currentValue === "--") {
+        alert("ยังไม่มีเลขที่สุ่ม");
         return;
       }
 
-      const text = encodeURIComponent(`เลขนำโชค ${selectedDigit} ตัว: ${currentNumber}`);
+      const text = encodeURIComponent(`${APP_NAME}\nเลขนำโชค ${selectedDigit} ตัว: ${currentValue}`);
       window.open(`https://line.me/R/msg/text/?${text}`, "_blank");
     }
 
-    document.getElementById("spinBtn").addEventListener("click", spinNumber);
-    document.getElementById("spinAgainBtn").addEventListener("click", spinNumber);
+    document.querySelectorAll(".digit-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        selectedDigit = Number(btn.dataset.digit);
+        currentValue = "-".repeat(selectedDigit);
+        resultNumber.textContent = currentValue;
+        resultMeta.textContent = `ตอนนี้เลือก: ${selectedDigit} ตัว`;
+        updateModeUI();
+      });
+    });
+
+    document.getElementById("spinBtn").addEventListener("click", spin);
     document.getElementById("copyBtn").addEventListener("click", copyNumber);
-    document.getElementById("saveSquareBtn").addEventListener("click", () => saveImage("square"));
-    document.getElementById("saveStoryBtn").addEventListener("click", () => saveImage("story"));
-    document.getElementById("saveStoryBtnTop").addEventListener("click", () => saveImage("story"));
+    document.getElementById("saveStoryBtn").addEventListener("click", () => saveCard("story"));
+    document.getElementById("saveSquareBtn").addEventListener("click", () => saveCard("square"));
     document.getElementById("shareBtn").addEventListener("click", shareNumber);
     document.getElementById("lineBtn").addEventListener("click", shareLine);
 
-    document.querySelectorAll(".digit-btn").forEach(btn => {
-      btn.addEventListener("click", () => setDigit(Number(btn.dataset.digit)));
-    });
+    window.addEventListener("resize", updateResultFont);
 
-    setDigit(2);
-    loadHistory();
+    currentValue = "--";
+    resultNumber.textContent = currentValue;
+    updateModeUI();
   </script>
 </body>
 </html>
