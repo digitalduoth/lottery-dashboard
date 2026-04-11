@@ -7,19 +7,19 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root{
-      --bg:#050816;
-      --bg2:#0a1022;
-      --panel:rgba(14,20,38,.82);
-      --line:rgba(255,255,255,.10);
-      --text:#f8fafc;
-      --muted:#aebbd3;
-      --gold:#ffd66b;
-      --pink:#ff56b3;
+      --bg:#060816;
+      --bg2:#0c1226;
+      --panel:rgba(16,22,42,.74);
+      --line:rgba(255,255,255,.11);
+      --text:#fffaf2;
+      --muted:#b9c4dc;
+      --gold:#ffd86f;
+      --pink:#ff4db8;
       --purple:#8b5cf6;
-      --blue:#60a5fa;
-      --cyan:#22d3ee;
-      --orange:#ff9a3d;
-      --shadow:0 30px 90px rgba(0,0,0,.45);
+      --blue:#63a9ff;
+      --cyan:#2de2ff;
+      --orange:#ff9f43;
+      --shadow:0 30px 90px rgba(0,0,0,.42);
     }
 
     *{box-sizing:border-box}
@@ -29,9 +29,9 @@
       color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
       background:
-        radial-gradient(circle at 12% 15%, rgba(96,165,250,.18), transparent 22%),
-        radial-gradient(circle at 88% 16%, rgba(255,86,179,.16), transparent 24%),
-        radial-gradient(circle at 50% 88%, rgba(34,211,238,.12), transparent 22%),
+        radial-gradient(circle at 12% 15%, rgba(99,169,255,.24), transparent 20%),
+        radial-gradient(circle at 88% 16%, rgba(255,77,184,.20), transparent 24%),
+        radial-gradient(circle at 50% 88%, rgba(45,226,255,.14), transparent 20%),
         linear-gradient(180deg,var(--bg),var(--bg2));
       overflow-x:hidden;
     }
@@ -39,7 +39,7 @@
     .app{
       max-width:1320px;
       margin:0 auto;
-      padding:18px 14px 22px;
+      padding:18px 14px 24px;
       min-height:100vh;
       display:flex;
       flex-direction:column;
@@ -49,19 +49,19 @@
     .hero,.stage{
       border:1px solid var(--line);
       border-radius:34px;
-      background:rgba(15,21,40,.82);
+      background:var(--panel);
       box-shadow:var(--shadow);
       backdrop-filter:blur(18px);
     }
 
     .hero{
       padding:22px;
-      overflow:hidden;
       position:relative;
-      background:linear-gradient(135deg, rgba(96,165,250,.18), rgba(255,86,179,.14));
+      overflow:hidden;
+      background:linear-gradient(135deg, rgba(99,169,255,.24), rgba(255,77,184,.20));
     }
 
-    .hero::after{
+    .hero::before{
       content:"";
       position:absolute;
       width:240px;
@@ -69,7 +69,7 @@
       border-radius:50%;
       right:-60px;
       top:-60px;
-      background:radial-gradient(circle, rgba(255,214,107,.22), transparent 70%);
+      background:radial-gradient(circle, rgba(255,216,111,.26), transparent 70%);
       pointer-events:none;
     }
 
@@ -88,30 +88,31 @@
     }
 
     .brand-logo{
-      width:64px;
-      height:64px;
-      border-radius:20px;
+      width:66px;
+      height:66px;
+      border-radius:22px;
       display:grid;
       place-items:center;
-      background:linear-gradient(135deg,var(--gold),#ffb84e);
+      background:linear-gradient(135deg,var(--gold),#ffb84d);
       color:#111827;
       font-size:30px;
       font-weight:900;
-      box-shadow:0 12px 28px rgba(255,214,107,.24);
+      box-shadow:0 12px 28px rgba(255,216,111,.28);
       flex:0 0 auto;
     }
 
     .kicker{
       font-size:13px;
       color:#eef4ff;
-      opacity:.9;
+      opacity:.92;
       margin-bottom:6px;
-      font-weight:800;
+      font-weight:900;
+      letter-spacing:.02em;
     }
 
     h1{
       margin:0;
-      font-size:clamp(36px,6vw,76px);
+      font-size:clamp(38px,6vw,76px);
       line-height:.95;
       letter-spacing:-1.2px;
     }
@@ -151,16 +152,17 @@
 
     .stage{
       padding:18px;
-      min-height:72vh;
+      min-height:76vh;
       display:grid;
       grid-template-rows:auto 1fr auto;
       gap:18px;
       position:relative;
       overflow:hidden;
       background:
-        radial-gradient(circle at 15% 15%, rgba(255,255,255,.04), transparent 18%),
-        radial-gradient(circle at 85% 22%, rgba(255,86,179,.08), transparent 22%),
-        linear-gradient(135deg, rgba(10,15,30,.96), rgba(20,28,55,.94));
+        radial-gradient(circle at 15% 14%, rgba(255,255,255,.05), transparent 18%),
+        radial-gradient(circle at 85% 22%, rgba(255,77,184,.12), transparent 22%),
+        radial-gradient(circle at 50% 100%, rgba(45,226,255,.08), transparent 20%),
+        linear-gradient(135deg, rgba(8,12,26,.98), rgba(18,26,54,.96));
     }
 
     .stage::before{
@@ -169,21 +171,21 @@
       width:360px;
       height:360px;
       border-radius:50%;
-      right:-110px;
-      bottom:-110px;
-      background:radial-gradient(circle, rgba(96,165,250,.14), transparent 70%);
+      right:-120px;
+      bottom:-120px;
+      background:radial-gradient(circle, rgba(99,169,255,.18), transparent 70%);
       pointer-events:none;
     }
 
     .stage::after{
       content:"";
       position:absolute;
-      width:260px;
-      height:260px;
+      width:280px;
+      height:280px;
       border-radius:50%;
-      left:-80px;
-      top:40%;
-      background:radial-gradient(circle, rgba(255,86,179,.12), transparent 70%);
+      left:-90px;
+      top:42%;
+      background:radial-gradient(circle, rgba(255,77,184,.14), transparent 70%);
       pointer-events:none;
     }
 
@@ -222,23 +224,23 @@
       border:1px solid rgba(255,255,255,.10);
       background:rgba(255,255,255,.05);
       color:var(--text);
-      border-radius:20px;
+      border-radius:22px;
       padding:15px 10px;
       font-size:clamp(18px,2vw,26px);
       font-weight:900;
       cursor:pointer;
-      min-height:76px;
+      min-height:78px;
       transition:.18s ease;
       box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
     }
 
     .digit-btn.active{
-      background:linear-gradient(135deg, rgba(255,154,61,.30), rgba(255,86,179,.26));
-      border-color:rgba(255,214,107,.40);
+      background:linear-gradient(135deg, rgba(255,159,67,.42), rgba(255,77,184,.34));
+      border-color:rgba(255,216,111,.55);
       box-shadow:
-        0 0 0 2px rgba(255,214,107,.10) inset,
-        0 18px 40px rgba(255,86,179,.18),
-        0 0 32px rgba(255,154,61,.12);
+        0 0 0 2px rgba(255,216,111,.12) inset,
+        0 18px 44px rgba(255,77,184,.22),
+        0 0 42px rgba(255,159,67,.18);
       transform:translateY(-1px);
     }
 
@@ -248,48 +250,48 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      min-height:300px;
+      min-height:320px;
     }
 
     .result-card{
       width:100%;
-      min-height:420px;
-      border-radius:36px;
+      min-height:440px;
+      border-radius:38px;
       display:flex;
       align-items:center;
       justify-content:center;
       flex-direction:column;
       padding:28px 24px;
-      background:linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.035));
-      border:1px solid rgba(255,255,255,.11);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.12);
       overflow:hidden;
       position:relative;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,.05),
-        0 20px 50px rgba(0,0,0,.18);
+        0 20px 50px rgba(0,0,0,.20);
     }
 
     .result-card::before{
       content:"";
       position:absolute;
-      width:280px;
-      height:280px;
+      width:320px;
+      height:320px;
       border-radius:50%;
-      left:-70px;
-      bottom:-70px;
-      background:radial-gradient(circle, rgba(255,255,255,.06), transparent 70%);
+      left:-80px;
+      bottom:-80px;
+      background:radial-gradient(circle, rgba(255,255,255,.07), transparent 70%);
       pointer-events:none;
     }
 
     .result-card::after{
       content:"";
       position:absolute;
-      width:300px;
-      height:300px;
+      width:320px;
+      height:320px;
       border-radius:50%;
       right:-90px;
       top:-90px;
-      background:radial-gradient(circle, rgba(255,214,107,.08), transparent 70%);
+      background:radial-gradient(circle, rgba(255,216,111,.11), transparent 70%);
       pointer-events:none;
     }
 
@@ -297,10 +299,12 @@
       color:#edf4ff;
       font-size:clamp(18px,2vw,24px);
       font-weight:900;
-      opacity:.95;
+      opacity:.96;
       margin-bottom:18px;
       text-align:center;
       letter-spacing:.01em;
+      position:relative;
+      z-index:1;
     }
 
     .result-number{
@@ -311,23 +315,23 @@
       white-space:nowrap;
       font-variant-numeric:tabular-nums;
       letter-spacing:.03em;
+      color:#fff8ee;
       text-shadow:
-        0 0 10px rgba(255,255,255,.12),
-        0 0 24px rgba(255,214,107,.08),
-        0 14px 40px rgba(0,0,0,.34);
-      transition:transform .15s ease, opacity .15s ease, filter .15s ease;
+        0 0 14px rgba(255,255,255,.16),
+        0 0 34px rgba(255,216,111,.12),
+        0 18px 44px rgba(0,0,0,.34);
+      transition:transform .12s ease, opacity .12s ease, filter .12s ease;
       overflow:hidden;
       position:relative;
       z-index:1;
-      color:#fff8ef;
     }
 
-    .result-number.glow{
-      filter:brightness(1.08);
+    .result-number.flash{
+      filter:brightness(1.14);
       text-shadow:
-        0 0 16px rgba(255,255,255,.20),
-        0 0 34px rgba(255,214,107,.14),
-        0 18px 46px rgba(0,0,0,.34);
+        0 0 18px rgba(255,255,255,.24),
+        0 0 44px rgba(255,216,111,.20),
+        0 20px 50px rgba(0,0,0,.36);
     }
 
     .result-meta{
@@ -354,28 +358,28 @@
       border:0;
       cursor:pointer;
       border-radius:24px;
-      min-height:66px;
-      padding:16px 28px;
+      min-height:68px;
+      padding:16px 30px;
       font-size:24px;
       font-weight:900;
       color:white;
       background:linear-gradient(135deg,var(--orange),var(--pink),var(--purple));
       box-shadow:
-        0 18px 40px rgba(255,86,179,.20),
-        0 0 30px rgba(255,154,61,.12);
-      min-width:280px;
+        0 20px 44px rgba(255,77,184,.22),
+        0 0 40px rgba(255,159,67,.18);
+      min-width:290px;
     }
 
     .action-btn{
       border:1px solid rgba(255,255,255,.10);
       cursor:pointer;
       border-radius:18px;
-      min-height:54px;
+      min-height:56px;
       padding:12px 16px;
       font-size:15px;
       font-weight:900;
       color:white;
-      background:rgba(255,255,255,.06);
+      background:rgba(255,255,255,.07);
       min-width:132px;
       backdrop-filter:blur(6px);
     }
@@ -397,7 +401,7 @@
       .digit-picks{grid-template-columns:repeat(2,minmax(0,1fr))}
       .spin-btn,.action-btn{width:100%}
       .action-row{justify-content:stretch}
-      .result-card{min-height:290px;padding:22px 16px}
+      .result-card{min-height:300px;padding:22px 16px}
     }
   </style>
 </head>
@@ -440,8 +444,8 @@
         <button class="digit-btn" data-digit="6">6 ตัว</button>
       </div>
 
-      <div class="result-wrap" id="captureArea">
-        <div class="result-card">
+      <div class="result-wrap">
+        <div class="result-card" id="captureArea">
           <div class="result-label">เลขนำโชคของคุณ</div>
           <div class="result-number" id="resultNumber">--</div>
           <div class="result-meta" id="resultMeta">กดสุ่มเพื่อเริ่ม</div>
@@ -488,12 +492,12 @@
 
     function getFontSizePx(digit, width) {
       const rules = {
-        1: Math.min(width * 0.42, 270),
-        2: Math.min(width * 0.35, 240),
-        3: Math.min(width * 0.28, 198),
-        4: Math.min(width * 0.225, 162),
-        5: Math.min(width * 0.185, 132),
-        6: Math.min(width * 0.155, 112)
+        1: Math.min(width * 0.42, 280),
+        2: Math.min(width * 0.35, 245),
+        3: Math.min(width * 0.28, 202),
+        4: Math.min(width * 0.225, 166),
+        5: Math.min(width * 0.185, 136),
+        6: Math.min(width * 0.155, 116)
       };
       return rules[digit] || 100;
     }
@@ -513,67 +517,88 @@
       updateResultFont();
     }
 
-    function animatePulseEnd() {
-      resultNumber.classList.add("glow");
-      resultNumber.style.transform = "scale(1.05)";
+    function endFlash() {
+      resultNumber.classList.add("flash");
+      resultNumber.style.transform = "scale(1.075)";
       setTimeout(() => {
         resultNumber.style.transform = "scale(1)";
-      }, 180);
+      }, 160);
       setTimeout(() => {
-        resultNumber.classList.remove("glow");
-      }, 560);
+        resultNumber.classList.remove("flash");
+      }, 620);
     }
 
-    async function spin() {
+    function setRollingVisual(scale, opacity) {
+      resultNumber.style.transform = `scale(${scale})`;
+      resultNumber.style.opacity = opacity;
+    }
+
+    function rollingValue(max, digit) {
+      return padNumber(randomInt(max), digit);
+    }
+
+    function spin() {
       if (isSpinning) return;
 
       isSpinning = true;
       spinBtn.disabled = true;
-      spinBtn.style.opacity = ".75";
+      spinBtn.style.opacity = ".72";
 
       const max = getMaxByDigit(selectedDigit);
-      const finalValue = padNumber(randomInt(max), selectedDigit);
+      const finalValue = rollingValue(max, selectedDigit);
 
       resultMeta.textContent = "กำลังสุ่ม...";
       updateResultFont();
 
-      const fastCount = selectedDigit >= 5 ? 18 : 20;
-      const slowCount = 7;
+      let phase1 = 0;
+      let phase2 = 0;
+      let phase3 = 0;
 
-      let i = 0;
+      function runPhase1() {
+        resultNumber.textContent = rollingValue(max, selectedDigit);
+        setRollingVisual(1.045, ".93");
+        phase1++;
 
-      function tickFast() {
-        if (i < fastCount) {
-          resultNumber.textContent = padNumber(randomInt(max), selectedDigit);
-          resultNumber.style.transform = i % 2 === 0 ? "scale(1.03)" : "scale(0.995)";
-          resultNumber.style.opacity = ".96";
-          i++;
-          setTimeout(tickFast, 48);
+        if (phase1 < 24) {
+          setTimeout(runPhase1, 32);
         } else {
-          tickSlow(0);
+          runPhase2();
         }
       }
 
-      function tickSlow(step) {
-        if (step < slowCount) {
-          resultNumber.textContent = padNumber(randomInt(max), selectedDigit);
-          resultNumber.style.transform = "scale(1.015)";
-          resultNumber.style.opacity = ".985";
-          setTimeout(() => tickSlow(step + 1), 95 + (step * 28));
+      function runPhase2() {
+        resultNumber.textContent = rollingValue(max, selectedDigit);
+        setRollingVisual(1.028, ".97");
+        phase2++;
+
+        if (phase2 < 10) {
+          setTimeout(runPhase2, 66);
+        } else {
+          runPhase3();
+        }
+      }
+
+      function runPhase3() {
+        resultNumber.textContent = rollingValue(max, selectedDigit);
+        setRollingVisual(1.012, ".99");
+        phase3++;
+
+        if (phase3 < 5) {
+          setTimeout(runPhase3, 120 + (phase3 * 30));
         } else {
           resultNumber.textContent = finalValue;
           resultNumber.style.opacity = "1";
           resultNumber.style.transform = "scale(1)";
           currentValue = finalValue;
           resultMeta.textContent = `ตอนนี้เลือก: ${selectedDigit} ตัว`;
-          animatePulseEnd();
+          endFlash();
           isSpinning = false;
           spinBtn.disabled = false;
           spinBtn.style.opacity = "1";
         }
       }
 
-      tickFast();
+      runPhase1();
     }
 
     async function copyNumber() {
@@ -603,10 +628,10 @@
           color:#ffffff;
           font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
           background:
-            radial-gradient(circle at 12% 15%, rgba(96,165,250,.18), transparent 22%),
-            radial-gradient(circle at 88% 16%, rgba(255,86,179,.16), transparent 24%),
-            radial-gradient(circle at 50% 88%, rgba(34,211,238,.12), transparent 22%),
-            linear-gradient(180deg,#050816,#0a1022);
+            radial-gradient(circle at 12% 15%, rgba(99,169,255,.24), transparent 20%),
+            radial-gradient(circle at 88% 16%, rgba(255,77,184,.20), transparent 24%),
+            radial-gradient(circle at 50% 88%, rgba(45,226,255,.14), transparent 20%),
+            linear-gradient(180deg,#060816,#0c1226);
           display:flex;
           flex-direction:column;
           justify-content:space-between;
@@ -616,17 +641,17 @@
         ">
           <div style="
             position:absolute;right:-100px;top:-100px;width:320px;height:320px;border-radius:50%;
-            background:radial-gradient(circle, rgba(255,214,107,.18), transparent 70%);
+            background:radial-gradient(circle, rgba(255,216,111,.20), transparent 70%);
           "></div>
 
           <div style="position:relative;z-index:1;">
             <div style="display:flex;align-items:center;gap:16px;">
               <div style="
                 width:88px;height:88px;border-radius:26px;display:grid;place-items:center;
-                background:linear-gradient(135deg,#ffd66b,#ffb84e);color:#111827;font-size:38px;font-weight:900;
+                background:linear-gradient(135deg,#ffd86f,#ffb84d);color:#111827;font-size:38px;font-weight:900;
               ">🎲</div>
               <div>
-                <div style="font-size:24px;color:rgba(255,255,255,.75);font-weight:800;">Random 100% • ไม่เกี่ยวกับ AI</div>
+                <div style="font-size:24px;color:rgba(255,255,255,.78);font-weight:900;">Random 100% • ไม่เกี่ยวกับ AI</div>
                 <div style="font-size:72px;font-weight:900;line-height:1;margin-top:6px;">${APP_NAME}</div>
               </div>
             </div>
@@ -637,11 +662,11 @@
             display:flex;align-items:center;justify-content:center;flex-direction:column;
             border-radius:38px;
             padding:40px 28px;
-            background:linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.035));
-            border:1px solid rgba(255,255,255,.11);
+            background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+            border:1px solid rgba(255,255,255,.12);
             min-height:${isStory ? "860px" : "520px"};
           ">
-            <div style="font-size:28px;color:rgba(255,255,255,.82);font-weight:900;margin-bottom:24px;">เลขนำโชค ${selectedDigit} ตัว</div>
+            <div style="font-size:28px;color:rgba(255,255,255,.84);font-weight:900;margin-bottom:24px;">เลขนำโชค ${selectedDigit} ตัว</div>
             <div style="
               font-weight:900;
               line-height:1;
@@ -652,14 +677,14 @@
               };
               text-align:center;
               white-space:nowrap;
-              color:#fff8ef;
-              text-shadow:0 0 16px rgba(255,255,255,.16), 0 0 30px rgba(255,214,107,.10), 0 16px 38px rgba(0,0,0,.30);
+              color:#fff8ee;
+              text-shadow:0 0 18px rgba(255,255,255,.20), 0 0 40px rgba(255,216,111,.16), 0 18px 44px rgba(0,0,0,.32);
             ">${currentValue}</div>
           </div>
 
           <div style="position:relative;z-index:1;">
-            <div style="font-size:28px;font-weight:900;color:rgba(255,255,255,.84);">Lucky Random • Full Random</div>
-            <div style="font-size:22px;color:rgba(255,255,255,.66);margin-top:10px;">${new Date().toLocaleDateString("th-TH")}</div>
+            <div style="font-size:28px;font-weight:900;color:rgba(255,255,255,.86);">Lucky Random • Full Random</div>
+            <div style="font-size:22px;color:rgba(255,255,255,.68);margin-top:10px;">${new Date().toLocaleDateString("th-TH")}</div>
           </div>
         </div>
       `;
