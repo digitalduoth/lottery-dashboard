@@ -31,7 +31,7 @@
       --pink:#ec4899;
       --slate1:#334155;
       --slate2:#1e293b;
-      --danger:#ef4444;
+      --red:#ef4444;
 
       --shadow:0 28px 70px rgba(0,0,0,.42);
     }
@@ -152,7 +152,7 @@
     .sub{
       margin:10px 0 0;
       color:var(--muted);
-      max-width:980px;
+      max-width:920px;
       line-height:1.7;
       font-size:15px;
     }
@@ -237,7 +237,7 @@
     }
 
     .grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
-    .grid-main{grid-template-columns:1.08fr .92fr}
+    .grid-main{grid-template-columns:1.06fr .94fr}
     .grid-2{grid-template-columns:1fr 1fr}
 
     .card{
@@ -395,6 +395,11 @@
       border-color:rgba(139,92,246,.20);
     }
 
+    .mini-chip.red{
+      background:rgba(239,68,68,.14);
+      border-color:rgba(239,68,68,.20);
+    }
+
     .bars{
       display:grid;
       gap:12px;
@@ -527,57 +532,57 @@
       font-weight:800;
     }
 
-    .accuracy-summary{
+    .accuracy-grid{
       display:grid;
       grid-template-columns:repeat(3,minmax(0,1fr));
       gap:12px;
       margin-top:12px;
     }
 
-    .accuracy-box{
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.08);
+    .accuracy-badge{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
       padding:14px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.08);
       background:rgba(255,255,255,.03);
     }
 
-    .accuracy-box-title{
-      font-size:13px;
-      color:#d7e2f7;
-      font-weight:800;
-      margin-bottom:8px;
+    .accuracy-badge.hit{
+      background:rgba(34,197,94,.12);
+      border-color:rgba(34,197,94,.20);
     }
 
-    .accuracy-box-main{
+    .accuracy-badge.miss{
+      background:rgba(239,68,68,.12);
+      border-color:rgba(239,68,68,.20);
+    }
+
+    .accuracy-title{
+      font-size:13px;
+      color:#dbe7ff;
+      font-weight:800;
+    }
+
+    .accuracy-status{
       font-size:24px;
       font-weight:900;
       color:#fff;
-      margin-bottom:4px;
     }
 
-    .accuracy-box-sub{
+    .accuracy-sub{
       font-size:12px;
-      color:#c5d1e8;
+      color:#d7e2f7;
+      opacity:.92;
     }
 
-    .accuracy-rows{
+    .stat-2col{
       display:grid;
-      gap:10px;
-      margin-top:14px;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
     }
 
-    .accuracy-row{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      padding:10px 12px;
-      border-radius:14px;
-      background:rgba(255,255,255,.03);
-      border:1px solid rgba(255,255,255,.05);
-      font-size:13px;
-    }
-
-    .muted{color:var(--muted)}
     .empty{
       color:var(--muted);
       padding:8px 0;
@@ -591,7 +596,7 @@
       .grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}
       .grid-main,.grid-2{grid-template-columns:1fr}
       .search-grid{grid-template-columns:1fr}
-      .accuracy-summary{grid-template-columns:1fr}
+      .accuracy-grid,.stat-2col{grid-template-columns:1fr}
     }
 
     @media (max-width:700px){
@@ -631,8 +636,8 @@
             </div>
           </div>
           <p class="sub">
-            หลังบ้านสำหรับวิเคราะห์เลข แยก 2 ตัว / 3 ตัวบน / 3 ตัวล่าง พร้อม Hybrid,
-            Auto Generate และ Accuracy ย้อนหลังแบบเข้มกับแบบใช้งานจริง
+            หลังบ้านสำหรับรัน AI วิเคราะห์เลข ดูคะแนนย้อนหลัง วัดความแม่นแบบ Strict และ Practical
+            พร้อมเปรียบเทียบย้อนหลังหลายงวดในหน้าเดียว
           </p>
         </div>
 
@@ -704,9 +709,9 @@
 
     <section class="grid-2">
       <div class="card filter-block filter-all"><div class="card-inner">
-        <h2 class="section-title">AI Accuracy ย้อนหลัง</h2>
-        <p class="section-sub">แยกเป็น Strict (Top 5) และ Practical (Top 10)</p>
-        <div id="accuracyBox" class="analysis">กด Check Accuracy เพื่อคำนวณย้อนหลัง</div>
+        <h2 class="section-title">AI Accuracy</h2>
+        <p class="section-sub">แยก 2 แบบ: Strict = Top 5, Practical = Top 10</p>
+        <div id="accuracyBox" class="analysis">กด Check Accuracy เพื่อดูผล</div>
       </div></div>
 
       <div class="card filter-block filter-all"><div class="card-inner">
@@ -786,8 +791,7 @@
         </div></div>
       </div>
     </section>
-
-    <section class="grid-2">
+        <section class="grid-2">
       <div class="card filter-block filter-all"><div class="card-inner">
         <h2 class="section-title">Auto Generate เลขชุด</h2>
 
@@ -885,6 +889,12 @@
       opposite: 0.10
     };
 
+    const ACCURACY_WINDOWS = {
+      strict: 5,
+      practical: 10,
+      lookback: 20
+    };
+
     let currentMode = "balanced";
     let currentFilter = "all";
 
@@ -924,13 +934,19 @@
 
     function digitFreq2(sourceRecords) {
       const map = {};
-      sourceRecords.forEach(r => r.last2.split("").forEach(d => map[d] = (map[d] || 0) + 1));
+      sourceRecords.forEach(r => r.last2.split("").forEach(d => {
+        map[d] = (map[d] || 0) + 1;
+      }));
       return map;
     }
 
     function digitFreq3(list) {
       const map = {};
-      list.forEach(num => num.split("").forEach(d => map[d] = (map[d] || 0) + 1));
+      list.forEach(num => {
+        num.split("").forEach(d => {
+          map[d] = (map[d] || 0) + 1;
+        });
+      });
       return map;
     }
 
@@ -994,6 +1010,8 @@
           };
         }).filter(r => r.date && r.last2);
 
+        records.sort(sortDateDesc);
+
         allTop3 = records.flatMap(r => r.top3);
         allBottom3 = records.flatMap(r => r.bottom3);
         allCombined3 = records.flatMap(r => r.last3);
@@ -1055,7 +1073,7 @@
 
       const cfg = MODES[currentMode];
       const allFreq = countBy(list, x => x);
-      const recentFreq = countBy(list.slice(-recentWindow), x => x);
+      const recentFreq = countBy(list.slice(0, recentWindow), x => x);
       const digitFreq = digitFreq3(list);
       const pairFreq = pairFreq3(list);
 
@@ -1125,25 +1143,41 @@
       }).sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
     }
 
-    function renderBars(containerId, entries) {
-      const el = document.getElementById(containerId);
-      if (!entries.length) {
-        el.innerHTML = '<div class="empty">ยังไม่มีข้อมูล</div>';
-        return;
-      }
+    function buildPredictionsFromHistory(historyRecords, topLimit) {
+      const cfg = MODES[currentMode];
 
-      const max = entries[0].value || 1;
-      el.innerHTML = entries.map(item => `
-        <div class="bar-row">
-          <div>${item.label}</div>
-          <div class="bar-track">
-            <div class="bar-fill" style="width:${(item.value / max) * 100}%"></div>
-          </div>
-          <div class="bar-score">${item.value}%</div>
-        </div>
-      `).join("");
+      const histTop3 = historyRecords.flatMap(r => r.top3);
+      const histBottom3 = historyRecords.flatMap(r => r.bottom3);
+      const histCombined3 = historyRecords.flatMap(r => r.last3);
+
+      const predict2 = calculate2Scores(historyRecords).slice(0, topLimit).map(x => x.number);
+
+      const histCombinedScores = calculate3ScoresFromList(histCombined3, cfg.recentWindow3D);
+      const histTopScores = calculate3ScoresFromList(histTop3, cfg.recentWindow3D);
+      const histBottomScores = calculate3ScoresFromList(histBottom3, cfg.recentWindow3D);
+
+      const predictTop = mergeHybridScores(histCombinedScores, histTopScores, histBottomScores)
+        .slice(0, topLimit).map(x => x.number);
+
+      const predictBottom = mergeHybridScores(histCombinedScores, histBottomScores, histTopScores)
+        .slice(0, topLimit).map(x => x.number);
+
+      return {
+        predict2,
+        predictTop,
+        predictBottom
+      };
     }
 
+    function evaluateHit(actualRecord, predictions) {
+      return {
+        hit2: predictions.predict2.includes(actualRecord.last2),
+        hitTop: actualRecord.top3.some(x => predictions.predictTop.includes(x)),
+        hitBottom: actualRecord.bottom3.some(x => predictions.predictBottom.includes(x))
+      };
+    }
+  </script>
+    <script>
     function scoreCard(item, index, colorClass, subText = "") {
       return `
         <div class="score-chip ${colorClass}">
@@ -1181,6 +1215,25 @@
           <div class="mini-chip-label">พร้อมใช้งาน</div>
         </div>
       `;
+    }
+
+    function renderBars(containerId, entries) {
+      const el = document.getElementById(containerId);
+      if (!entries.length) {
+        el.innerHTML = '<div class="empty">ยังไม่มีข้อมูล</div>';
+        return;
+      }
+
+      const max = entries[0].value || 1;
+      el.innerHTML = entries.map(item => `
+        <div class="bar-row">
+          <div>${item.label}</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:${(item.value / max) * 100}%"></div>
+          </div>
+          <div class="bar-score">${item.value}%</div>
+        </div>
+      `).join("");
     }
 
     function renderStats(scores2, scoresTop, scoresBottom) {
@@ -1325,11 +1378,11 @@
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
       document.getElementById("rankingTop3Box").innerHTML = cachedHybridTop.length
-        ? cachedHybridTop.slice(0, 10).map((x, i) => scoreCard(x, i, "gold", "วิเคราะห์ 3 ตัวบน")).join("")
+        ? cachedHybridTop.slice(0, 10).map((x, i) => scoreCard(x, i, "gold", `วิเคราะห์ 3 ตัวบน`)).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
       document.getElementById("rankingBottom3Box").innerHTML = cachedHybridBottom.length
-        ? cachedHybridBottom.slice(0, 10).map((x, i) => scoreCard(x, i, "pink", "วิเคราะห์ 3 ตัวล่าง")).join("")
+        ? cachedHybridBottom.slice(0, 10).map((x, i) => scoreCard(x, i, "pink", `วิเคราะห์ 3 ตัวล่าง`)).join("")
         : '<span class="empty">ยังไม่มีข้อมูล</span>';
 
       document.getElementById("topPredictBox").innerHTML = cachedHybridTop.length
@@ -1351,8 +1404,8 @@
 
       document.getElementById("predictInsight").textContent =
 `โหมด ${MODES[currentMode].label}
-- 2 ตัว = total + recent + digit + double
-- 3 ตัว = total + recent + digit + pair + pattern
+- 2 ตัว ใช้ total + recent + digit + double
+- 3 ตัว ใช้ total + recent + digit + pair + pattern
 - Hybrid บน = รวม 40% + บน 50% + ล่าง 10%
 - Hybrid ล่าง = รวม 40% + ล่าง 50% + บน 10%`;
 
@@ -1431,112 +1484,154 @@ ${MODES[currentMode].desc}`;
       }
     }
 
-    function getPredictionsForRecords(sourceRecords) {
-      const cfg = MODES[currentMode];
-      const sourceTop3 = sourceRecords.flatMap(r => r.top3);
-      const sourceBottom3 = sourceRecords.flatMap(r => r.bottom3);
-      const sourceCombined3 = sourceRecords.flatMap(r => r.last3);
-
-      const top2Strict = calculate2Scores(sourceRecords).slice(0, 5).map(x => x.number);
-      const top2Practical = calculate2Scores(sourceRecords).slice(0, 10).map(x => x.number);
-
-      const combinedScores = calculate3ScoresFromList(sourceCombined3, cfg.recentWindow3D);
-      const topScores = calculate3ScoresFromList(sourceTop3, cfg.recentWindow3D);
-      const bottomScores = calculate3ScoresFromList(sourceBottom3, cfg.recentWindow3D);
-
-      const hybridTop = mergeHybridScores(combinedScores, topScores, bottomScores);
-      const hybridBottom = mergeHybridScores(combinedScores, bottomScores, topScores);
-
-      return {
-        top2Strict,
-        top2Practical,
-        top3Strict: hybridTop.slice(0, 5).map(x => x.number),
-        top3Practical: hybridTop.slice(0, 10).map(x => x.number),
-        bottom3Strict: hybridBottom.slice(0, 5).map(x => x.number),
-        bottom3Practical: hybridBottom.slice(0, 10).map(x => x.number)
-      };
-    }
-
-    function runAccuracy() {
-      if (records.length < 15) {
-        document.getElementById("accuracyBox").textContent = "ข้อมูลน้อยเกินไปสำหรับการคำนวณย้อนหลัง แนะนำอย่างน้อย 15 งวด";
-        return;
+    function runSingleLatestAccuracy() {
+      if (records.length < 10) {
+        return `<div class="analysis">ข้อมูลน้อยเกินไปสำหรับการวัดความแม่น</div>`;
       }
 
-      const backtestWindow = Math.min(20, records.length - 5);
-      const targets = records.slice(-backtestWindow);
+      const history = records.slice(1);
+      const actual = records[0];
 
-      let strict2Hits = 0;
-      let practical2Hits = 0;
-      let strictTopHits = 0;
-      let practicalTopHits = 0;
-      let strictBottomHits = 0;
-      let practicalBottomHits = 0;
+      const strictPred = buildPredictionsFromHistory(history, ACCURACY_WINDOWS.strict);
+      const practicalPred = buildPredictionsFromHistory(history, ACCURACY_WINDOWS.practical);
 
-      for (let i = records.length - backtestWindow; i < records.length; i++) {
-        const history = records.slice(0, i);
-        const actual = records[i];
-        if (history.length < 5) continue;
+      const strictHit = evaluateHit(actual, strictPred);
+      const practicalHit = evaluateHit(actual, practicalPred);
 
-        const preds = getPredictionsForRecords(history);
-
-        if (preds.top2Strict.includes(actual.last2)) strict2Hits++;
-        if (preds.top2Practical.includes(actual.last2)) practical2Hits++;
-
-        if (actual.top3.some(n => preds.top3Strict.includes(n))) strictTopHits++;
-        if (actual.top3.some(n => preds.top3Practical.includes(n))) practicalTopHits++;
-
-        if (actual.bottom3.some(n => preds.bottom3Strict.includes(n))) strictBottomHits++;
-        if (actual.bottom3.some(n => preds.bottom3Practical.includes(n))) practicalBottomHits++;
-      }
-
-      const total = targets.length || 1;
-
-      const percent = (value) => ((value / total) * 100).toFixed(1);
-
-      document.getElementById("accuracyBox").innerHTML = `
+      return `
 <div class="analysis">
-คำนวณย้อนหลัง ${total} งวด
-โหมดที่ใช้: ${MODES[currentMode].label}
+งวดที่ใช้ตรวจ: ${actual.date}
+ผลจริง:
+- 2 ตัว: ${actual.last2}
+- 3 ตัวบน: ${actual.top3.join(", ") || "-"}
+- 3 ตัวล่าง: ${actual.bottom3.join(", ") || "-"}
 
-Strict = Top 5
-Practical = Top 10
-
-<div class="accuracy-summary">
-  <div class="accuracy-box">
-    <div class="accuracy-box-title">2 ตัว</div>
-    <div class="accuracy-box-main">${percent(strict2Hits)}% / ${percent(practical2Hits)}%</div>
-    <div class="accuracy-box-sub">Strict ${strict2Hits}/${total} • Practical ${practical2Hits}/${total}</div>
+<div class="stat-2col">
+  <div>
+    <strong>Strict (Top 5)</strong>
+    - 2 ตัว: ${strictPred.predict2.join(", ")}
+    - 3 ตัวบน: ${strictPred.predictTop.join(", ")}
+    - 3 ตัวล่าง: ${strictPred.predictBottom.join(", ")}
   </div>
-
-  <div class="accuracy-box">
-    <div class="accuracy-box-title">3 ตัวบน</div>
-    <div class="accuracy-box-main">${percent(strictTopHits)}% / ${percent(practicalTopHits)}%</div>
-    <div class="accuracy-box-sub">Strict ${strictTopHits}/${total} • Practical ${practicalTopHits}/${total}</div>
-  </div>
-
-  <div class="accuracy-box">
-    <div class="accuracy-box-title">3 ตัวล่าง</div>
-    <div class="accuracy-box-main">${percent(strictBottomHits)}% / ${percent(practicalBottomHits)}%</div>
-    <div class="accuracy-box-sub">Strict ${strictBottomHits}/${total} • Practical ${practicalBottomHits}/${total}</div>
+  <div>
+    <strong>Practical (Top 10)</strong>
+    - 2 ตัว: ${practicalPred.predict2.join(", ")}
+    - 3 ตัวบน: ${practicalPred.predictTop.join(", ")}
+    - 3 ตัวล่าง: ${practicalPred.predictBottom.join(", ")}
   </div>
 </div>
 
-<div class="accuracy-rows">
-  <div class="accuracy-row">
-    <span>2 ตัว</span>
-    <span>Strict Top 5 = ${strict2Hits}/${total} • Practical Top 10 = ${practical2Hits}/${total}</span>
+<div class="accuracy-grid">
+  <div class="accuracy-badge ${strictHit.hit2 ? "hit" : "miss"}">
+    <div class="accuracy-title">Strict • 2 ตัว</div>
+    <div class="accuracy-status">${strictHit.hit2 ? "✅ เข้า" : "❌ ไม่เข้า"}</div>
+    <div class="accuracy-sub">ผลจริง ${actual.last2}</div>
   </div>
-  <div class="accuracy-row">
-    <span>3 ตัวบน</span>
-    <span>Strict Top 5 = ${strictTopHits}/${total} • Practical Top 10 = ${practicalTopHits}/${total}</span>
+  <div class="accuracy-badge ${strictHit.hitTop ? "hit" : "miss"}">
+    <div class="accuracy-title">Strict • 3 ตัวบน</div>
+    <div class="accuracy-status">${strictHit.hitTop ? "✅ เข้า" : "❌ ไม่เข้า"}</div>
+    <div class="accuracy-sub">ผลจริง ${actual.top3.join(", ") || "-"}</div>
   </div>
-  <div class="accuracy-row">
-    <span>3 ตัวล่าง</span>
-    <span>Strict Top 5 = ${strictBottomHits}/${total} • Practical Top 10 = ${practicalBottomHits}/${total}</span>
+  <div class="accuracy-badge ${strictHit.hitBottom ? "hit" : "miss"}">
+    <div class="accuracy-title">Strict • 3 ตัวล่าง</div>
+    <div class="accuracy-status">${strictHit.hitBottom ? "✅ เข้า" : "❌ ไม่เข้า"}</div>
+    <div class="accuracy-sub">ผลจริง ${actual.bottom3.join(", ") || "-"}</div>
+  </div>
+</div>
+
+<div class="accuracy-grid">
+  <div class="accuracy-badge ${practicalHit.hit2 ? "hit" : "miss"}">
+    <div class="accuracy-title">Practical • 2 ตัว</div>
+    <div class="accuracy-status">${practicalHit.hit2 ? "✅ เข้า" : "❌ ไม่เข้า"}</div>
+    <div class="accuracy-sub">ผลจริง ${actual.last2}</div>
+  </div>
+  <div class="accuracy-badge ${practicalHit.hitTop ? "hit" : "miss"}">
+    <div class="accuracy-title">Practical • 3 ตัวบน</div>
+    <div class="accuracy-status">${practicalHit.hitTop ? "✅ เข้า" : "❌ ไม่เข้า"}</div>
+    <div class="accuracy-sub">ผลจริง ${actual.top3.join(", ") || "-"}</div>
+  </div>
+  <div class="accuracy-badge ${practicalHit.hitBottom ? "hit" : "miss"}">
+    <div class="accuracy-title">Practical • 3 ตัวล่าง</div>
+    <div class="accuracy-status">${practicalHit.hitBottom ? "✅ เข้า" : "❌ ไม่เข้า"}</div>
+    <div class="accuracy-sub">ผลจริง ${actual.bottom3.join(", ") || "-"}</div>
   </div>
 </div>
 </div>`;
+    }
+
+    function runBacktestAccuracy() {
+      if (records.length < ACCURACY_WINDOWS.lookback + 5) {
+        return `<div class="analysis">ข้อมูลยังไม่พอสำหรับย้อนหลัง ${ACCURACY_WINDOWS.lookback} งวด</div>`;
+      }
+
+      let strict2Hit = 0;
+      let strictTopHit = 0;
+      let strictBottomHit = 0;
+
+      let practical2Hit = 0;
+      let practicalTopHit = 0;
+      let practicalBottomHit = 0;
+
+      let totalTests = 0;
+
+      for (let i = 0; i < ACCURACY_WINDOWS.lookback; i++) {
+        const actual = records[i];
+        const history = records.slice(i + 1);
+
+        if (history.length < 10) continue;
+
+        const strictPred = buildPredictionsFromHistory(history, ACCURACY_WINDOWS.strict);
+        const practicalPred = buildPredictionsFromHistory(history, ACCURACY_WINDOWS.practical);
+
+        const strictHit = evaluateHit(actual, strictPred);
+        const practicalHit = evaluateHit(actual, practicalPred);
+
+        strict2Hit += strictHit.hit2 ? 1 : 0;
+        strictTopHit += strictHit.hitTop ? 1 : 0;
+        strictBottomHit += strictHit.hitBottom ? 1 : 0;
+
+        practical2Hit += practicalHit.hit2 ? 1 : 0;
+        practicalTopHit += practicalHit.hitTop ? 1 : 0;
+        practicalBottomHit += practicalHit.hitBottom ? 1 : 0;
+
+        totalTests++;
+      }
+
+      if (!totalTests) {
+        return `<div class="analysis">ไม่สามารถคำนวณย้อนหลังได้</div>`;
+      }
+
+      const fmt = (hit) => `${hit}/${totalTests} = ${((hit / totalTests) * 100).toFixed(2)}%`;
+
+      return `
+<div class="analysis">
+ย้อนหลัง ${totalTests} งวด
+
+<div class="stat-2col">
+  <div>
+    <strong>Strict Accuracy (Top 5)</strong>
+    - 2 ตัว: ${fmt(strict2Hit)}
+    - 3 ตัวบน: ${fmt(strictTopHit)}
+    - 3 ตัวล่าง: ${fmt(strictBottomHit)}
+  </div>
+  <div>
+    <strong>Practical Accuracy (Top 10)</strong>
+    - 2 ตัว: ${fmt(practical2Hit)}
+    - 3 ตัวบน: ${fmt(practicalTopHit)}
+    - 3 ตัวล่าง: ${fmt(practicalBottomHit)}
+  </div>
+</div>
+</div>`;
+    }
+
+    function runAccuracy() {
+      const latest = runSingleLatestAccuracy();
+      const backtest = runBacktestAccuracy();
+
+      document.getElementById("accuracyBox").innerHTML = `
+${latest}
+<div style="height:12px;"></div>
+${backtest}`;
     }
 
     function applyFilter(mode) {
