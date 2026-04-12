@@ -1,1120 +1,381 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
-  />
-  <title>Lucky Drop</title>
-
-  <meta name="theme-color" content="#050816" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="format-detection" content="telephone=no" />
-
-  <style>
-    :root {
-      --bg: #040814;
-      --bg-2: #071126;
-      --panel: rgba(10, 18, 36, 0.9);
-      --panel-soft: rgba(255, 255, 255, 0.03);
-      --line: rgba(255, 255, 255, 0.08);
-
-      --text: #f8fbff;
-      --muted: #a6b2ca;
-
-      --cyan: #78d8ff;
-      --blue: #82a8ff;
-      --purple: #8d6aff;
-      --pink: #d957aa;
-
-      --shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      min-height: 100%;
-      background:
-        radial-gradient(circle at 12% 10%, rgba(120, 216, 255, 0.16), transparent 20%),
-        radial-gradient(circle at 88% 14%, rgba(217, 87, 170, 0.16), transparent 18%),
-        radial-gradient(circle at 50% 100%, rgba(130, 168, 255, 0.08), transparent 24%),
-        linear-gradient(180deg, #02050d 0%, var(--bg) 38%, var(--bg-2) 100%);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Arial, sans-serif;
-      overflow-x: hidden;
-    }
-
-    body {
-      user-select: none;
-    }
-
-    .app {
-      width: 100%;
-      max-width: 1320px;
-      margin: 0 auto;
-      padding:
-        max(20px, env(safe-area-inset-top))
-        18px
-        max(24px, env(safe-area-inset-bottom))
-        18px;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 18px;
-    }
-
-    .logo-box {
-      width: 86px;
-      height: 86px;
-      border-radius: 24px;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)),
-        rgba(11, 18, 36, 0.94);
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow:
-        0 18px 36px rgba(0,0,0,0.34),
-        0 0 34px rgba(141,106,255,0.16);
-    }
-
-    .brand {
-      min-width: 0;
-    }
-
-    .eyebrow {
-      color: rgba(255,255,255,0.76);
-      font-size: 18px;
-      font-weight: 800;
-      margin-bottom: 2px;
-    }
-
-    .title {
-      margin: 0;
-      font-size: clamp(44px, 8vw, 88px);
-      line-height: 0.95;
-      letter-spacing: -0.04em;
-      font-weight: 900;
-    }
-
-    .subtitle {
-      margin-top: 10px;
-      color: #d7dff0;
-      font-size: clamp(16px, 2vw, 22px);
-      font-weight: 800;
-      letter-spacing: 0.03em;
-    }
-
-    .segmented {
-      display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 14px;
-      margin: 22px 0 20px;
-    }
-
-    .segment-btn {
-      height: 88px;
-      border-radius: 24px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)),
-        rgba(10, 18, 36, 0.88);
-      color: #fff;
-      font-size: clamp(18px, 2vw, 26px);
-      font-weight: 900;
-      cursor: pointer;
-      transition: transform 0.16s ease, opacity 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
-    }
-
-    .segment-btn:hover,
-    .primary-btn:hover,
-    .action-btn:hover,
-    .theme-card:hover {
-      opacity: 0.96;
-    }
-
-    .segment-btn:active,
-    .primary-btn:active,
-    .action-btn:active,
-    .theme-card:active,
-    .theme-confirm-btn:active,
-    .theme-cancel-btn:active {
-      transform: scale(0.98);
-    }
-
-    .segment-btn.active {
-      border-color: rgba(141, 182, 255, 0.28);
-      background:
-        radial-gradient(circle at 20% 18%, rgba(120,216,255,0.26), transparent 44%),
-        radial-gradient(circle at 80% 78%, rgba(217,87,170,0.24), transparent 42%),
-        linear-gradient(135deg, rgba(130,168,255,0.20), rgba(141,106,255,0.18));
-      box-shadow:
-        0 14px 28px rgba(0,0,0,0.22),
-        0 0 34px rgba(120,168,255,0.12);
-    }
-
-    .result-card {
-      position: relative;
-      overflow: hidden;
-      min-height: 540px;
-      border-radius: 38px;
-      background:
-        radial-gradient(circle at 10% 78%, rgba(120,216,255,0.10), transparent 18%),
-        radial-gradient(circle at 90% 20%, rgba(217,87,170,0.10), transparent 16%),
-        linear-gradient(180deg, rgba(8,16,30,0.96), rgba(6,12,24,0.98));
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: var(--shadow);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 22px;
-    }
-
-    .result-inner {
-      position: relative;
-      width: 100%;
-      padding: 34px 22px 28px;
-      text-align: center;
-      z-index: 2;
-    }
-
-    .result-label {
-      color: #f2f6ff;
-      font-size: clamp(24px, 3vw, 40px);
-      font-weight: 900;
-      margin-bottom: 28px;
-      letter-spacing: -0.02em;
-    }
-
-    .number-stage {
-      position: relative;
-      width: min(980px, 100%);
-      margin: 0 auto;
-      padding: 28px 16px;
-      border-radius: 34px;
-      background:
-        linear-gradient(180deg, rgba(0,0,0,0.92), rgba(4,8,18,0.98));
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,0.03),
-        0 0 34px rgba(120,168,255,0.08);
-    }
-
-    .number-track {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      min-width: min(100%, 900px);
-      min-height: 250px;
-      padding: 22px 26px;
-      border-radius: 32px;
-      background:
-        linear-gradient(180deg, rgba(4,7,15,0.96), rgba(0,0,0,0.98));
-      border: 1px solid rgba(255,255,255,0.04);
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,0.02),
-        0 0 26px rgba(120,168,255,0.10);
-      transition: transform 0.22s ease, filter 0.22s ease, box-shadow 0.22s ease;
-    }
-
-    .number-track::before {
-      content: "";
-      position: absolute;
-      inset: 18px;
-      border-radius: 26px;
-      background:
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02), transparent 60%);
-      pointer-events: none;
-    }
-
-    .number-track.spin {
-      transform: scale(1.014);
-      filter: brightness(1.03);
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,0.02),
-        0 0 36px rgba(120,168,255,0.18);
-    }
-
-    .digit {
-      position: relative;
-      z-index: 2;
-      min-width: 0.56em;
-      text-align: center;
-      color: #ffffff;
-      font-size: clamp(88px, 18vw, 220px);
-      line-height: 0.84;
-      font-weight: 900;
-      letter-spacing: -0.06em;
-      text-shadow:
-        0 6px 16px rgba(0,0,0,0.30),
-        0 0 18px rgba(255,255,255,0.05);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Arial Black", "Segoe UI", sans-serif;
-      font-variant-numeric: tabular-nums;
-      transition: transform 0.12s ease, opacity 0.12s ease;
-    }
-
-    .digit.rolling {
-      transform: translateY(10px) scale(0.985);
-      opacity: 0.55;
-    }
-
-    .result-hint {
-      margin-top: 22px;
-      color: #dbe4f8;
-      font-size: clamp(16px, 2vw, 24px);
-      font-weight: 800;
-    }
-
-    .actions {
-      display: grid;
-      grid-template-columns: minmax(260px, 1.6fr) repeat(5, minmax(110px, 1fr));
-      gap: 14px;
-      align-items: stretch;
-    }
-
-    .primary-btn,
-    .action-btn {
-      min-height: 84px;
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,0.10);
-      color: #fff;
-      cursor: pointer;
-      font-weight: 900;
-      box-shadow: 0 16px 28px rgba(0,0,0,0.22);
-      transition: transform 0.16s ease, opacity 0.16s ease;
-    }
-
-    .primary-btn {
-      background:
-        radial-gradient(circle at 20% 20%, rgba(120,216,255,0.26), transparent 44%),
-        radial-gradient(circle at 80% 78%, rgba(217,87,170,0.24), transparent 42%),
-        linear-gradient(135deg, rgba(130,168,255,0.98), rgba(141,106,255,0.96), rgba(217,87,170,0.92));
-      font-size: clamp(24px, 2.2vw, 38px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .action-btn {
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)),
-        rgba(10, 18, 36, 0.90);
-      font-size: clamp(16px, 1.4vw, 22px);
-    }
-
-    .footer-note {
-      margin-top: 18px;
-      color: rgba(255,255,255,0.46);
-      font-size: 13px;
-      text-align: center;
-      letter-spacing: 0.02em;
-    }
-
-    .theme-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.62);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      z-index: 99;
-    }
-
-    .theme-modal.open {
-      display: flex;
-    }
-
-    .theme-panel {
-      width: min(760px, 100%);
-      border-radius: 28px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background:
-        linear-gradient(180deg, rgba(14,22,42,0.96), rgba(7,12,25,0.98));
-      box-shadow: 0 24px 70px rgba(0,0,0,0.45);
-      padding: 22px;
-    }
-
-    .theme-title {
-      font-size: 26px;
-      font-weight: 900;
-      margin-bottom: 6px;
-    }
-
-    .theme-sub {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.7;
-      margin-bottom: 16px;
-    }
-
-    .theme-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .theme-card {
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.02);
-      padding: 12px;
-      cursor: pointer;
-      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .theme-card.active {
-      border-color: rgba(130,168,255,0.40);
-      box-shadow: 0 0 24px rgba(130,168,255,0.10);
-    }
-
-    .theme-preview {
-      height: 110px;
-      border-radius: 14px;
-      margin-bottom: 10px;
-      border: 1px solid rgba(255,255,255,0.04);
-    }
-
-    .theme-name {
-      font-size: 15px;
-      font-weight: 900;
-      margin-bottom: 4px;
-    }
-
-    .theme-desc {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .theme-actions {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-    }
-
-    .theme-confirm-btn,
-    .theme-cancel-btn {
-      min-height: 48px;
-      padding: 0 18px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.08);
-      font-weight: 900;
-      cursor: pointer;
-      color: #fff;
-    }
-
-    .theme-confirm-btn {
-      background:
-        linear-gradient(135deg, rgba(130,168,255,0.98), rgba(141,106,255,0.96), rgba(217,87,170,0.92));
-    }
-
-    .theme-cancel-btn {
-      background: rgba(255,255,255,0.04);
-    }
-
-    .preview-neon {
-      background:
-        radial-gradient(circle at 15% 80%, rgba(120,216,255,0.20), transparent 22%),
-        radial-gradient(circle at 90% 20%, rgba(217,87,170,0.16), transparent 18%),
-        linear-gradient(180deg, #071120, #050a18);
-    }
-
-    .preview-clean {
-      background:
-        linear-gradient(180deg, #0b1221, #0a0f1a);
-    }
-
-    .preview-lux {
-      background:
-        linear-gradient(180deg, #0b0b0d, #121218);
-    }
-
-    @media (max-width: 1100px) {
-      .segmented {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-
-      .actions {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-
-      .primary-btn {
-        grid-column: 1 / -1;
-      }
-
-      .result-card {
-        min-height: 470px;
-      }
-    }
-
-    @media (max-width: 700px) {
-      .app {
-        padding-left: 14px;
-        padding-right: 14px;
-      }
-
-      .logo-box {
-        width: 72px;
-        height: 72px;
-        border-radius: 20px;
-      }
-
-      .eyebrow {
-        font-size: 15px;
-      }
-
-      .subtitle {
-        font-size: 15px;
-      }
-
-      .segmented {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-      }
-
-      .segment-btn {
-        height: 74px;
-        border-radius: 20px;
-      }
-
-      .result-card {
-        min-height: 400px;
-        border-radius: 28px;
-      }
-
-      .result-inner {
-        padding: 26px 16px 22px;
-      }
-
-      .number-stage {
-        padding: 18px 10px;
-        border-radius: 24px;
-      }
-
-      .number-track {
-        min-width: 100%;
-        min-height: 190px;
-        padding: 16px 12px;
-        gap: 8px;
-        border-radius: 22px;
-      }
-
-      .actions {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-      }
-
-      .primary-btn {
-        grid-column: 1 / -1;
-        min-height: 80px;
-      }
-
-      .action-btn {
-        min-height: 70px;
-      }
-
-      .theme-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .theme-actions {
-        flex-direction: column;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucky Drop</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: radial-gradient(circle at top left, #1e293b, #020617);
+  color: #fff;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 48px;
+  font-weight: 800;
+}
+
+.sub {
+  opacity: 0.7;
+  margin-bottom: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.btn {
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn.active {
+  background: linear-gradient(135deg,#6366f1,#ec4899);
+}
+
+.result-box {
+  margin: 40px 0;
+  text-align: center;
+}
+
+#result {
+  font-size: 80px;
+  font-weight: 800;
+  letter-spacing: 6px;
+}
+
+.label {
+  opacity: 0.6;
+}
+
+.run {
+  width: 100%;
+  padding: 18px;
+  border-radius: 16px;
+  border: none;
+  background: linear-gradient(135deg,#6366f1,#ec4899);
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 10px;
+}
+
+</style>
 </head>
+
 <body>
-  <main class="app">
-    <header class="topbar">
-      <div class="logo-box" aria-hidden="true">
-        <svg width="52" height="52" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="cubeStroke" x1="10" y1="10" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#78D8FF"/>
-              <stop offset="0.5" stop-color="#8D6AFF"/>
-              <stop offset="1" stop-color="#D957AA"/>
-            </linearGradient>
-          </defs>
-          <rect x="6" y="6" width="52" height="52" rx="16" fill="#0E1630"/>
-          <path d="M32 14L44.5 21.2V35.6L32 42.8L19.5 35.6V21.2L32 14Z" stroke="url(#cubeStroke)" stroke-width="3"/>
-          <path d="M32 14V28.4M44.5 21.2L32 28.4M19.5 21.2L32 28.4M32 28.4V42.8" stroke="url(#cubeStroke)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
 
-      <div class="brand">
-        <div class="eyebrow">Random 100% • ไม่เกี่ยวกับ AI</div>
-        <h1 class="title">Lucky Drop</h1>
-        <div class="subtitle">Pure Random • Real Luck</div>
-      </div>
-    </header>
-
-    <section class="segmented" aria-label="เลือกจำนวนหลัก">
-      <button class="segment-btn" data-digits="1">1 ตัว</button>
-      <button class="segment-btn active" data-digits="2">2 ตัว</button>
-      <button class="segment-btn" data-digits="3">3 ตัว</button>
-      <button class="segment-btn" data-digits="4">4 ตัว</button>
-      <button class="segment-btn" data-digits="5">5 ตัว</button>
-      <button class="segment-btn" data-digits="6">6 ตัว</button>
-    </section>
-
-    <section class="result-card">
-      <div class="result-inner">
-        <div class="result-label" id="resultLabel">เลขนำโชค 2 ตัว</div>
-
-        <div class="number-stage">
-          <div class="number-track" id="numberTrack" aria-live="polite">
-            <span class="digit">-</span>
-            <span class="digit">-</span>
-          </div>
-        </div>
-
-        <div class="result-hint" id="resultHint">กดสุ่มเพื่อเริ่ม</div>
-      </div>
-    </section>
-
-    <section class="actions">
-      <button class="primary-btn" id="randomBtn">🎲 สุ่มเลข</button>
-      <button class="action-btn" id="copyBtn">Copy</button>
-      <button class="action-btn" id="storyBtn">Save Story</button>
-      <button class="action-btn" id="squareBtn">Save Square</button>
-      <button class="action-btn" id="shareBtn">Share</button>
-      <button class="action-btn" id="lineBtn">LINE</button>
-    </section>
-
-    <div class="footer-note">Lucky Random • Full Random</div>
-  </main>
-
-  <div class="theme-modal" id="themeModal">
-    <div class="theme-panel">
-      <div class="theme-title">เลือกธีมภาพ</div>
-      <div class="theme-sub">สำหรับ Save Story / Save Square — เน้นเด่น สะอาด และไม่รก</div>
-
-      <div class="theme-grid">
-        <button class="theme-card active" data-theme="neon" type="button">
-          <div class="theme-preview preview-neon"></div>
-          <div class="theme-name">Dark Neon</div>
-          <div class="theme-desc">โทนหลักของ Lucky Drop เข้ม คม เด่น</div>
-        </button>
-
-        <button class="theme-card" data-theme="clean" type="button">
-          <div class="theme-preview preview-clean"></div>
-          <div class="theme-name">Clean Dark</div>
-          <div class="theme-desc">คลีนกว่า เรียบกว่า เน้นตัวเลขล้วน</div>
-        </button>
-
-        <button class="theme-card" data-theme="lux" type="button">
-          <div class="theme-preview preview-lux"></div>
-          <div class="theme-name">Black Gold</div>
-          <div class="theme-desc">เข้ม หรู เนี้ยบ เหมาะกับภาพส่งต่อ</div>
-        </button>
-      </div>
-
-      <div class="theme-actions">
-        <button class="theme-cancel-btn" id="themeCancelBtn" type="button">ยกเลิก</button>
-        <button class="theme-confirm-btn" id="themeConfirmBtn" type="button">บันทึกภาพ</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const state = {
-      digits: 2,
-      value: "",
-      hasResult: false,
-      spinning: false,
-      pendingSaveMode: null,
-      selectedTheme: "neon"
-    };
-
-    const segmentButtons = [...document.querySelectorAll(".segment-btn")];
-    const resultLabel = document.getElementById("resultLabel");
-    const numberTrack = document.getElementById("numberTrack");
-    const resultHint = document.getElementById("resultHint");
-
-    const randomBtn = document.getElementById("randomBtn");
-    const copyBtn = document.getElementById("copyBtn");
-    const storyBtn = document.getElementById("storyBtn");
-    const squareBtn = document.getElementById("squareBtn");
-    const shareBtn = document.getElementById("shareBtn");
-    const lineBtn = document.getElementById("lineBtn");
-
-    const themeModal = document.getElementById("themeModal");
-    const themeCards = [...document.querySelectorAll(".theme-card")];
-    const themeCancelBtn = document.getElementById("themeCancelBtn");
-    const themeConfirmBtn = document.getElementById("themeConfirmBtn");
-
-    function randomDigits(size) {
-      let out = "";
-      for (let i = 0; i < size; i += 1) {
-        out += Math.floor(Math.random() * 10).toString();
-      }
-      return out;
-    }
-
-    function getLabel(size) {
-      return `เลขนำโชค ${size} ตัว`;
-    }
-
-    function createDigits(value) {
-      numberTrack.innerHTML = "";
-      value.split("").forEach((char) => {
-        const span = document.createElement("span");
-        span.className = "digit";
-        span.textContent = char;
-        numberTrack.appendChild(span);
-      });
-    }
-
-    function createPlaceholder(size) {
-      numberTrack.innerHTML = "";
-      for (let i = 0; i < size; i += 1) {
-        const span = document.createElement("span");
-        span.className = "digit";
-        span.textContent = "-";
-        numberTrack.appendChild(span);
-      }
-    }
-
-    function updateLabel() {
-      resultLabel.textContent = getLabel(state.digits);
-    }
-
-    function setDigits(size) {
-      if (state.spinning) return;
-
-      state.digits = size;
-      segmentButtons.forEach((btn) => {
-        btn.classList.toggle("active", Number(btn.dataset.digits) === size);
-      });
-
-      updateLabel();
-
-      if (!state.hasResult) {
-        createPlaceholder(size);
-        resultHint.textContent = "กดสุ่มเพื่อเริ่ม";
-        return;
-      }
-
-      state.value = randomDigits(size);
-      createDigits(state.value);
-      resultHint.textContent = "เลขล่าสุด";
-    }
-
-    async function animateSpin(finalValue) {
-      state.spinning = true;
-      randomBtn.disabled = true;
-      numberTrack.classList.add("spin");
-
-      const rounds = 22;
-      const startDelay = 42;
-      const slowStep = 10;
-
-      for (let i = 0; i < rounds; i += 1) {
-        createDigits(randomDigits(state.digits));
-        [...numberTrack.querySelectorAll(".digit")].forEach((el) => {
-          el.classList.add("rolling");
-        });
-
-        const delay = startDelay + (i * slowStep);
-        await new Promise((resolve) => setTimeout(resolve, delay));
-      }
-
-      createDigits(finalValue);
-      [...numberTrack.querySelectorAll(".digit")].forEach((el) => {
-        el.classList.remove("rolling");
-      });
-
-      await new Promise((resolve) => setTimeout(resolve, 160));
-      numberTrack.classList.remove("spin");
-      randomBtn.disabled = false;
-      state.spinning = false;
-    }
-
-    async function generateNumber() {
-      if (state.spinning) return;
-
-      const value = randomDigits(state.digits);
-      state.value = value;
-      state.hasResult = true;
-      resultHint.textContent = "เลขล่าสุด";
-      await animateSpin(value);
-    }
-
-    async function copyResult() {
-      if (!state.hasResult) {
-        alert("ยังไม่มีเลขให้คัดลอก");
-        return;
-      }
-
-      try {
-        await navigator.clipboard.writeText(state.value);
-        resultHint.textContent = "คัดลอกแล้ว";
-        setTimeout(() => {
-          resultHint.textContent = "เลขล่าสุด";
-        }, 1000);
-      } catch (error) {
-        alert("คัดลอกไม่สำเร็จ");
-      }
-    }
-
-    function formatThaiDate() {
-      const now = new Date();
-      const thaiYear = now.getFullYear() + 543;
-      const day = now.getDate();
-      const month = now.getMonth() + 1;
-      return `${day}/${month}/${thaiYear}`;
-    }
-
-    function roundRect(ctx, x, y, w, h, r) {
-      ctx.beginPath();
-      ctx.moveTo(x + r, y);
-      ctx.lineTo(x + w - r, y);
-      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-      ctx.lineTo(x + w, y + h - r);
-      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-      ctx.lineTo(x + r, y + h);
-      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-      ctx.lineTo(x, y + r);
-      ctx.quadraticCurveTo(x, y, x + r, y);
-      ctx.closePath();
-    }
-
-    function drawThemeBackground(ctx, width, height, theme) {
-      if (theme === "clean") {
-        const bg = ctx.createLinearGradient(0, 0, 0, height);
-        bg.addColorStop(0, "#050912");
-        bg.addColorStop(1, "#0a1222");
-        ctx.fillStyle = bg;
-        ctx.fillRect(0, 0, width, height);
-        return;
-      }
-
-      if (theme === "lux") {
-        const bg = ctx.createLinearGradient(0, 0, 0, height);
-        bg.addColorStop(0, "#0a0a0d");
-        bg.addColorStop(1, "#14151c");
-        ctx.fillStyle = bg;
-        ctx.fillRect(0, 0, width, height);
-        return;
-      }
-
-      const bg = ctx.createLinearGradient(0, 0, 0, height);
-      bg.addColorStop(0, "#02050d");
-      bg.addColorStop(0.45, "#040814");
-      bg.addColorStop(1, "#071126");
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, width, height);
-
-      ctx.globalAlpha = 0.12;
-      ctx.fillStyle = "#78d8ff";
-      ctx.beginPath();
-      ctx.arc(width * 0.12, height * 0.16, width * 0.18, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = "#d957aa";
-      ctx.beginPath();
-      ctx.arc(width * 0.88, height * 0.14, width * 0.12, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.globalAlpha = 1;
-    }
-
-    function drawExportCard(ctx, x, y, w, h, theme) {
-      let fillTop = "#08101e";
-      let fillBottom = "#060c18";
-      let glow = "rgba(120,168,255,0.08)";
-      let accentA = "rgba(120,216,255,0.10)";
-      let accentB = "rgba(217,87,170,0.08)";
-      let stroke = "rgba(255,255,255,0.08)";
-
-      if (theme === "clean") {
-        fillTop = "#0b1221";
-        fillBottom = "#0a1020";
-        glow = "rgba(255,255,255,0.02)";
-        accentA = "rgba(120,216,255,0.04)";
-        accentB = "rgba(217,87,170,0.00)";
-      }
-
-      if (theme === "lux") {
-        fillTop = "#111116";
-        fillBottom = "#151720";
-        glow = "rgba(255,215,120,0.04)";
-        accentA = "rgba(255,215,120,0.06)";
-        accentB = "rgba(255,215,120,0.03)";
-      }
-
-      ctx.save();
-      roundRect(ctx, x, y, w, h, 42);
-      ctx.clip();
-
-      const grad = ctx.createLinearGradient(0, y, 0, y + h);
-      grad.addColorStop(0, fillTop);
-      grad.addColorStop(1, fillBottom);
-      ctx.fillStyle = grad;
-      ctx.fillRect(x, y, w, h);
-
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = accentA;
-      ctx.beginPath();
-      ctx.arc(x + 110, y + h - 110, 120, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = accentB;
-      ctx.beginPath();
-      ctx.arc(x + w - 110, y + 110, 90, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.restore();
-
-      ctx.strokeStyle = stroke;
-      ctx.lineWidth = 2;
-      roundRect(ctx, x, y, w, h, 42);
-      ctx.stroke();
-    }
-
-    function drawExportTrack(ctx, x, y, w, h, theme) {
-      let fillTop = "#05070f";
-      let fillBottom = "#000000";
-      let glow = "rgba(120,168,255,0.12)";
-      let border = "rgba(255,255,255,0.04)";
-
-      if (theme === "clean") {
-        fillTop = "#070b14";
-        fillBottom = "#04070d";
-        glow = "rgba(255,255,255,0.03)";
-      }
-
-      if (theme === "lux") {
-        fillTop = "#0b0b0d";
-        fillBottom = "#050505";
-        glow = "rgba(255,215,120,0.08)";
-        border = "rgba(255,215,120,0.08)";
-      }
-
-      ctx.save();
-      roundRect(ctx, x, y, w, h, 32);
-      ctx.clip();
-
-      const grad = ctx.createLinearGradient(0, y, 0, y + h);
-      grad.addColorStop(0, fillTop);
-      grad.addColorStop(1, fillBottom);
-      ctx.fillStyle = grad;
-      ctx.fillRect(x, y, w, h);
-
-      ctx.restore();
-
-      ctx.strokeStyle = border;
-      ctx.lineWidth = 2;
-      roundRect(ctx, x, y, w, h, 32);
-      ctx.stroke();
-
-      ctx.shadowColor = glow;
-      ctx.shadowBlur = 28;
-      ctx.strokeStyle = "rgba(255,255,255,0.01)";
-      roundRect(ctx, x, y, w, h, 32);
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-    }
-
-    function drawExportImage(mode, theme) {
-      if (!state.hasResult) {
-        alert("ยังไม่มีเลขให้บันทึก");
-        return;
-      }
-
-      const isSquare = mode === "square";
-      const width = 1080;
-      const height = isSquare ? 1080 : 1920;
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d");
-
-      drawThemeBackground(ctx, width, height, theme);
-
-      let brandColor = "#ffffff";
-      let subColor = "#d7dff0";
-      let footerColor = "rgba(255,255,255,0.86)";
-      let dateColor = "rgba(255,255,255,0.64)";
-      let digitColor = "#ffffff";
-
-      if (theme === "lux") {
-        subColor = "#e7d5a2";
-        footerColor = "#f0ddb1";
-        dateColor = "rgba(240,221,177,0.76)";
-        digitColor = "#fff8ea";
-      }
-
-      ctx.fillStyle = brandColor;
-      ctx.font = "800 24px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-      ctx.fillText("Random 100% • ไม่เกี่ยวกับ AI", 70, 86);
-
-      ctx.font = "900 76px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-      ctx.fillText("Lucky Drop", 70, 162);
-
-      ctx.fillStyle = subColor;
-      ctx.font = "800 34px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-      ctx.fillText("Pure Random • Real Luck", 70, 212);
-
-      const cardX = 54;
-      const cardY = isSquare ? 250 : 310;
-      const cardW = width - 108;
-      const cardH = isSquare ? 720 : 1280;
-      drawExportCard(ctx, cardX, cardY, cardW, cardH, theme);
-
-      ctx.fillStyle = brandColor;
-      ctx.textAlign = "center";
-      ctx.font = `900 ${isSquare ? 54 : 62}px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;
-      ctx.fillText(`เลขนำโชค ${state.digits} ตัว`, width / 2, cardY + 110);
-
-      const trackX = cardX + 60;
-      const trackY = isSquare ? cardY + 230 : cardY + 360;
-      const trackW = cardW - 120;
-      const trackH = isSquare ? 180 : 220;
-      drawExportTrack(ctx, trackX, trackY, trackW, trackH, theme);
-
-      ctx.fillStyle = digitColor;
-      ctx.textBaseline = "middle";
-      ctx.textAlign = "center";
-      ctx.font = `900 ${isSquare ? 170 : 220}px -apple-system, BlinkMacSystemFont, 'Arial Black', sans-serif`;
-
-      const chars = state.value.split("");
-      const gap = state.digits >= 5 ? (isSquare ? 118 : 132) : (isSquare ? 130 : 148);
-      const startX = width / 2 - ((chars.length - 1) * gap) / 2;
-
-      chars.forEach((char, index) => {
-        ctx.fillText(char, startX + index * gap, trackY + trackH / 2 + 8);
-      });
-
-      ctx.fillStyle = brandColor;
-      ctx.font = `800 ${isSquare ? 34 : 40}px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;
-      ctx.fillText("เลขล่าสุด", width / 2, trackY + trackH + (isSquare ? 74 : 90));
-
-      ctx.textAlign = "left";
-      ctx.fillStyle = footerColor;
-      ctx.font = "900 34px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-      ctx.fillText("Lucky Random • Full Random", 70, height - 90);
-
-      ctx.fillStyle = dateColor;
-      ctx.font = "700 24px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-      ctx.fillText(formatThaiDate(), 70, height - 48);
-
-      const link = document.createElement("a");
-      link.download = `lucky-drop-${mode}-${theme}-${state.value}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    }
-
-    function openThemeModal(mode) {
-      if (!state.hasResult) {
-        alert("ยังไม่มีเลขให้บันทึก");
-        return;
-      }
-      state.pendingSaveMode = mode;
-      themeModal.classList.add("open");
-    }
-
-    function closeThemeModal() {
-      themeModal.classList.remove("open");
-      state.pendingSaveMode = null;
-    }
-
-    async function shareResult() {
-      if (!state.hasResult) {
-        alert("ยังไม่มีเลขให้แชร์");
-        return;
-      }
-
-      const text = `Lucky Drop\nเลขนำโชค ${state.digits} ตัว: ${state.value}`;
-
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: "Lucky Drop",
-            text
-          });
-          return;
-        } catch (error) {}
-      }
-
-      try {
-        await navigator.clipboard.writeText(text);
-        alert("คัดลอกข้อความสำหรับแชร์แล้ว");
-      } catch (error) {
-        alert(text);
-      }
-    }
-
-    function shareToLine() {
-      if (!state.hasResult) {
-        alert("ยังไม่มีเลขให้แชร์");
-        return;
-      }
-
-      const text = encodeURIComponent(`Lucky Drop - เลขนำโชค ${state.digits} ตัว: ${state.value}`);
-      const mobileUrl = `line://msg/text/${text}`;
-      const fallbackUrl = `https://line.me/R/msg/text/?${text}`;
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-      if (isMobile) {
-        window.location.href = mobileUrl;
-        setTimeout(() => {
-          window.location.href = fallbackUrl;
-        }, 900);
-      } else {
-        window.open(fallbackUrl, "_blank");
-      }
-    }
-
+<h1>Lucky Drop</h1>
+<div class="sub">Pure Random • Real Luck</div>
+
+<div class="grid">
+<button class="btn" data-len="1">1 ตัว</button>
+<button class="btn active" data-len="2">2 ตัว</button>
+<button class="btn" data-len="3">3 ตัว</button>
+<button class="btn" data-len="4">4 ตัว</button>
+<button class="btn" data-len="5">5 ตัว</button>
+<button class="btn" data-len="6">6 ตัว</button>
+</div>
+
+<div class="result-box">
+<div id="result">--</div>
+<div class="label">เลขล่าสุด</div>
+</div>
+
+<button class="run" id="runBtn">🎲 สุ่มเลข</button>
+
+<div class="actions">
+<button class="btn" id="saveStory">Save Story</button>
+<button class="btn" id="saveSquare">Save Square</button>
+</div>
+<script>
+  const segmentButtons = [...document.querySelectorAll(".btn[data-len]")];
+  const resultEl = document.getElementById("result");
+  const runBtn = document.getElementById("runBtn");
+  const saveStoryBtn = document.getElementById("saveStory");
+  const saveSquareBtn = document.getElementById("saveSquare");
+
+  const state = {
+    len: 2,
+    value: "",
+    spinning: false
+  };
+
+  function setActiveLength(len) {
+    state.len = len;
     segmentButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        setDigits(Number(btn.dataset.digits));
-      });
+      btn.classList.toggle("active", Number(btn.dataset.len) === len);
     });
 
-    themeCards.forEach((card) => {
-      card.addEventListener("click", () => {
-        state.selectedTheme = card.dataset.theme;
-        themeCards.forEach((c) => c.classList.toggle("active", c === card));
-      });
+    if (!state.value) {
+      resultEl.textContent = "-".repeat(len);
+    }
+  }
+
+  function randomDigits(len) {
+    let out = "";
+    for (let i = 0; i < len; i += 1) {
+      out += Math.floor(Math.random() * 10).toString();
+    }
+    return out;
+  }
+
+  async function spinNumber() {
+    if (state.spinning) return;
+
+    state.spinning = true;
+    runBtn.disabled = true;
+
+    const finalValue = randomDigits(state.len);
+
+    // เร็ว + ตื่นเต้น + ยาวขึ้นนิด
+    const rounds = 22;
+    const startDelay = 38;
+    const stepDelay = 8;
+
+    for (let i = 0; i < rounds; i += 1) {
+      resultEl.style.transform = "translateY(8px) scale(0.985)";
+      resultEl.style.opacity = "0.65";
+      resultEl.textContent = randomDigits(state.len);
+
+      const delay = startDelay + (i * stepDelay);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+
+    resultEl.style.transform = "translateY(0) scale(1)";
+    resultEl.style.opacity = "1";
+    resultEl.textContent = finalValue;
+    state.value = finalValue;
+
+    runBtn.disabled = false;
+    state.spinning = false;
+  }
+
+  function formatThaiDate() {
+    const now = new Date();
+    const thaiYear = now.getFullYear() + 543;
+    const day = now.getDate();
+    const month = now.getMonth() + 1;
+    return `${day}/${month}/${thaiYear}`;
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  function getThemeConfig() {
+    return {
+      bgTop: "#02050d",
+      bgBottom: "#071126",
+      glowA: "rgba(120,216,255,0.10)",
+      glowB: "rgba(217,87,170,0.10)",
+      title: "#ffffff",
+      sub: "rgba(255,255,255,0.82)",
+      digits: "#ffffff",
+      footer: "rgba(255,255,255,0.84)",
+      date: "rgba(255,255,255,0.64)"
+    };
+  }
+
+  function drawPosterBackground(ctx, width, height, theme) {
+    const bg = ctx.createLinearGradient(0, 0, 0, height);
+    bg.addColorStop(0, theme.bgTop);
+    bg.addColorStop(1, theme.bgBottom);
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.globalAlpha = 1;
+
+    const glow1 = ctx.createRadialGradient(
+      width * 0.08, height * 0.12, 0,
+      width * 0.08, height * 0.12, width * 0.20
+    );
+    glow1.addColorStop(0, theme.glowA);
+    glow1.addColorStop(1, "transparent");
+    ctx.fillStyle = glow1;
+    ctx.fillRect(0, 0, width, height);
+
+    const glow2 = ctx.createRadialGradient(
+      width * 0.90, height * 0.16, 0,
+      width * 0.90, height * 0.16, width * 0.15
+    );
+    glow2.addColorStop(0, theme.glowB);
+    glow2.addColorStop(1, "transparent");
+    ctx.fillStyle = glow2;
+    ctx.fillRect(0, 0, width, height);
+
+    const floorGlow = ctx.createLinearGradient(0, height * 0.72, 0, height);
+    floorGlow.addColorStop(0, "rgba(255,255,255,0)");
+    floorGlow.addColorStop(1, "rgba(80,120,255,0.04)");
+    ctx.fillStyle = floorGlow;
+    ctx.fillRect(0, 0, width, height);
+  }
+
+  function drawPosterLayout(type = "story") {
+    if (!state.value) {
+      alert("ยังไม่มีเลขให้บันทึก");
+      return;
+    }
+
+    const isStory = type === "story";
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = 1080;
+    canvas.height = isStory ? 1920 : 1080;
+
+    const width = canvas.width;
+    const height = canvas.height;
+    const theme = getThemeConfig();
+
+    drawPosterBackground(ctx, width, height, theme);
+
+    // Brand
+    ctx.textAlign = "left";
+    ctx.fillStyle = theme.title;
+    ctx.font = "800 26px Inter, Arial, sans-serif";
+    ctx.fillText("Random 100% • ไม่เกี่ยวกับ AI", 70, 86);
+
+    ctx.font = "800 82px Inter, Arial, sans-serif";
+    ctx.fillText("Lucky Drop", 70, 162);
+
+    ctx.fillStyle = theme.sub;
+    ctx.font = "700 36px Inter, Arial, sans-serif";
+    ctx.fillText("Pure Random • Real Luck", 70, 214);
+
+    // Main area — ไม่มีกรอบเลข, ไม่มีกรอบซ้อน
+    const labelY = isStory ? 420 : 360;
+    const numberY = isStory ? 860 : 590;
+    const hintY = isStory ? 1040 : 710;
+
+    // label
+    ctx.textAlign = "center";
+    ctx.fillStyle = theme.title;
+    ctx.font = `800 ${isStory ? 64 : 54}px Inter, Arial, sans-serif`;
+    ctx.fillText(`เลขนำโชค ${state.len} ตัว`, width / 2, labelY);
+
+    // soft spotlight behind number (ไม่ใช่กรอบ)
+    const spot = ctx.createRadialGradient(
+      width / 2,
+      numberY - 40,
+      10,
+      width / 2,
+      numberY - 40,
+      isStory ? 280 : 220
+    );
+    spot.addColorStop(0, "rgba(255,255,255,0.035)");
+    spot.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = spot;
+    ctx.beginPath();
+    ctx.arc(width / 2, numberY - 40, isStory ? 280 : 220, 0, Math.PI * 2);
+    ctx.fill();
+
+    // number
+    ctx.fillStyle = theme.digits;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    const chars = state.value.split("");
+    let fontSize = isStory ? 220 : 190;
+    if (state.len >= 5) fontSize = isStory ? 190 : 150;
+    if (state.len === 6) fontSize = isStory ? 175 : 138;
+    if (state.len === 1) fontSize = isStory ? 260 : 210;
+
+    ctx.font = `800 ${fontSize}px Inter, Arial, sans-serif`;
+
+    let gap = isStory ? 128 : 100;
+    if (state.len >= 5) gap = isStory ? 112 : 86;
+    if (state.len === 6) gap = isStory ? 100 : 76;
+    if (state.len <= 2) gap = isStory ? 160 : 126;
+
+    const startX = width / 2 - ((chars.length - 1) * gap) / 2;
+
+    chars.forEach((char, index) => {
+      const x = startX + (index * gap);
+
+      ctx.shadowColor = "rgba(0,0,0,0.30)";
+      ctx.shadowBlur = 18;
+      ctx.fillText(char, x, numberY);
     });
 
-    themeCancelBtn.addEventListener("click", closeThemeModal);
-    themeConfirmBtn.addEventListener("click", () => {
-      if (!state.pendingSaveMode) return;
-      drawExportImage(state.pendingSaveMode, state.selectedTheme);
-      closeThemeModal();
+    ctx.shadowBlur = 0;
+
+    // hint
+    ctx.fillStyle = theme.sub;
+    ctx.font = `700 ${isStory ? 38 : 32}px Inter, Arial, sans-serif`;
+    ctx.fillText("เลขล่าสุด", width / 2, hintY);
+
+    // footer
+    ctx.textAlign = "left";
+    ctx.fillStyle = theme.footer;
+    ctx.font = "800 34px Inter, Arial, sans-serif";
+    ctx.fillText("Lucky Random • Full Random", 70, height - 96);
+
+    ctx.fillStyle = theme.date;
+    ctx.font = "700 24px Inter, Arial, sans-serif";
+    ctx.fillText(formatThaiDate(), 70, height - 50);
+
+    return canvas;
+  }
+
+  function exportImage(type = "story") {
+    const canvas = drawPosterLayout(type);
+    if (!canvas) return;
+
+    const link = document.createElement("a");
+    link.download = `lucky-drop-${type}-${state.value}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }
+
+  segmentButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (state.spinning) return;
+      setActiveLength(Number(btn.dataset.len));
     });
+  });
 
-    themeModal.addEventListener("click", (e) => {
-      if (e.target === themeModal) closeThemeModal();
-    });
+  runBtn.addEventListener("click", spinNumber);
+  saveStoryBtn.addEventListener("click", () => exportImage("story"));
+  saveSquareBtn.addEventListener("click", () => exportImage("square"));
 
-    randomBtn.addEventListener("click", generateNumber);
-    copyBtn.addEventListener("click", copyResult);
-    storyBtn.addEventListener("click", () => openThemeModal("story"));
-    squareBtn.addEventListener("click", () => openThemeModal("square"));
-    shareBtn.addEventListener("click", shareResult);
-    lineBtn.addEventListener("click", shareToLine);
-
-    updateLabel();
-    createPlaceholder(state.digits);
-  </script>
+  // init
+  setActiveLength(2);
+  resultEl.style.transition = "transform 0.12s ease, opacity 0.12s ease";
+</script>
 </body>
 </html>
