@@ -257,7 +257,7 @@
       line-height:1;
       font-weight:900;
       color:#fff;
-      letter-spacing:.02em;
+      letter-spacing:.04em;
     }
 
     .rank-score{
@@ -323,7 +323,7 @@
     .bar-row{
       display:grid;
       grid-template-columns:74px 1fr 72px;
-      gap:12px;
+      gap:16px;
       align-items:center;
       font-size:14px;
     }
@@ -544,27 +544,36 @@
     mode: "balanced",
     modes: {
       stable: {
-        decay2D: 18,
-        decay3D: 22,
-        recent2D: 16,
-        recent3D: 24
+        shortDecay2D: 8,
+        longDecay2D: 20,
+        shortDecay3D: 10,
+        longDecay3D: 24,
+        burst2D: 5,
+        burst3D: 6,
+        recentDigits: 12
       },
       balanced: {
-        decay2D: 12,
-        decay3D: 15,
-        recent2D: 12,
-        recent3D: 18
+        shortDecay2D: 6,
+        longDecay2D: 14,
+        shortDecay3D: 8,
+        longDecay3D: 18,
+        burst2D: 4,
+        burst3D: 5,
+        recentDigits: 10
       },
       dynamic: {
-        decay2D: 7,
-        decay3D: 9,
-        recent2D: 8,
-        recent3D: 12
+        shortDecay2D: 4,
+        longDecay2D: 10,
+        shortDecay3D: 5,
+        longDecay3D: 12,
+        burst2D: 3,
+        burst3D: 4,
+        recentDigits: 8
       }
     },
     hybrid: {
-      target: 0.50,
-      combined: 0.35,
+      target: 0.55,
+      combined: 0.30,
       opposite: 0.15
     },
     accuracy: {
@@ -625,10 +634,6 @@
     return Math.exp(-index / decay);
   }
 
-  function antiFrequencyPenalty(rawCount, alpha = 0.12) {
-    return 1 / (1 + rawCount * alpha);
-  }
-
   function createDigitMap() {
     return { "0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0 };
   }
@@ -664,22 +669,30 @@
     );
   }
 
+  function antiFrequencyPenalty(rawCount, alpha = 0.10) {
+    return 1 / (1 + rawCount * alpha);
+  }
+
+  function dominanceCap(rawCount, threshold = 3, beta = 0.12) {
+    return 1 / (1 + Math.max(0, rawCount - threshold) * beta);
+  }
+
   function buildDecayScore2D(sourceRecords, decay) {
-    const score = {};
+    const map = {};
     sourceRecords.forEach((row, index) => {
       const w = decayWeight(index, decay);
-      score[row.last2] = (score[row.last2] || 0) + w;
+      map[row.last2] = (map[row.last2] || 0) + w;
     });
-    return score;
+    return map;
   }
 
   function buildDecayScore3D(list, decay) {
-    const score = {};
+    const map = {};
     list.forEach((num, index) => {
       const w = decayWeight(index, decay);
-      score[num] = (score[num] || 0) + w;
+      map[num] = (map[num] || 0) + w;
     });
-    return score;
+    return map;
   }
 
   function buildPositionScore2D(sourceRecords, decay) {
@@ -743,7 +756,6 @@
       const w = decayWeight(index, decay);
       const f = num.slice(0, 2);
       const b = num.slice(1, 3);
-
       front[f] = (front[f] || 0) + w;
       back[b] = (back[b] || 0) + w;
     });
@@ -751,12 +763,12 @@
     return { front, back };
   }
 
-  function recentBoost2D(sourceRecords, recentWindow) {
-    return countMap(sourceRecords.slice(0, recentWindow).map(row => row.last2));
+  function buildBurst2D(sourceRecords, windowSize) {
+    return countMap(sourceRecords.slice(0, windowSize).map(row => row.last2));
   }
 
-  function recentBoost3D(list, recentWindow) {
-    return countMap(list.slice(0, recentWindow));
+  function buildBurst3D(list, windowSize) {
+    return countMap(list.slice(0, windowSize));
   }
 
   function isDouble2D(num) {
@@ -767,10 +779,21 @@
     const [a, b, c] = num.split("");
     let score = 0;
 
-    if (a === b || b === c || a === c) score += 0.65;
-    if (a === b && b === c) score += 0.35;
+    if (a === b || b === c || a === c) score += 0.55;
+    if (a === b && b === c) score += 0.25;
+
+    const asc = Number(b) - Number(a) === 1 && Number(c) - Number(b) === 1;
+    const desc = Number(a) - Number(b) === 1 && Number(b) - Number(c) === 1;
+    if (asc || desc) score += 0.20;
 
     return score;
+  }
+
+  function spreadScore3D(num) {
+    const unique = new Set(num.split("")).size;
+    if (unique === 3) return 1;
+    if (unique === 2) return 0.75;
+    return 0.45;
   }
 
   function exactPositionMatch(a, b) {
@@ -805,7 +828,6 @@
       for (const predicted of predictedList) {
         const exact = exactPositionMatch(actual, predicted);
         const loose = unorderedDigitMatch(actual, predicted);
-
         const current = { actual, predicted, exact, loose };
 
         if (!best) {
@@ -814,82 +836,123 @@
         }
 
         const bestScore = best.exact * 10 + best.loose;
-        const currentScore = current.exact * 10 + current.loose;
+        const currScore = current.exact * 10 + current.loose;
 
-        if (currentScore > bestScore) {
-          best = current;
-        }
+        if (currScore > bestScore) best = current;
       }
     }
 
     return best;
   }
-      function score2D(sourceRecords) {
+
+  function getHotDigitsFromRecent(sourceRecords, take = 10) {
+    const map = createDigitMap();
+
+    sourceRecords.slice(0, take).forEach(row => {
+      row.last2.split("").forEach(d => map[d]++);
+      row.top3.forEach(n => n.split("").forEach(d => map[d]++));
+      row.bottom3.forEach(n => n.split("").forEach(d => map[d]++));
+    });
+
+    return Object.entries(map)
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .slice(0, 3)
+      .map(entry => entry[0]);
+  }
+
+  function getMissingDigitsFromRecent(sourceRecords, take = 10) {
+    const used = new Set();
+
+    sourceRecords.slice(0, take).forEach(row => {
+      row.last2.split("").forEach(d => used.add(d));
+      row.top3.forEach(n => n.split("").forEach(d => used.add(d)));
+      row.bottom3.forEach(n => n.split("").forEach(d => used.add(d)));
+    });
+
+    return Array.from({ length: 10 }, (_, i) => String(i)).filter(d => !used.has(d));
+  }
+
+  function score2D(sourceRecords) {
     const mode = getModeConfig();
 
-    const rawCounts = countMap(sourceRecords.map(r => r.last2));
-    const decayScores = buildDecayScore2D(sourceRecords, mode.decay2D);
-    const pos = buildPositionScore2D(sourceRecords, mode.decay2D);
-    const pool = buildDigitPool2D(sourceRecords, mode.decay2D);
-    const recent = recentBoost2D(sourceRecords, mode.recent2D);
+    const rawCounts = countMap(sourceRecords.map(row => row.last2));
 
-    const maxDecay = maxValue(decayScores);
+    const shortDecay = buildDecayScore2D(sourceRecords, mode.shortDecay2D);
+    const longDecay = buildDecayScore2D(sourceRecords, mode.longDecay2D);
+    const pos = buildPositionScore2D(sourceRecords, mode.longDecay2D);
+    const pool = buildDigitPool2D(sourceRecords, mode.longDecay2D);
+    const burst = buildBurst2D(sourceRecords, mode.burst2D);
+    const hotDigits = new Set(getHotDigitsFromRecent(sourceRecords, mode.recentDigits));
+
+    const maxShort = maxValue(shortDecay);
+    const maxLong = maxValue(longDecay);
     const maxTens = maxValue(pos.tens);
     const maxUnits = maxValue(pos.units);
     const maxPool = maxValue(pool);
-    const maxRecent = maxValue(recent);
+    const maxBurst = maxValue(burst);
 
     return Object.keys(rawCounts).map(num => {
-      const pairDecay = normalize(decayScores[num] || 0, maxDecay);
+      const shortScore = normalize(shortDecay[num] || 0, maxShort);
+      const longScore = normalize(longDecay[num] || 0, maxLong);
       const tensScore = normalize(pos.tens[num[0]] || 0, maxTens);
       const unitScore = normalize(pos.units[num[1]] || 0, maxUnits);
       const poolScore = (
         normalize(pool[num[0]] || 0, maxPool) +
         normalize(pool[num[1]] || 0, maxPool)
       ) / 2;
-      const recentScore = normalize(recent[num] || 0, maxRecent);
+      const burstScore = normalize(burst[num] || 0, maxBurst);
       const doubleBonus = isDouble2D(num) ? 1 : 0;
+      const coverageBonus = (hotDigits.has(num[0]) || hotDigits.has(num[1])) ? 1 : 0;
+
       const penalty = antiFrequencyPenalty(rawCounts[num] || 0);
+      const cap = dominanceCap(rawCounts[num] || 0);
 
       const base =
-        pairDecay * 0.30 +
-        tensScore * 0.18 +
-        unitScore * 0.18 +
-        recentScore * 0.16 +
+        shortScore * 0.24 +
+        longScore * 0.16 +
+        tensScore * 0.14 +
+        unitScore * 0.14 +
         poolScore * 0.10 +
-        doubleBonus * 0.08;
+        burstScore * 0.12 +
+        doubleBonus * 0.06 +
+        coverageBonus * 0.04;
 
-      const finalScore = base * penalty;
+      const finalScore = base * penalty * cap;
 
       return {
         number: num,
         score: Number((finalScore * 100).toFixed(2)),
         totalCount: rawCounts[num] || 0
       };
-    }).sort((a,b)=>b.score-a.score||a.number.localeCompare(b.number));
+    }).sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
   }
 
-  function score3D(list) {
+  function score3D(list, sourceRecords) {
     const mode = getModeConfig();
 
     const rawCounts = countMap(list);
-    const decayScores = buildDecayScore3D(list, mode.decay3D);
-    const pos = buildPositionScore3D(list, mode.decay3D);
-    const pool = buildDigitPool3D(list, mode.decay3D);
-    const pairs = buildPairScore3D(list, mode.decay3D);
-    const recent = recentBoost3D(list, mode.recent3D);
 
-    const maxDecay = maxValue(decayScores);
+    const shortDecay = buildDecayScore3D(list, mode.shortDecay3D);
+    const longDecay = buildDecayScore3D(list, mode.longDecay3D);
+    const pos = buildPositionScore3D(list, mode.longDecay3D);
+    const pool = buildDigitPool3D(list, mode.longDecay3D);
+    const pairs = buildPairScore3D(list, mode.longDecay3D);
+    const burst = buildBurst3D(list, mode.burst3D);
+    const hotDigits = new Set(getHotDigitsFromRecent(sourceRecords, mode.recentDigits));
+
+    const maxShort = maxValue(shortDecay);
+    const maxLong = maxValue(longDecay);
     const maxH = maxValue(pos.h);
     const maxT = maxValue(pos.t);
     const maxU = maxValue(pos.u);
     const maxPool = maxValue(pool);
     const maxFront = maxValue(pairs.front);
     const maxBack = maxValue(pairs.back);
-    const maxRecent = maxValue(recent);
+    const maxBurst = maxValue(burst);
 
     return Object.keys(rawCounts).map(num => {
-      const decay = normalize(decayScores[num] || 0, maxDecay);
+      const shortScore = normalize(shortDecay[num] || 0, maxShort);
+      const longScore = normalize(longDecay[num] || 0, maxLong);
 
       const positionScore = (
         normalize(pos.h[num[0]] || 0, maxH) +
@@ -898,8 +961,8 @@
       ) / 3;
 
       const pairScore = (
-        normalize(pairs.front[num.slice(0,2)] || 0, maxFront) +
-        normalize(pairs.back[num.slice(1,3)] || 0, maxBack)
+        normalize(pairs.front[num.slice(0, 2)] || 0, maxFront) +
+        normalize(pairs.back[num.slice(1, 3)] || 0, maxBack)
       ) / 2;
 
       const poolScore = (
@@ -908,115 +971,109 @@
         normalize(pool[num[2]] || 0, maxPool)
       ) / 3;
 
-      const recentScore = normalize(recent[num] || 0, maxRecent);
+      const burstScore = normalize(burst[num] || 0, maxBurst);
       const pattern = patternScore3D(num);
+      const spread = spreadScore3D(num);
+
+      let coverageBonus = 0;
+      num.split("").forEach(d => {
+        if (hotDigits.has(d)) coverageBonus += 1;
+      });
+      coverageBonus = coverageBonus / 3;
+
       const penalty = antiFrequencyPenalty(rawCounts[num] || 0);
+      const cap = dominanceCap(rawCounts[num] || 0);
 
       const base =
-        decay * 0.20 +
-        positionScore * 0.22 +
-        pairScore * 0.20 +
-        poolScore * 0.14 +
-        recentScore * 0.16 +
-        pattern * 0.08;
+        shortScore * 0.16 +
+        longScore * 0.10 +
+        positionScore * 0.18 +
+        pairScore * 0.18 +
+        poolScore * 0.12 +
+        burstScore * 0.10 +
+        pattern * 0.08 +
+        spread * 0.05 +
+        coverageBonus * 0.03;
 
-      const finalScore = base * penalty;
+      const finalScore = base * penalty * cap;
 
       return {
         number: num,
         score: Number((finalScore * 100).toFixed(2)),
         totalCount: rawCounts[num] || 0
       };
-    }).sort((a,b)=>b.score-a.score||a.number.localeCompare(b.number));
+    }).sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
   }
 
-  function hybridMerge(target, combined, opposite) {
-    const t = Object.fromEntries(target.map(x=>[x.number,x.score]));
-    const c = Object.fromEntries(combined.map(x=>[x.number,x.score]));
-    const o = Object.fromEntries(opposite.map(x=>[x.number,x.score]));
+  function hybridMerge(targetScores, combinedScores, oppositeScores) {
+    const targetMap = Object.fromEntries(targetScores.map(item => [item.number, item.score]));
+    const combinedMap = Object.fromEntries(combinedScores.map(item => [item.number, item.score]));
+    const oppositeMap = Object.fromEntries(oppositeScores.map(item => [item.number, item.score]));
 
-    const keys = new Set([...Object.keys(t),...Object.keys(c),...Object.keys(o)]);
+    const keys = new Set([
+      ...Object.keys(targetMap),
+      ...Object.keys(combinedMap),
+      ...Object.keys(oppositeMap)
+    ]);
 
-    return [...keys].map(num=>{
+    return [...keys].map(number => {
       const score =
-        (t[num]||0)*CONFIG.hybrid.target +
-        (c[num]||0)*CONFIG.hybrid.combined +
-        (o[num]||0)*CONFIG.hybrid.opposite;
+        (targetMap[number] || 0) * CONFIG.hybrid.target +
+        (combinedMap[number] || 0) * CONFIG.hybrid.combined +
+        (oppositeMap[number] || 0) * CONFIG.hybrid.opposite;
 
-      return { number:num, score:Number(score.toFixed(2)) };
-    }).sort((a,b)=>b.score-a.score||a.number.localeCompare(b.number));
+      return {
+        number,
+        score: Number(score.toFixed(2))
+      };
+    }).sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
   }
 
   function buildAllScores(sourceRecords) {
-    const top3 = sourceRecords.flatMap(r=>r.top3);
-    const bottom3 = sourceRecords.flatMap(r=>r.bottom3);
-    const combined3 = sourceRecords.flatMap(r=>r.last3);
+    const top3List = sourceRecords.flatMap(row => row.top3);
+    const bottom3List = sourceRecords.flatMap(row => row.bottom3);
+    const combined3List = sourceRecords.flatMap(row => row.last3);
 
-    const s2 = score2D(sourceRecords);
-    const sTop = score3D(top3);
-    const sBottom = score3D(bottom3);
-    const sCombined = score3D(combined3);
+    const scores2D = score2D(sourceRecords);
+    const scoresTop3 = score3D(top3List, sourceRecords);
+    const scoresBottom3 = score3D(bottom3List, sourceRecords);
+    const scoresCombined3 = score3D(combined3List, sourceRecords);
 
-    const hybridTop = hybridMerge(sTop, sCombined, sBottom);
-    const hybridBottom = hybridMerge(sBottom, sCombined, sTop);
+    const hybridTop3 = hybridMerge(scoresTop3, scoresCombined3, scoresBottom3);
+    const hybridBottom3 = hybridMerge(scoresBottom3, scoresCombined3, scoresTop3);
 
     const hybridMix = [...new Map(
-      [...hybridTop.slice(0,10),...hybridBottom.slice(0,10)]
-        .map(x=>[x.number,x])
-    ).values()].sort((a,b)=>b.score-a.score);
+      [...hybridTop3.slice(0, 10), ...hybridBottom3.slice(0, 10)]
+        .map(item => [item.number, item])
+    ).values()].sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
 
     return {
-      scores2D: s2,
-      scoresTop3: sTop,
-      scoresBottom3: sBottom,
-      scoresCombined3: sCombined,
-      hybridTop3: hybridTop,
-      hybridBottom3: hybridBottom,
+      scores2D,
+      scoresTop3,
+      scoresBottom3,
+      scoresCombined3,
+      hybridTop3,
+      hybridBottom3,
       hybridMix
     };
   }
 
-  function buildPredictions(history, topN) {
-    const result = buildAllScores(history);
+  function buildPredictions(historyRecords, topN) {
+    const result = buildAllScores(historyRecords);
 
     return {
-      top2: result.scores2D.slice(0, topN).map(x=>x.number),
-      top3Top: result.hybridTop3.slice(0, topN).map(x=>x.number),
-      top3Bottom: result.hybridBottom3.slice(0, topN).map(x=>x.number)
+      top2: result.scores2D.slice(0, topN).map(item => item.number),
+      top3Top: result.hybridTop3.slice(0, topN).map(item => item.number),
+      top3Bottom: result.hybridBottom3.slice(0, topN).map(item => item.number)
     };
   }
 
   function evaluateExactHit(actual, predicted) {
     return {
       hit2: predicted.top2.includes(actual.last2),
-      hitTop: actual.top3.some(n=>predicted.top3Top.includes(n)),
-      hitBottom: actual.bottom3.some(n=>predicted.top3Bottom.includes(n))
+      hitTop: actual.top3.some(num => predicted.top3Top.includes(num)),
+      hitBottom: actual.bottom3.some(num => predicted.top3Bottom.includes(num))
     };
-  }
-
-  function getHotDigitsFromRecent(sourceRecords, take=10){
-    const map = createDigitMap();
-    sourceRecords.slice(0,take).forEach(r=>{
-      r.last2.split("").forEach(d=>map[d]++);
-      r.top3.forEach(n=>n.split("").forEach(d=>map[d]++));
-      r.bottom3.forEach(n=>n.split("").forEach(d=>map[d]++));
-    });
-
-    return Object.entries(map)
-      .sort((a,b)=>b[1]-a[1])
-      .slice(0,3)
-      .map(x=>x[0]);
-  }
-
-  function getMissingDigitsFromRecent(sourceRecords, take=10){
-    const used = new Set();
-    sourceRecords.slice(0,take).forEach(r=>{
-      r.last2.split("").forEach(d=>used.add(d));
-      r.top3.forEach(n=>n.split("").forEach(d=>used.add(d)));
-      r.bottom3.forEach(n=>n.split("").forEach(d=>used.add(d)));
-    });
-
-    return Array.from({length:10},(_,i)=>String(i)).filter(d=>!used.has(d));
   }
       function createRankCard(item, index, variant, subText = "") {
     return `
@@ -1033,7 +1090,6 @@
 
   function createBarRows(list, limit = 10) {
     if (!list.length) return `<div class="empty">ยังไม่มีข้อมูล</div>`;
-
     const max = list[0].score || 1;
 
     return list.slice(0, limit).map(item => `
@@ -1098,7 +1154,7 @@
 3 ตัวล่าง: ${topBottom.join(", ") || "-"}
 
 หมายเหตุ:
-- ส่วนนี้ยังไม่สามารถเช็ค Accuracy ได้
+- ส่วนนี้ยังไม่เช็ค Accuracy
 - ต้องรอผลจริงของงวดถัดไปก่อน`;
   }
 
@@ -1180,18 +1236,25 @@
   function buildNearMatchInsight(actual, predicted) {
     const topNear = nearMatch3D(actual.top3, predicted.top3Top);
     const bottomNear = nearMatch3D(actual.bottom3, predicted.top3Bottom);
-
     const lines = [];
 
     if (topNear) {
+      let level = "Near-loose";
+      if (topNear.exact === 3) level = "Exact";
+      else if (topNear.exact >= 2) level = "Near-positional";
+
       lines.push(
-        `3 ตัวบนใกล้สุด: ${topNear.actual} ↔ ${topNear.predicted} | ตรงตำแหน่ง ${topNear.exact}/3 | เลขซ้ำรวม ${topNear.loose}/3`
+        `3 ตัวบนใกล้สุด: ${topNear.actual} ↔ ${topNear.predicted} | ${level} | ตรงตำแหน่ง ${topNear.exact}/3 | เลขซ้ำรวม ${topNear.loose}/3`
       );
     }
 
     if (bottomNear) {
+      let level = "Near-loose";
+      if (bottomNear.exact === 3) level = "Exact";
+      else if (bottomNear.exact >= 2) level = "Near-positional";
+
       lines.push(
-        `3 ตัวล่างใกล้สุด: ${bottomNear.actual} ↔ ${bottomNear.predicted} | ตรงตำแหน่ง ${bottomNear.exact}/3 | เลขซ้ำรวม ${bottomNear.loose}/3`
+        `3 ตัวล่างใกล้สุด: ${bottomNear.actual} ↔ ${bottomNear.predicted} | ${level} | ตรงตำแหน่ง ${bottomNear.exact}/3 | เลขซ้ำรวม ${bottomNear.loose}/3`
       );
     }
 
@@ -1243,7 +1306,6 @@
     for (let i = 0; i < lookback; i++) {
       const actual = records[i];
       const history = records.slice(i + 1);
-
       if (history.length < 10) continue;
 
       const pStrict = buildPredictions(history, CONFIG.accuracy.strictTop);
@@ -1287,31 +1349,26 @@ Practical 3 ตัวล่าง: ${fmt(practicalBottom)}`;
         <div class="score-value">${strictHit.hit2 ? "เข้า" : "ไม่เข้า"}</div>
         <div class="score-sub">${strictPred.top2.join(", ")}</div>
       </div>
-
       <div class="score-card ${strictHit.hitTop ? "good" : "bad"}">
         <div class="score-title">Strict • 3 ตัวบน</div>
         <div class="score-value">${strictHit.hitTop ? "เข้า" : "ไม่เข้า"}</div>
         <div class="score-sub">${strictPred.top3Top.join(", ")}</div>
       </div>
-
       <div class="score-card ${strictHit.hitBottom ? "good" : "bad"}">
         <div class="score-title">Strict • 3 ตัวล่าง</div>
         <div class="score-value">${strictHit.hitBottom ? "เข้า" : "ไม่เข้า"}</div>
         <div class="score-sub">${strictPred.top3Bottom.join(", ")}</div>
       </div>
-
       <div class="score-card ${practicalHit.hit2 ? "good" : "bad"}">
         <div class="score-title">Practical • 2 ตัว</div>
         <div class="score-value">${practicalHit.hit2 ? "เข้า" : "ไม่เข้า"}</div>
         <div class="score-sub">${practicalPred.top2.join(", ")}</div>
       </div>
-
       <div class="score-card ${practicalHit.hitTop ? "good" : "bad"}">
         <div class="score-title">Practical • 3 ตัวบน</div>
         <div class="score-value">${practicalHit.hitTop ? "เข้า" : "ไม่เข้า"}</div>
         <div class="score-sub">${practicalPred.top3Top.join(", ")}</div>
       </div>
-
       <div class="score-card ${practicalHit.hitBottom ? "good" : "bad"}">
         <div class="score-title">Practical • 3 ตัวล่าง</div>
         <div class="score-value">${practicalHit.hitBottom ? "เข้า" : "ไม่เข้า"}</div>
@@ -1431,9 +1488,7 @@ Practical 3 ตัวล่าง: ${fmt(practicalBottom)}`;
   }
 
   async function copyBundle() {
-    if (!cachedBundleText) {
-      buildBundleText();
-    }
+    if (!cachedBundleText) buildBundleText();
 
     if (!cachedBundleText) {
       alert("ยังไม่มีข้อมูลให้คัดลอก");
