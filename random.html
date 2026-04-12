@@ -17,7 +17,7 @@
     :root {
       --bg: #040814;
       --bg-2: #071126;
-      --panel: rgba(10, 18, 36, 0.88);
+      --panel: rgba(10, 18, 36, 0.9);
       --panel-soft: rgba(255, 255, 255, 0.03);
       --line: rgba(255, 255, 255, 0.08);
 
@@ -28,13 +28,8 @@
       --blue: #82a8ff;
       --purple: #8d6aff;
       --pink: #d957aa;
-      --green: #2dd36f;
 
       --shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
-      --radius-xl: 34px;
-      --radius-lg: 24px;
-      --radius-md: 18px;
-      --radius-sm: 14px;
     }
 
     * {
@@ -47,9 +42,9 @@
       padding: 0;
       min-height: 100%;
       background:
-        radial-gradient(circle at 12% 10%, rgba(120, 216, 255, 0.18), transparent 20%),
-        radial-gradient(circle at 88% 14%, rgba(217, 87, 170, 0.18), transparent 18%),
-        radial-gradient(circle at 50% 100%, rgba(130, 168, 255, 0.10), transparent 24%),
+        radial-gradient(circle at 12% 10%, rgba(120, 216, 255, 0.16), transparent 20%),
+        radial-gradient(circle at 88% 14%, rgba(217, 87, 170, 0.16), transparent 18%),
+        radial-gradient(circle at 50% 100%, rgba(130, 168, 255, 0.08), transparent 24%),
         linear-gradient(180deg, #02050d 0%, var(--bg) 38%, var(--bg-2) 100%);
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Arial, sans-serif;
@@ -145,13 +140,17 @@
 
     .segment-btn:hover,
     .primary-btn:hover,
-    .action-btn:hover {
+    .action-btn:hover,
+    .theme-card:hover {
       opacity: 0.96;
     }
 
     .segment-btn:active,
     .primary-btn:active,
-    .action-btn:active {
+    .action-btn:active,
+    .theme-card:active,
+    .theme-confirm-btn:active,
+    .theme-cancel-btn:active {
       transform: scale(0.98);
     }
 
@@ -172,8 +171,8 @@
       min-height: 540px;
       border-radius: 38px;
       background:
-        radial-gradient(circle at 10% 78%, rgba(120,216,255,0.18), transparent 18%),
-        radial-gradient(circle at 90% 20%, rgba(217,87,170,0.16), transparent 16%),
+        radial-gradient(circle at 10% 78%, rgba(120,216,255,0.10), transparent 18%),
+        radial-gradient(circle at 90% 20%, rgba(217,87,170,0.10), transparent 16%),
         linear-gradient(180deg, rgba(8,16,30,0.96), rgba(6,12,24,0.98));
       border: 1px solid rgba(255,255,255,0.08);
       box-shadow: var(--shadow);
@@ -203,14 +202,13 @@
       position: relative;
       width: min(980px, 100%);
       margin: 0 auto;
-      padding: 32px 18px;
+      padding: 28px 16px;
       border-radius: 34px;
       background:
-        radial-gradient(circle at 50% 50%, rgba(123, 157, 228, 0.16), transparent 26%),
         linear-gradient(180deg, rgba(0,0,0,0.92), rgba(4,8,18,0.98));
       box-shadow:
         inset 0 0 0 1px rgba(255,255,255,0.03),
-        0 0 34px rgba(120,168,255,0.12);
+        0 0 34px rgba(120,168,255,0.08);
     }
 
     .number-track {
@@ -218,41 +216,59 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 18px;
-      min-width: min(100%, 920px);
-      padding: 34px 38px;
-      border-radius: 38px;
+      gap: 14px;
+      min-width: min(100%, 900px);
+      min-height: 250px;
+      padding: 22px 26px;
+      border-radius: 32px;
       background:
-        radial-gradient(circle at 50% 50%, rgba(126, 158, 230, 0.95), rgba(126, 158, 230, 0.95) 38%, transparent 39%),
-        linear-gradient(90deg, #000 0%, #000 14%, rgba(124, 160, 236, 1) 14%, rgba(124, 160, 236, 1) 86%, #000 86%, #000 100%);
+        linear-gradient(180deg, rgba(4,7,15,0.96), rgba(0,0,0,0.98));
+      border: 1px solid rgba(255,255,255,0.04);
       box-shadow:
-        0 18px 42px rgba(31, 55, 120, 0.28),
-        0 0 42px rgba(120,168,255,0.22);
-      transition: transform 0.22s ease, filter 0.22s ease;
+        inset 0 0 0 1px rgba(255,255,255,0.02),
+        0 0 26px rgba(120,168,255,0.10);
+      transition: transform 0.22s ease, filter 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .number-track::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02), transparent 60%);
+      pointer-events: none;
     }
 
     .number-track.spin {
-      transform: scale(1.018);
-      filter: brightness(1.04);
+      transform: scale(1.014);
+      filter: brightness(1.03);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.02),
+        0 0 36px rgba(120,168,255,0.18);
     }
 
     .digit {
-      min-width: 0.6em;
+      position: relative;
+      z-index: 2;
+      min-width: 0.56em;
       text-align: center;
       color: #ffffff;
-      font-size: clamp(92px, 18vw, 230px);
+      font-size: clamp(88px, 18vw, 220px);
       line-height: 0.84;
       font-weight: 900;
       letter-spacing: -0.06em;
-      text-shadow: 0 10px 24px rgba(40, 64, 130, 0.22);
+      text-shadow:
+        0 6px 16px rgba(0,0,0,0.30),
+        0 0 18px rgba(255,255,255,0.05);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Arial Black", "Segoe UI", sans-serif;
       font-variant-numeric: tabular-nums;
-      transition: transform 0.14s ease, opacity 0.14s ease;
+      transition: transform 0.12s ease, opacity 0.12s ease;
     }
 
     .digit.rolling {
-      transform: translateY(8px) scale(0.98);
-      opacity: 0.64;
+      transform: translateY(10px) scale(0.985);
+      opacity: 0.55;
     }
 
     .result-hint {
@@ -306,6 +322,127 @@
       font-size: 13px;
       text-align: center;
       letter-spacing: 0.02em;
+    }
+
+    .theme-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.62);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 99;
+    }
+
+    .theme-modal.open {
+      display: flex;
+    }
+
+    .theme-panel {
+      width: min(760px, 100%);
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        linear-gradient(180deg, rgba(14,22,42,0.96), rgba(7,12,25,0.98));
+      box-shadow: 0 24px 70px rgba(0,0,0,0.45);
+      padding: 22px;
+    }
+
+    .theme-title {
+      font-size: 26px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .theme-sub {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .theme-card {
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .theme-card.active {
+      border-color: rgba(130,168,255,0.40);
+      box-shadow: 0 0 24px rgba(130,168,255,0.10);
+    }
+
+    .theme-preview {
+      height: 110px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .theme-name {
+      font-size: 15px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .theme-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .theme-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .theme-confirm-btn,
+    .theme-cancel-btn {
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      font-weight: 900;
+      cursor: pointer;
+      color: #fff;
+    }
+
+    .theme-confirm-btn {
+      background:
+        linear-gradient(135deg, rgba(130,168,255,0.98), rgba(141,106,255,0.96), rgba(217,87,170,0.92));
+    }
+
+    .theme-cancel-btn {
+      background: rgba(255,255,255,0.04);
+    }
+
+    .preview-neon {
+      background:
+        radial-gradient(circle at 15% 80%, rgba(120,216,255,0.20), transparent 22%),
+        radial-gradient(circle at 90% 20%, rgba(217,87,170,0.16), transparent 18%),
+        linear-gradient(180deg, #071120, #050a18);
+    }
+
+    .preview-clean {
+      background:
+        linear-gradient(180deg, #0b1221, #0a0f1a);
+    }
+
+    .preview-lux {
+      background:
+        linear-gradient(180deg, #0b0b0d, #121218);
     }
 
     @media (max-width: 1100px) {
@@ -366,15 +503,16 @@
       }
 
       .number-stage {
-        padding: 20px 12px;
+        padding: 18px 10px;
         border-radius: 24px;
       }
 
       .number-track {
         min-width: 100%;
-        padding: 24px 16px;
-        gap: 10px;
-        border-radius: 26px;
+        min-height: 190px;
+        padding: 16px 12px;
+        gap: 8px;
+        border-radius: 22px;
       }
 
       .actions {
@@ -389,6 +527,14 @@
 
       .action-btn {
         min-height: 70px;
+      }
+
+      .theme-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .theme-actions {
+        flex-direction: column;
       }
     }
   </style>
@@ -427,7 +573,7 @@
       <button class="segment-btn" data-digits="6">6 ตัว</button>
     </section>
 
-    <section class="result-card" id="resultCard">
+    <section class="result-card">
       <div class="result-inner">
         <div class="result-label" id="resultLabel">เลขนำโชค 2 ตัว</div>
 
@@ -454,19 +600,52 @@
     <div class="footer-note">Lucky Random • Full Random</div>
   </main>
 
+  <div class="theme-modal" id="themeModal">
+    <div class="theme-panel">
+      <div class="theme-title">เลือกธีมภาพ</div>
+      <div class="theme-sub">สำหรับ Save Story / Save Square — เน้นเด่น สะอาด และไม่รก</div>
+
+      <div class="theme-grid">
+        <button class="theme-card active" data-theme="neon" type="button">
+          <div class="theme-preview preview-neon"></div>
+          <div class="theme-name">Dark Neon</div>
+          <div class="theme-desc">โทนหลักของ Lucky Drop เข้ม คม เด่น</div>
+        </button>
+
+        <button class="theme-card" data-theme="clean" type="button">
+          <div class="theme-preview preview-clean"></div>
+          <div class="theme-name">Clean Dark</div>
+          <div class="theme-desc">คลีนกว่า เรียบกว่า เน้นตัวเลขล้วน</div>
+        </button>
+
+        <button class="theme-card" data-theme="lux" type="button">
+          <div class="theme-preview preview-lux"></div>
+          <div class="theme-name">Black Gold</div>
+          <div class="theme-desc">เข้ม หรู เนี้ยบ เหมาะกับภาพส่งต่อ</div>
+        </button>
+      </div>
+
+      <div class="theme-actions">
+        <button class="theme-cancel-btn" id="themeCancelBtn" type="button">ยกเลิก</button>
+        <button class="theme-confirm-btn" id="themeConfirmBtn" type="button">บันทึกภาพ</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const state = {
       digits: 2,
       value: "",
       hasResult: false,
-      spinning: false
+      spinning: false,
+      pendingSaveMode: null,
+      selectedTheme: "neon"
     };
 
     const segmentButtons = [...document.querySelectorAll(".segment-btn")];
     const resultLabel = document.getElementById("resultLabel");
     const numberTrack = document.getElementById("numberTrack");
     const resultHint = document.getElementById("resultHint");
-    const resultCard = document.getElementById("resultCard");
 
     const randomBtn = document.getElementById("randomBtn");
     const copyBtn = document.getElementById("copyBtn");
@@ -474,6 +653,11 @@
     const squareBtn = document.getElementById("squareBtn");
     const shareBtn = document.getElementById("shareBtn");
     const lineBtn = document.getElementById("lineBtn");
+
+    const themeModal = document.getElementById("themeModal");
+    const themeCards = [...document.querySelectorAll(".theme-card")];
+    const themeCancelBtn = document.getElementById("themeCancelBtn");
+    const themeConfirmBtn = document.getElementById("themeConfirmBtn");
 
     function randomDigits(size) {
       let out = "";
@@ -537,16 +721,17 @@
       randomBtn.disabled = true;
       numberTrack.classList.add("spin");
 
-      const totalRounds = 18;
-      const baseDelay = 55;
+      const rounds = 22;
+      const startDelay = 42;
+      const slowStep = 10;
 
-      for (let i = 0; i < totalRounds; i += 1) {
+      for (let i = 0; i < rounds; i += 1) {
         createDigits(randomDigits(state.digits));
         [...numberTrack.querySelectorAll(".digit")].forEach((el) => {
           el.classList.add("rolling");
         });
 
-        const delay = baseDelay + i * 8;
+        const delay = startDelay + (i * slowStep);
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
 
@@ -555,7 +740,7 @@
         el.classList.remove("rolling");
       });
 
-      await new Promise((resolve) => setTimeout(resolve, 140));
+      await new Promise((resolve) => setTimeout(resolve, 160));
       numberTrack.classList.remove("spin");
       randomBtn.disabled = false;
       state.spinning = false;
@@ -596,28 +781,6 @@
       return `${day}/${month}/${thaiYear}`;
     }
 
-    function drawBackground(ctx, width, height) {
-      const bg = ctx.createLinearGradient(0, 0, 0, height);
-      bg.addColorStop(0, "#02050d");
-      bg.addColorStop(0.45, "#040814");
-      bg.addColorStop(1, "#071126");
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, width, height);
-
-      ctx.globalAlpha = 0.18;
-      ctx.fillStyle = "#78d8ff";
-      ctx.beginPath();
-      ctx.arc(width * 0.1, height * 0.14, width * 0.18, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = "#d957aa";
-      ctx.beginPath();
-      ctx.arc(width * 0.88, height * 0.16, width * 0.13, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.globalAlpha = 1;
-    }
-
     function roundRect(ctx, x, y, w, h, r) {
       ctx.beginPath();
       ctx.moveTo(x + r, y);
@@ -632,38 +795,144 @@
       ctx.closePath();
     }
 
-    function drawCard(ctx, x, y, w, h) {
-      ctx.save();
-      roundRect(ctx, x, y, w, h, 42);
-      ctx.clip();
+    function drawThemeBackground(ctx, width, height, theme) {
+      if (theme === "clean") {
+        const bg = ctx.createLinearGradient(0, 0, 0, height);
+        bg.addColorStop(0, "#050912");
+        bg.addColorStop(1, "#0a1222");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, width, height);
+        return;
+      }
 
-      const cardGrad = ctx.createLinearGradient(0, y, 0, y + h);
-      cardGrad.addColorStop(0, "#08101e");
-      cardGrad.addColorStop(1, "#060c18");
-      ctx.fillStyle = cardGrad;
-      ctx.fillRect(x, y, w, h);
+      if (theme === "lux") {
+        const bg = ctx.createLinearGradient(0, 0, 0, height);
+        bg.addColorStop(0, "#0a0a0d");
+        bg.addColorStop(1, "#14151c");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, width, height);
+        return;
+      }
 
-      ctx.globalAlpha = 0.15;
+      const bg = ctx.createLinearGradient(0, 0, 0, height);
+      bg.addColorStop(0, "#02050d");
+      bg.addColorStop(0.45, "#040814");
+      bg.addColorStop(1, "#071126");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.globalAlpha = 0.12;
       ctx.fillStyle = "#78d8ff";
       ctx.beginPath();
-      ctx.arc(x + 120, y + h - 120, 130, 0, Math.PI * 2);
+      ctx.arc(width * 0.12, height * 0.16, width * 0.18, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.fillStyle = "#d957aa";
       ctx.beginPath();
-      ctx.arc(x + w - 110, y + 110, 100, 0, Math.PI * 2);
+      ctx.arc(width * 0.88, height * 0.14, width * 0.12, 0, Math.PI * 2);
       ctx.fill();
+
       ctx.globalAlpha = 1;
+    }
+
+    function drawExportCard(ctx, x, y, w, h, theme) {
+      let fillTop = "#08101e";
+      let fillBottom = "#060c18";
+      let glow = "rgba(120,168,255,0.08)";
+      let accentA = "rgba(120,216,255,0.10)";
+      let accentB = "rgba(217,87,170,0.08)";
+      let stroke = "rgba(255,255,255,0.08)";
+
+      if (theme === "clean") {
+        fillTop = "#0b1221";
+        fillBottom = "#0a1020";
+        glow = "rgba(255,255,255,0.02)";
+        accentA = "rgba(120,216,255,0.04)";
+        accentB = "rgba(217,87,170,0.00)";
+      }
+
+      if (theme === "lux") {
+        fillTop = "#111116";
+        fillBottom = "#151720";
+        glow = "rgba(255,215,120,0.04)";
+        accentA = "rgba(255,215,120,0.06)";
+        accentB = "rgba(255,215,120,0.03)";
+      }
+
+      ctx.save();
+      roundRect(ctx, x, y, w, h, 42);
+      ctx.clip();
+
+      const grad = ctx.createLinearGradient(0, y, 0, y + h);
+      grad.addColorStop(0, fillTop);
+      grad.addColorStop(1, fillBottom);
+      ctx.fillStyle = grad;
+      ctx.fillRect(x, y, w, h);
+
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = accentA;
+      ctx.beginPath();
+      ctx.arc(x + 110, y + h - 110, 120, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = accentB;
+      ctx.beginPath();
+      ctx.arc(x + w - 110, y + 110, 90, 0, Math.PI * 2);
+      ctx.fill();
 
       ctx.restore();
 
-      ctx.strokeStyle = "rgba(255,255,255,0.08)";
+      ctx.strokeStyle = stroke;
       ctx.lineWidth = 2;
       roundRect(ctx, x, y, w, h, 42);
       ctx.stroke();
     }
 
-    function drawResultImage(mode) {
+    function drawExportTrack(ctx, x, y, w, h, theme) {
+      let fillTop = "#05070f";
+      let fillBottom = "#000000";
+      let glow = "rgba(120,168,255,0.12)";
+      let border = "rgba(255,255,255,0.04)";
+
+      if (theme === "clean") {
+        fillTop = "#070b14";
+        fillBottom = "#04070d";
+        glow = "rgba(255,255,255,0.03)";
+      }
+
+      if (theme === "lux") {
+        fillTop = "#0b0b0d";
+        fillBottom = "#050505";
+        glow = "rgba(255,215,120,0.08)";
+        border = "rgba(255,215,120,0.08)";
+      }
+
+      ctx.save();
+      roundRect(ctx, x, y, w, h, 32);
+      ctx.clip();
+
+      const grad = ctx.createLinearGradient(0, y, 0, y + h);
+      grad.addColorStop(0, fillTop);
+      grad.addColorStop(1, fillBottom);
+      ctx.fillStyle = grad;
+      ctx.fillRect(x, y, w, h);
+
+      ctx.restore();
+
+      ctx.strokeStyle = border;
+      ctx.lineWidth = 2;
+      roundRect(ctx, x, y, w, h, 32);
+      ctx.stroke();
+
+      ctx.shadowColor = glow;
+      ctx.shadowBlur = 28;
+      ctx.strokeStyle = "rgba(255,255,255,0.01)";
+      roundRect(ctx, x, y, w, h, 32);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+
+    function drawExportImage(mode, theme) {
       if (!state.hasResult) {
         alert("ยังไม่มีเลขให้บันทึก");
         return;
@@ -677,16 +946,29 @@
       canvas.height = height;
       const ctx = canvas.getContext("2d");
 
-      drawBackground(ctx, width, height);
+      drawThemeBackground(ctx, width, height, theme);
 
-      ctx.fillStyle = "#ffffff";
+      let brandColor = "#ffffff";
+      let subColor = "#d7dff0";
+      let footerColor = "rgba(255,255,255,0.86)";
+      let dateColor = "rgba(255,255,255,0.64)";
+      let digitColor = "#ffffff";
+
+      if (theme === "lux") {
+        subColor = "#e7d5a2";
+        footerColor = "#f0ddb1";
+        dateColor = "rgba(240,221,177,0.76)";
+        digitColor = "#fff8ea";
+      }
+
+      ctx.fillStyle = brandColor;
       ctx.font = "800 24px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
       ctx.fillText("Random 100% • ไม่เกี่ยวกับ AI", 70, 86);
 
       ctx.font = "900 76px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
       ctx.fillText("Lucky Drop", 70, 162);
 
-      ctx.fillStyle = "#d7dff0";
+      ctx.fillStyle = subColor;
       ctx.font = "800 34px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
       ctx.fillText("Pure Random • Real Luck", 70, 212);
 
@@ -694,68 +976,63 @@
       const cardY = isSquare ? 250 : 310;
       const cardW = width - 108;
       const cardH = isSquare ? 720 : 1280;
-      drawCard(ctx, cardX, cardY, cardW, cardH);
+      drawExportCard(ctx, cardX, cardY, cardW, cardH, theme);
 
-      ctx.fillStyle = "#f3f6ff";
+      ctx.fillStyle = brandColor;
       ctx.textAlign = "center";
       ctx.font = `900 ${isSquare ? 54 : 62}px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;
       ctx.fillText(`เลขนำโชค ${state.digits} ตัว`, width / 2, cardY + 110);
 
       const trackX = cardX + 60;
-      const trackY = isSquare ? cardY + 190 : cardY + 320;
+      const trackY = isSquare ? cardY + 230 : cardY + 360;
       const trackW = cardW - 120;
-      const trackH = isSquare ? 220 : 280;
+      const trackH = isSquare ? 180 : 220;
+      drawExportTrack(ctx, trackX, trackY, trackW, trackH, theme);
 
-      ctx.save();
-      roundRect(ctx, trackX, trackY, trackW, trackH, 34);
-      ctx.clip();
-
-      const trackGrad = ctx.createLinearGradient(trackX, trackY, trackX, trackY + trackH);
-      trackGrad.addColorStop(0, "#000000");
-      trackGrad.addColorStop(1, "#040812");
-      ctx.fillStyle = trackGrad;
-      ctx.fillRect(trackX, trackY, trackW, trackH);
-
-      const circleX = trackX + trackW / 2;
-      const circleY = trackY + trackH / 2;
-      const circleR = isSquare ? 190 : 235;
-      ctx.fillStyle = "#819dea";
-      ctx.beginPath();
-      ctx.arc(circleX, circleY, circleR, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.restore();
-
-      ctx.fillStyle = "#ffffff";
+      ctx.fillStyle = digitColor;
       ctx.textBaseline = "middle";
       ctx.textAlign = "center";
       ctx.font = `900 ${isSquare ? 170 : 220}px -apple-system, BlinkMacSystemFont, 'Arial Black', sans-serif`;
 
       const chars = state.value.split("");
-      const gap = isSquare ? 120 : 150;
+      const gap = state.digits >= 5 ? (isSquare ? 118 : 132) : (isSquare ? 130 : 148);
       const startX = width / 2 - ((chars.length - 1) * gap) / 2;
 
       chars.forEach((char, index) => {
-        ctx.fillText(char, startX + index * gap, trackY + trackH / 2 + 10);
+        ctx.fillText(char, startX + index * gap, trackY + trackH / 2 + 8);
       });
 
-      ctx.fillStyle = "#dbe4f8";
+      ctx.fillStyle = brandColor;
       ctx.font = `800 ${isSquare ? 34 : 40}px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;
-      ctx.fillText("เลขล่าสุด", width / 2, trackY + trackH + (isSquare ? 70 : 90));
+      ctx.fillText("เลขล่าสุด", width / 2, trackY + trackH + (isSquare ? 74 : 90));
 
       ctx.textAlign = "left";
-      ctx.fillStyle = "rgba(255,255,255,0.86)";
+      ctx.fillStyle = footerColor;
       ctx.font = "900 34px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
       ctx.fillText("Lucky Random • Full Random", 70, height - 90);
 
-      ctx.fillStyle = "rgba(255,255,255,0.64)";
+      ctx.fillStyle = dateColor;
       ctx.font = "700 24px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
       ctx.fillText(formatThaiDate(), 70, height - 48);
 
       const link = document.createElement("a");
-      link.download = `lucky-drop-${mode}-${state.value}.png`;
+      link.download = `lucky-drop-${mode}-${theme}-${state.value}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
+    }
+
+    function openThemeModal(mode) {
+      if (!state.hasResult) {
+        alert("ยังไม่มีเลขให้บันทึก");
+        return;
+      }
+      state.pendingSaveMode = mode;
+      themeModal.classList.add("open");
+    }
+
+    function closeThemeModal() {
+      themeModal.classList.remove("open");
+      state.pendingSaveMode = null;
     }
 
     async function shareResult() {
@@ -793,7 +1070,6 @@
       const text = encodeURIComponent(`Lucky Drop - เลขนำโชค ${state.digits} ตัว: ${state.value}`);
       const mobileUrl = `line://msg/text/${text}`;
       const fallbackUrl = `https://line.me/R/msg/text/?${text}`;
-
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
       if (isMobile) {
@@ -812,10 +1088,28 @@
       });
     });
 
+    themeCards.forEach((card) => {
+      card.addEventListener("click", () => {
+        state.selectedTheme = card.dataset.theme;
+        themeCards.forEach((c) => c.classList.toggle("active", c === card));
+      });
+    });
+
+    themeCancelBtn.addEventListener("click", closeThemeModal);
+    themeConfirmBtn.addEventListener("click", () => {
+      if (!state.pendingSaveMode) return;
+      drawExportImage(state.pendingSaveMode, state.selectedTheme);
+      closeThemeModal();
+    });
+
+    themeModal.addEventListener("click", (e) => {
+      if (e.target === themeModal) closeThemeModal();
+    });
+
     randomBtn.addEventListener("click", generateNumber);
     copyBtn.addEventListener("click", copyResult);
-    storyBtn.addEventListener("click", () => drawResultImage("story"));
-    squareBtn.addEventListener("click", () => drawResultImage("square"));
+    storyBtn.addEventListener("click", () => openThemeModal("story"));
+    squareBtn.addEventListener("click", () => openThemeModal("square"));
     shareBtn.addEventListener("click", shareResult);
     lineBtn.addEventListener("click", shareToLine);
 
