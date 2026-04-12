@@ -15,23 +15,24 @@
 
   <style>
     :root {
-      --bg: #040816;
-      --bg-2: #071124;
-      --panel: rgba(10, 18, 36, 0.86);
+      --bg: #040814;
+      --bg-2: #071126;
+      --panel: rgba(10, 18, 36, 0.88);
       --panel-soft: rgba(255, 255, 255, 0.03);
       --line: rgba(255, 255, 255, 0.08);
-      --text: #f8fbff;
-      --muted: #a8b3c9;
 
-      --cyan: #6ad8ff;
-      --blue: #78a8ff;
-      --purple: #8f68ff;
-      --pink: #e45ab5;
+      --text: #f8fbff;
+      --muted: #a6b2ca;
+
+      --cyan: #78d8ff;
+      --blue: #82a8ff;
+      --purple: #8d6aff;
+      --pink: #d957aa;
       --green: #2dd36f;
 
-      --shadow: 0 24px 70px rgba(0, 0, 0, 0.36);
-      --radius-xl: 30px;
-      --radius-lg: 22px;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+      --radius-xl: 34px;
+      --radius-lg: 24px;
       --radius-md: 18px;
       --radius-sm: 14px;
     }
@@ -41,18 +42,17 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    html,
-    body {
+    html, body {
       margin: 0;
       padding: 0;
       min-height: 100%;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      color: var(--text);
       background:
-        radial-gradient(circle at 12% 10%, rgba(106, 216, 255, 0.18), transparent 22%),
-        radial-gradient(circle at 88% 14%, rgba(228, 90, 181, 0.18), transparent 22%),
-        radial-gradient(circle at 50% 100%, rgba(120, 168, 255, 0.1), transparent 28%),
-        linear-gradient(180deg, #02050f 0%, var(--bg) 35%, var(--bg-2) 100%);
+        radial-gradient(circle at 12% 10%, rgba(120, 216, 255, 0.18), transparent 20%),
+        radial-gradient(circle at 88% 14%, rgba(217, 87, 170, 0.18), transparent 18%),
+        radial-gradient(circle at 50% 100%, rgba(130, 168, 255, 0.10), transparent 24%),
+        linear-gradient(180deg, #02050d 0%, var(--bg) 38%, var(--bg-2) 100%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Arial, sans-serif;
       overflow-x: hidden;
     }
 
@@ -62,60 +62,63 @@
 
     .app {
       width: 100%;
-      max-width: 1280px;
+      max-width: 1320px;
       margin: 0 auto;
-      padding: max(20px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom)) 18px;
+      padding:
+        max(20px, env(safe-area-inset-top))
+        18px
+        max(24px, env(safe-area-inset-bottom))
+        18px;
     }
 
     .topbar {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
       margin-bottom: 18px;
     }
 
-    .brand-icon {
-      width: 88px;
-      height: 88px;
+    .logo-box {
+      width: 86px;
+      height: 86px;
       border-radius: 24px;
       display: grid;
       place-items: center;
+      flex-shrink: 0;
       background:
         linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)),
-        rgba(11, 18, 36, 0.92);
+        rgba(11, 18, 36, 0.94);
       border: 1px solid rgba(255,255,255,0.08);
       box-shadow:
-        0 16px 34px rgba(0,0,0,0.34),
-        0 0 40px rgba(126, 104, 255, 0.16);
-      flex-shrink: 0;
+        0 18px 36px rgba(0,0,0,0.34),
+        0 0 34px rgba(141,106,255,0.16);
     }
 
-    .brand-text {
+    .brand {
       min-width: 0;
     }
 
     .eyebrow {
-      color: rgba(255,255,255,0.72);
+      color: rgba(255,255,255,0.76);
       font-size: 18px;
       font-weight: 800;
-      letter-spacing: 0.01em;
       margin-bottom: 2px;
     }
 
     .title {
-      font-size: clamp(42px, 8vw, 88px);
-      line-height: 0.95;
-      font-weight: 900;
-      letter-spacing: -0.04em;
       margin: 0;
+      font-size: clamp(44px, 8vw, 88px);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      font-weight: 900;
     }
 
     .subtitle {
+      margin-top: 10px;
       color: #d7dff0;
       font-size: clamp(16px, 2vw, 22px);
-      font-weight: 700;
-      margin-top: 10px;
-      letter-spacing: 0.04em;
+      font-weight: 800;
+      letter-spacing: 0.03em;
     }
 
     .segmented {
@@ -126,18 +129,24 @@
     }
 
     .segment-btn {
-      height: 92px;
+      height: 88px;
       border-radius: 24px;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.10);
       background:
         linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)),
-        rgba(10, 18, 36, 0.86);
+        rgba(10, 18, 36, 0.88);
       color: #fff;
       font-size: clamp(18px, 2vw, 26px);
       font-weight: 900;
       cursor: pointer;
-      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, opacity 0.16s ease;
+      transition: transform 0.16s ease, opacity 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
+    .segment-btn:hover,
+    .primary-btn:hover,
+    .action-btn:hover {
+      opacity: 0.96;
     }
 
     .segment-btn:active,
@@ -147,104 +156,109 @@
     }
 
     .segment-btn.active {
-      border-color: rgba(145, 192, 255, 0.32);
+      border-color: rgba(141, 182, 255, 0.28);
       background:
-        radial-gradient(circle at 20% 20%, rgba(106, 216, 255, 0.28), transparent 45%),
-        radial-gradient(circle at 80% 80%, rgba(228, 90, 181, 0.24), transparent 42%),
-        linear-gradient(135deg, rgba(120,168,255,0.28), rgba(143,104,255,0.18));
+        radial-gradient(circle at 20% 18%, rgba(120,216,255,0.26), transparent 44%),
+        radial-gradient(circle at 80% 78%, rgba(217,87,170,0.24), transparent 42%),
+        linear-gradient(135deg, rgba(130,168,255,0.20), rgba(141,106,255,0.18));
       box-shadow:
-        0 16px 34px rgba(0,0,0,0.24),
-        0 0 40px rgba(120,168,255,0.16);
+        0 14px 28px rgba(0,0,0,0.22),
+        0 0 34px rgba(120,168,255,0.12);
     }
 
     .result-card {
       position: relative;
       overflow: hidden;
-      min-height: 560px;
+      min-height: 540px;
       border-radius: 38px;
       background:
-        radial-gradient(circle at 14% 66%, rgba(106,216,255,0.85), rgba(106,216,255,0.85) 20%, transparent 21%),
-        radial-gradient(circle at 96% 62%, rgba(228,90,181,0.9), rgba(228,90,181,0.9) 18%, transparent 19%),
-        radial-gradient(circle at 50% 50%, rgba(120,168,255,0.16), transparent 24%),
-        linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,247,252,0.96));
-      box-shadow: var(--shadow);
+        radial-gradient(circle at 10% 78%, rgba(120,216,255,0.18), transparent 18%),
+        radial-gradient(circle at 90% 20%, rgba(217,87,170,0.16), transparent 16%),
+        linear-gradient(180deg, rgba(8,16,30,0.96), rgba(6,12,24,0.98));
       border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow);
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 22px;
     }
 
-    .result-overlay {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at 50% 50%, rgba(120,168,255,0.16), transparent 28%);
-      opacity: 0.95;
-    }
-
     .result-inner {
       position: relative;
-      z-index: 2;
       width: 100%;
-      padding: 42px 28px;
+      padding: 34px 22px 28px;
       text-align: center;
+      z-index: 2;
     }
 
     .result-label {
-      color: #dde3f3;
-      font-size: clamp(26px, 3vw, 40px);
+      color: #f2f6ff;
+      font-size: clamp(24px, 3vw, 40px);
       font-weight: 900;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
       letter-spacing: -0.02em;
     }
 
-    .number-wrap {
+    .number-stage {
+      position: relative;
+      width: min(980px, 100%);
+      margin: 0 auto;
+      padding: 32px 18px;
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(123, 157, 228, 0.16), transparent 26%),
+        linear-gradient(180deg, rgba(0,0,0,0.92), rgba(4,8,18,0.98));
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.03),
+        0 0 34px rgba(120,168,255,0.12);
+    }
+
+    .number-track {
+      position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 24px;
-      min-width: min(100%, 980px);
-      padding: 42px 54px;
-      border-radius: 40px;
+      gap: 18px;
+      min-width: min(100%, 920px);
+      padding: 34px 38px;
+      border-radius: 38px;
       background:
-        radial-gradient(circle at 50% 50%, rgba(122, 160, 236, 0.92), rgba(122, 160, 236, 0.92) 46%, rgba(0,0,0,0) 47%),
-        linear-gradient(90deg, #000 0%, #000 12%, rgba(124, 162, 236, 1) 12%, rgba(124, 162, 236, 1) 88%, #000 88%, #000 100%);
+        radial-gradient(circle at 50% 50%, rgba(126, 158, 230, 0.95), rgba(126, 158, 230, 0.95) 38%, transparent 39%),
+        linear-gradient(90deg, #000 0%, #000 14%, rgba(124, 160, 236, 1) 14%, rgba(124, 160, 236, 1) 86%, #000 86%, #000 100%);
       box-shadow:
-        0 18px 40px rgba(34, 61, 120, 0.24),
-        0 0 40px rgba(120,168,255,0.22);
-      transition: transform 0.2s ease, filter 0.2s ease;
+        0 18px 42px rgba(31, 55, 120, 0.28),
+        0 0 42px rgba(120,168,255,0.22);
+      transition: transform 0.22s ease, filter 0.22s ease;
     }
 
-    .number-wrap.animate {
-      transform: scale(1.015);
-      filter: brightness(1.02);
+    .number-track.spin {
+      transform: scale(1.018);
+      filter: brightness(1.04);
     }
 
     .digit {
-      font-size: clamp(88px, 17vw, 230px);
+      min-width: 0.6em;
+      text-align: center;
+      color: #ffffff;
+      font-size: clamp(92px, 18vw, 230px);
       line-height: 0.84;
       font-weight: 900;
-      color: #fff;
-      letter-spacing: -0.05em;
-      text-shadow: 0 10px 24px rgba(40, 64, 130, 0.24);
-      min-width: 0.56em;
-      transform: translateY(0);
-      opacity: 1;
-      transition: transform 0.18s ease, opacity 0.18s ease;
+      letter-spacing: -0.06em;
+      text-shadow: 0 10px 24px rgba(40, 64, 130, 0.22);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Arial Black", "Segoe UI", sans-serif;
       font-variant-numeric: tabular-nums;
+      transition: transform 0.14s ease, opacity 0.14s ease;
     }
 
     .digit.rolling {
-      transform: translateY(8px);
-      opacity: 0.66;
+      transform: translateY(8px) scale(0.98);
+      opacity: 0.64;
     }
 
     .result-hint {
-      margin-top: 34px;
-      color: #cfd6ea;
-      font-size: clamp(16px, 2vw, 28px);
+      margin-top: 22px;
+      color: #dbe4f8;
+      font-size: clamp(16px, 2vw, 24px);
       font-weight: 800;
     }
 
@@ -257,21 +271,21 @@
 
     .primary-btn,
     .action-btn {
-      border: 1px solid rgba(255,255,255,0.1);
+      min-height: 84px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.10);
       color: #fff;
       cursor: pointer;
-      border-radius: 22px;
-      min-height: 88px;
       font-weight: 900;
-      transition: transform 0.16s ease, opacity 0.16s ease, box-shadow 0.16s ease;
-      box-shadow: 0 16px 28px rgba(0,0,0,0.24);
+      box-shadow: 0 16px 28px rgba(0,0,0,0.22);
+      transition: transform 0.16s ease, opacity 0.16s ease;
     }
 
     .primary-btn {
       background:
-        radial-gradient(circle at 20% 20%, rgba(106,216,255,0.36), transparent 44%),
-        radial-gradient(circle at 80% 78%, rgba(228,90,181,0.34), transparent 42%),
-        linear-gradient(135deg, rgba(120,168,255,0.92), rgba(143,104,255,0.92), rgba(228,90,181,0.9));
+        radial-gradient(circle at 20% 20%, rgba(120,216,255,0.26), transparent 44%),
+        radial-gradient(circle at 80% 78%, rgba(217,87,170,0.24), transparent 42%),
+        linear-gradient(135deg, rgba(130,168,255,0.98), rgba(141,106,255,0.96), rgba(217,87,170,0.92));
       font-size: clamp(24px, 2.2vw, 38px);
       display: flex;
       align-items: center;
@@ -282,14 +296,8 @@
     .action-btn {
       background:
         linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)),
-        rgba(10, 18, 36, 0.88);
+        rgba(10, 18, 36, 0.90);
       font-size: clamp(16px, 1.4vw, 22px);
-    }
-
-    .action-btn:hover,
-    .primary-btn:hover,
-    .segment-btn:hover {
-      opacity: 0.96;
     }
 
     .footer-note {
@@ -298,89 +306,6 @@
       font-size: 13px;
       text-align: center;
       letter-spacing: 0.02em;
-    }
-
-    .hidden-capture {
-      position: fixed;
-      left: -99999px;
-      top: -99999px;
-      width: 1080px;
-      height: 1920px;
-      background:
-        radial-gradient(circle at 12% 10%, rgba(106,216,255,0.18), transparent 22%),
-        radial-gradient(circle at 88% 14%, rgba(228,90,181,0.18), transparent 22%),
-        linear-gradient(180deg, #02050f 0%, #040816 35%, #071124 100%);
-      padding: 54px;
-      color: #fff;
-      overflow: hidden;
-    }
-
-    .capture-card {
-      margin-top: 34px;
-      height: 1460px;
-      border-radius: 42px;
-      background:
-        radial-gradient(circle at 14% 66%, rgba(106,216,255,0.85), rgba(106,216,255,0.85) 20%, transparent 21%),
-        radial-gradient(circle at 96% 62%, rgba(228,90,181,0.9), rgba(228,90,181,0.9) 18%, transparent 19%),
-        linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,247,252,0.96));
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    .capture-label {
-      position: absolute;
-      top: 104px;
-      left: 0;
-      right: 0;
-      text-align: center;
-      color: #dde3f3;
-      font-size: 62px;
-      font-weight: 900;
-    }
-
-    .capture-number-wrap {
-      display: inline-flex;
-      gap: 34px;
-      padding: 54px 74px;
-      border-radius: 44px;
-      background:
-        radial-gradient(circle at 50% 50%, rgba(122, 160, 236, 0.92), rgba(122, 160, 236, 0.92) 46%, rgba(0,0,0,0) 47%),
-        linear-gradient(90deg, #000 0%, #000 12%, rgba(124, 162, 236, 1) 12%, rgba(124, 162, 236, 1) 88%, #000 88%, #000 100%);
-      box-shadow:
-        0 18px 40px rgba(34, 61, 120, 0.24),
-        0 0 40px rgba(120,168,255,0.22);
-    }
-
-    .capture-digit {
-      font-size: 260px;
-      line-height: 0.84;
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: -0.05em;
-      min-width: 0.56em;
-      text-align: center;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .capture-brand {
-      position: absolute;
-      left: 54px;
-      bottom: 48px;
-      color: #fff;
-    }
-
-    .capture-brand-title {
-      font-size: 32px;
-      font-weight: 900;
-    }
-
-    .capture-brand-date {
-      font-size: 20px;
-      color: rgba(255,255,255,0.76);
-      margin-top: 8px;
     }
 
     @media (max-width: 1100px) {
@@ -397,12 +322,7 @@
       }
 
       .result-card {
-        min-height: 500px;
-      }
-
-      .number-wrap {
-        padding: 34px 28px;
-        gap: 18px;
+        min-height: 470px;
       }
     }
 
@@ -412,11 +332,7 @@
         padding-right: 14px;
       }
 
-      .topbar {
-        align-items: flex-start;
-      }
-
-      .brand-icon {
+      .logo-box {
         width: 72px;
         height: 72px;
         border-radius: 20px;
@@ -441,27 +357,24 @@
       }
 
       .result-card {
-        min-height: 430px;
+        min-height: 400px;
         border-radius: 28px;
       }
 
       .result-inner {
-        padding: 28px 18px;
+        padding: 26px 16px 22px;
       }
 
-      .result-label {
-        margin-bottom: 20px;
+      .number-stage {
+        padding: 20px 12px;
+        border-radius: 24px;
       }
 
-      .number-wrap {
+      .number-track {
         min-width: 100%;
-        padding: 24px 18px;
-        gap: 12px;
-        border-radius: 28px;
-      }
-
-      .result-hint {
-        margin-top: 20px;
+        padding: 24px 16px;
+        gap: 10px;
+        border-radius: 26px;
       }
 
       .actions {
@@ -471,11 +384,11 @@
 
       .primary-btn {
         grid-column: 1 / -1;
-        min-height: 82px;
+        min-height: 80px;
       }
 
       .action-btn {
-        min-height: 72px;
+        min-height: 70px;
       }
     }
   </style>
@@ -483,13 +396,13 @@
 <body>
   <main class="app">
     <header class="topbar">
-      <div class="brand-icon" aria-hidden="true">
+      <div class="logo-box" aria-hidden="true">
         <svg width="52" height="52" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="cubeStroke" x1="10" y1="10" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#6AD8FF"/>
-              <stop offset="0.5" stop-color="#8F68FF"/>
-              <stop offset="1" stop-color="#E45AB5"/>
+              <stop stop-color="#78D8FF"/>
+              <stop offset="0.5" stop-color="#8D6AFF"/>
+              <stop offset="1" stop-color="#D957AA"/>
             </linearGradient>
           </defs>
           <rect x="6" y="6" width="52" height="52" rx="16" fill="#0E1630"/>
@@ -498,7 +411,7 @@
         </svg>
       </div>
 
-      <div class="brand-text">
+      <div class="brand">
         <div class="eyebrow">Random 100% • ไม่เกี่ยวกับ AI</div>
         <h1 class="title">Lucky Drop</h1>
         <div class="subtitle">Pure Random • Real Luck</div>
@@ -515,14 +428,14 @@
     </section>
 
     <section class="result-card" id="resultCard">
-      <div class="result-overlay"></div>
-
       <div class="result-inner">
         <div class="result-label" id="resultLabel">เลขนำโชค 2 ตัว</div>
 
-        <div class="number-wrap" id="numberWrap" aria-live="polite">
-          <span class="digit">-</span>
-          <span class="digit">-</span>
+        <div class="number-stage">
+          <div class="number-track" id="numberTrack" aria-live="polite">
+            <span class="digit">-</span>
+            <span class="digit">-</span>
+          </div>
         </div>
 
         <div class="result-hint" id="resultHint">กดสุ่มเพื่อเริ่ม</div>
@@ -541,18 +454,17 @@
     <div class="footer-note">Lucky Random • Full Random</div>
   </main>
 
-  <div class="hidden-capture" id="captureCanvas"></div>
-
   <script>
     const state = {
       digits: 2,
       value: "",
-      hasResult: false
+      hasResult: false,
+      spinning: false
     };
 
     const segmentButtons = [...document.querySelectorAll(".segment-btn")];
     const resultLabel = document.getElementById("resultLabel");
-    const numberWrap = document.getElementById("numberWrap");
+    const numberTrack = document.getElementById("numberTrack");
     const resultHint = document.getElementById("resultHint");
     const resultCard = document.getElementById("resultCard");
 
@@ -563,95 +475,100 @@
     const shareBtn = document.getElementById("shareBtn");
     const lineBtn = document.getElementById("lineBtn");
 
-    function padValue(value, size) {
-      return String(value).padStart(size, "0").slice(-size);
-    }
-
     function randomDigits(size) {
-      let result = "";
+      let out = "";
       for (let i = 0; i < size; i += 1) {
-        result += Math.floor(Math.random() * 10).toString();
+        out += Math.floor(Math.random() * 10).toString();
       }
-      return result;
+      return out;
     }
 
     function getLabel(size) {
       return `เลขนำโชค ${size} ตัว`;
     }
 
-    function createDigitNodes(value) {
-      numberWrap.innerHTML = "";
-      const chars = value.split("");
-      chars.forEach((char) => {
+    function createDigits(value) {
+      numberTrack.innerHTML = "";
+      value.split("").forEach((char) => {
         const span = document.createElement("span");
         span.className = "digit";
         span.textContent = char;
-        numberWrap.appendChild(span);
+        numberTrack.appendChild(span);
       });
     }
 
-    function createPlaceholderNodes(size) {
-      numberWrap.innerHTML = "";
+    function createPlaceholder(size) {
+      numberTrack.innerHTML = "";
       for (let i = 0; i < size; i += 1) {
         const span = document.createElement("span");
         span.className = "digit";
         span.textContent = "-";
-        numberWrap.appendChild(span);
+        numberTrack.appendChild(span);
       }
     }
 
-    function updateHeader() {
+    function updateLabel() {
       resultLabel.textContent = getLabel(state.digits);
     }
 
     function setDigits(size) {
+      if (state.spinning) return;
+
       state.digits = size;
       segmentButtons.forEach((btn) => {
         btn.classList.toggle("active", Number(btn.dataset.digits) === size);
       });
-      updateHeader();
+
+      updateLabel();
 
       if (!state.hasResult) {
-        createPlaceholderNodes(size);
+        createPlaceholder(size);
         resultHint.textContent = "กดสุ่มเพื่อเริ่ม";
         return;
       }
 
-      const nextValue = padValue(state.value, size);
-      state.value = nextValue;
-      createDigitNodes(nextValue);
+      state.value = randomDigits(size);
+      createDigits(state.value);
       resultHint.textContent = "เลขล่าสุด";
     }
 
-    async function animateRoll(finalValue) {
-      const rounds = 9;
-      resultCard.classList.add("animate");
+    async function animateSpin(finalValue) {
+      state.spinning = true;
+      randomBtn.disabled = true;
+      numberTrack.classList.add("spin");
 
-      for (let step = 0; step < rounds; step += 1) {
-        const temp = randomDigits(state.digits);
-        createDigitNodes(temp);
-        document.querySelectorAll(".digit").forEach((el) => el.classList.add("rolling"));
-        await new Promise((resolve) => setTimeout(resolve, 56 + step * 8));
+      const totalRounds = 18;
+      const baseDelay = 55;
+
+      for (let i = 0; i < totalRounds; i += 1) {
+        createDigits(randomDigits(state.digits));
+        [...numberTrack.querySelectorAll(".digit")].forEach((el) => {
+          el.classList.add("rolling");
+        });
+
+        const delay = baseDelay + i * 8;
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
 
-      createDigitNodes(finalValue);
-      document.querySelectorAll(".digit").forEach((el) => el.classList.remove("rolling"));
+      createDigits(finalValue);
+      [...numberTrack.querySelectorAll(".digit")].forEach((el) => {
+        el.classList.remove("rolling");
+      });
 
-      setTimeout(() => {
-        resultCard.classList.remove("animate");
-      }, 160);
+      await new Promise((resolve) => setTimeout(resolve, 140));
+      numberTrack.classList.remove("spin");
+      randomBtn.disabled = false;
+      state.spinning = false;
     }
 
     async function generateNumber() {
+      if (state.spinning) return;
+
       const value = randomDigits(state.digits);
       state.value = value;
       state.hasResult = true;
       resultHint.textContent = "เลขล่าสุด";
-      await animateRoll(value);
-    }
-
-    function getResultText() {
-      return state.hasResult ? state.value : "";
+      await animateSpin(value);
     }
 
     async function copyResult() {
@@ -665,13 +582,13 @@
         resultHint.textContent = "คัดลอกแล้ว";
         setTimeout(() => {
           resultHint.textContent = "เลขล่าสุด";
-        }, 1200);
+        }, 1000);
       } catch (error) {
         alert("คัดลอกไม่สำเร็จ");
       }
     }
 
-    function getThaiDate() {
+    function formatThaiDate() {
       const now = new Date();
       const thaiYear = now.getFullYear() + 543;
       const day = now.getDate();
@@ -679,154 +596,166 @@
       return `${day}/${month}/${thaiYear}`;
     }
 
-    function buildCaptureMarkup(size, value, mode = "story") {
-      const digits = value.split("").map((char) => `<div class="capture-digit">${char}</div>`).join("");
-      const height = mode === "square" ? 1080 : 1920;
-      const width = 1080;
-      const cardHeight = mode === "square" ? 860 : 1460;
-      const cardTop = mode === "square" ? 26 : 34;
-      const labelTop = mode === "square" ? 78 : 104;
-      const digitSize = mode === "square" ? 210 : 260;
+    function drawBackground(ctx, width, height) {
+      const bg = ctx.createLinearGradient(0, 0, 0, height);
+      bg.addColorStop(0, "#02050d");
+      bg.addColorStop(0.45, "#040814");
+      bg.addColorStop(1, "#071126");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, width, height);
 
-      return `
-        <div style="width:${width}px;height:${height}px;background:
-          radial-gradient(circle at 12% 10%, rgba(106,216,255,0.18), transparent 22%),
-          radial-gradient(circle at 88% 14%, rgba(228,90,181,0.18), transparent 22%),
-          linear-gradient(180deg, #02050f 0%, #040816 35%, #071124 100%);
-          padding:54px;color:#fff;position:relative;overflow:hidden;">
-          
-          <div style="display:flex;align-items:center;gap:18px;">
-            <div style="width:86px;height:86px;border-radius:24px;display:grid;place-items:center;
-              background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)), rgba(11,18,36,0.92);
-              border:1px solid rgba(255,255,255,0.08);">
-              <svg width="50" height="50" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="captureCubeStroke" x1="10" y1="10" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#6AD8FF"/>
-                    <stop offset="0.5" stop-color="#8F68FF"/>
-                    <stop offset="1" stop-color="#E45AB5"/>
-                  </linearGradient>
-                </defs>
-                <rect x="6" y="6" width="52" height="52" rx="16" fill="#0E1630"/>
-                <path d="M32 14L44.5 21.2V35.6L32 42.8L19.5 35.6V21.2L32 14Z" stroke="url(#captureCubeStroke)" stroke-width="3"/>
-                <path d="M32 14V28.4M44.5 21.2L32 28.4M19.5 21.2L32 28.4M32 28.4V42.8" stroke="url(#captureCubeStroke)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <div>
-              <div style="font-size:24px;font-weight:800;color:rgba(255,255,255,0.78);">Random 100% • ไม่เกี่ยวกับ AI</div>
-              <div style="font-size:68px;line-height:0.95;font-weight:900;letter-spacing:-0.04em;">Lucky Drop</div>
-              <div style="font-size:28px;font-weight:800;color:#d7dff0;margin-top:8px;">Pure Random • Real Luck</div>
-            </div>
-          </div>
+      ctx.globalAlpha = 0.18;
+      ctx.fillStyle = "#78d8ff";
+      ctx.beginPath();
+      ctx.arc(width * 0.1, height * 0.14, width * 0.18, 0, Math.PI * 2);
+      ctx.fill();
 
-          <div style="
-            margin-top:${cardTop}px;
-            height:${cardHeight}px;
-            border-radius:42px;
-            background:
-              radial-gradient(circle at 14% 66%, rgba(106,216,255,0.85), rgba(106,216,255,0.85) 20%, transparent 21%),
-              radial-gradient(circle at 96% 62%, rgba(228,90,181,0.9), rgba(228,90,181,0.9) 18%, transparent 19%),
-              linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,247,252,0.96));
-            position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-            
-            <div style="
-              position:absolute;
-              top:${labelTop}px;
-              left:0;
-              right:0;
-              text-align:center;
-              color:#dde3f3;
-              font-size:${mode === "square" ? 50 : 62}px;
-              font-weight:900;">
-              เลขนำโชค ${size} ตัว
-            </div>
+      ctx.fillStyle = "#d957aa";
+      ctx.beginPath();
+      ctx.arc(width * 0.88, height * 0.16, width * 0.13, 0, Math.PI * 2);
+      ctx.fill();
 
-            <div style="
-              display:inline-flex;
-              gap:${mode === "square" ? 22 : 34}px;
-              padding:${mode === "square" ? "44px 54px" : "54px 74px"};
-              border-radius:44px;
-              background:
-                radial-gradient(circle at 50% 50%, rgba(122,160,236,0.92), rgba(122,160,236,0.92) 46%, rgba(0,0,0,0) 47%),
-                linear-gradient(90deg, #000 0%, #000 12%, rgba(124,162,236,1) 12%, rgba(124,162,236,1) 88%, #000 88%, #000 100%);
-              box-shadow:
-                0 18px 40px rgba(34,61,120,0.24),
-                0 0 40px rgba(120,168,255,0.22);">
-              ${value.split("").map((char) => `
-                <div style="
-                  font-size:${digitSize}px;
-                  line-height:0.84;
-                  font-weight:900;
-                  color:#fff;
-                  letter-spacing:-0.05em;
-                  min-width:0.56em;
-                  text-align:center;
-                  font-variant-numeric:tabular-nums;">${char}</div>
-              `).join("")}
-            </div>
-
-            <div style="
-              position:absolute;
-              left:54px;
-              bottom:48px;
-              color:#fff;">
-              <div style="font-size:32px;font-weight:900;">Lucky Random • Full Random</div>
-              <div style="font-size:20px;color:rgba(255,255,255,0.76);margin-top:8px;">${getThaiDate()}</div>
-            </div>
-          </div>
-        </div>
-      `;
+      ctx.globalAlpha = 1;
     }
 
-    async function domToImageDownload(mode = "story") {
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    function drawCard(ctx, x, y, w, h) {
+      ctx.save();
+      roundRect(ctx, x, y, w, h, 42);
+      ctx.clip();
+
+      const cardGrad = ctx.createLinearGradient(0, y, 0, y + h);
+      cardGrad.addColorStop(0, "#08101e");
+      cardGrad.addColorStop(1, "#060c18");
+      ctx.fillStyle = cardGrad;
+      ctx.fillRect(x, y, w, h);
+
+      ctx.globalAlpha = 0.15;
+      ctx.fillStyle = "#78d8ff";
+      ctx.beginPath();
+      ctx.arc(x + 120, y + h - 120, 130, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#d957aa";
+      ctx.beginPath();
+      ctx.arc(x + w - 110, y + 110, 100, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.restore();
+
+      ctx.strokeStyle = "rgba(255,255,255,0.08)";
+      ctx.lineWidth = 2;
+      roundRect(ctx, x, y, w, h, 42);
+      ctx.stroke();
+    }
+
+    function drawResultImage(mode) {
       if (!state.hasResult) {
         alert("ยังไม่มีเลขให้บันทึก");
         return;
       }
 
-      const target = document.getElementById("captureCanvas");
-      target.innerHTML = buildCaptureMarkup(state.digits, state.value, mode);
+      const isSquare = mode === "square";
+      const width = 1080;
+      const height = isSquare ? 1080 : 1920;
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
 
-      try {
-        const svg = `
-          <svg xmlns="http://www.w3.org/2000/svg" width="${mode === "square" ? 1080 : 1080}" height="${mode === "square" ? 1080 : 1920}">
-            <foreignObject width="100%" height="100%">
-              <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;">
-                ${target.innerHTML}
-              </div>
-            </foreignObject>
-          </svg>
-        `;
+      drawBackground(ctx, width, height);
 
-        const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "800 24px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+      ctx.fillText("Random 100% • ไม่เกี่ยวกับ AI", 70, 86);
 
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          canvas.width = mode === "square" ? 1080 : 1080;
-          canvas.height = mode === "square" ? 1080 : 1920;
+      ctx.font = "900 76px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+      ctx.fillText("Lucky Drop", 70, 162);
 
-          const ctx = canvas.getContext("2d");
-          ctx.fillStyle = "#040816";
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-          ctx.drawImage(img, 0, 0);
+      ctx.fillStyle = "#d7dff0";
+      ctx.font = "800 34px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+      ctx.fillText("Pure Random • Real Luck", 70, 212);
 
-          URL.revokeObjectURL(url);
+      const cardX = 54;
+      const cardY = isSquare ? 250 : 310;
+      const cardW = width - 108;
+      const cardH = isSquare ? 720 : 1280;
+      drawCard(ctx, cardX, cardY, cardW, cardH);
 
-          const link = document.createElement("a");
-          link.download = `lucky-drop-${mode}-${state.value}.png`;
-          link.href = canvas.toDataURL("image/png");
-          link.click();
-        };
-        img.onerror = () => {
-          URL.revokeObjectURL(url);
-          alert("บันทึกภาพไม่สำเร็จ");
-        };
-        img.src = url;
-      } catch (error) {
-        alert("บันทึกภาพไม่สำเร็จ");
-      }
+      ctx.fillStyle = "#f3f6ff";
+      ctx.textAlign = "center";
+      ctx.font = `900 ${isSquare ? 54 : 62}px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;
+      ctx.fillText(`เลขนำโชค ${state.digits} ตัว`, width / 2, cardY + 110);
+
+      const trackX = cardX + 60;
+      const trackY = isSquare ? cardY + 190 : cardY + 320;
+      const trackW = cardW - 120;
+      const trackH = isSquare ? 220 : 280;
+
+      ctx.save();
+      roundRect(ctx, trackX, trackY, trackW, trackH, 34);
+      ctx.clip();
+
+      const trackGrad = ctx.createLinearGradient(trackX, trackY, trackX, trackY + trackH);
+      trackGrad.addColorStop(0, "#000000");
+      trackGrad.addColorStop(1, "#040812");
+      ctx.fillStyle = trackGrad;
+      ctx.fillRect(trackX, trackY, trackW, trackH);
+
+      const circleX = trackX + trackW / 2;
+      const circleY = trackY + trackH / 2;
+      const circleR = isSquare ? 190 : 235;
+      ctx.fillStyle = "#819dea";
+      ctx.beginPath();
+      ctx.arc(circleX, circleY, circleR, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "center";
+      ctx.font = `900 ${isSquare ? 170 : 220}px -apple-system, BlinkMacSystemFont, 'Arial Black', sans-serif`;
+
+      const chars = state.value.split("");
+      const gap = isSquare ? 120 : 150;
+      const startX = width / 2 - ((chars.length - 1) * gap) / 2;
+
+      chars.forEach((char, index) => {
+        ctx.fillText(char, startX + index * gap, trackY + trackH / 2 + 10);
+      });
+
+      ctx.fillStyle = "#dbe4f8";
+      ctx.font = `800 ${isSquare ? 34 : 40}px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;
+      ctx.fillText("เลขล่าสุด", width / 2, trackY + trackH + (isSquare ? 70 : 90));
+
+      ctx.textAlign = "left";
+      ctx.fillStyle = "rgba(255,255,255,0.86)";
+      ctx.font = "900 34px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+      ctx.fillText("Lucky Random • Full Random", 70, height - 90);
+
+      ctx.fillStyle = "rgba(255,255,255,0.64)";
+      ctx.font = "700 24px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+      ctx.fillText(formatThaiDate(), 70, height - 48);
+
+      const link = document.createElement("a");
+      link.download = `lucky-drop-${mode}-${state.value}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
     }
 
     async function shareResult() {
@@ -855,14 +784,26 @@
       }
     }
 
-    function openLineShare() {
+    function shareToLine() {
       if (!state.hasResult) {
         alert("ยังไม่มีเลขให้แชร์");
         return;
       }
 
-      const text = encodeURIComponent(`Lucky Drop\nเลขนำโชค ${state.digits} ตัว: ${state.value}`);
-      window.open(`https://social-plugins.line.me/lineit/share?text=${text}`, "_blank");
+      const text = encodeURIComponent(`Lucky Drop - เลขนำโชค ${state.digits} ตัว: ${state.value}`);
+      const mobileUrl = `line://msg/text/${text}`;
+      const fallbackUrl = `https://line.me/R/msg/text/?${text}`;
+
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        window.location.href = mobileUrl;
+        setTimeout(() => {
+          window.location.href = fallbackUrl;
+        }, 900);
+      } else {
+        window.open(fallbackUrl, "_blank");
+      }
     }
 
     segmentButtons.forEach((btn) => {
@@ -873,13 +814,13 @@
 
     randomBtn.addEventListener("click", generateNumber);
     copyBtn.addEventListener("click", copyResult);
-    storyBtn.addEventListener("click", () => domToImageDownload("story"));
-    squareBtn.addEventListener("click", () => domToImageDownload("square"));
+    storyBtn.addEventListener("click", () => drawResultImage("story"));
+    squareBtn.addEventListener("click", () => drawResultImage("square"));
     shareBtn.addEventListener("click", shareResult);
-    lineBtn.addEventListener("click", openLineShare);
+    lineBtn.addEventListener("click", shareToLine);
 
-    updateHeader();
-    createPlaceholderNodes(state.digits);
+    updateLabel();
+    createPlaceholder(state.digits);
   </script>
 </body>
 </html>
