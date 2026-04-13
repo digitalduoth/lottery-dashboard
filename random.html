@@ -1,372 +1,259 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lucky Drop</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif}
+
+body{
+  background: linear-gradient(180deg,#06080f,#0a1224);
+  color:#fff;
+  padding:20px;
+}
+
+/* HEADER */
+h1{
+  font-size:42px;
+  font-weight:900;
+}
+.sub{
+  opacity:.7;
+  margin-bottom:20px;
+}
+
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.btn{
+  padding:18px;
+  border-radius:16px;
+  background:rgba(255,255,255,0.05);
+  text-align:center;
+  font-weight:700;
+  border:1px solid rgba(255,255,255,0.08);
+  cursor:pointer;
+}
+
+.btn.active{
+  background:rgba(255,255,255,0.12);
+}
+
+/* RESULT CARD */
+.card{
+  margin-top:10px;
+  padding:30px 16px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.08);
+  text-align:center;
+}
+
+.label{
+  font-size:18px;
+  opacity:.7;
+}
+
+.result{
+  width:100%;
+  font-weight:900;
+  font-size:140px;
+  letter-spacing:-0.07em;
+  white-space:nowrap;
+  margin:20px 0;
+}
+
+.hint{
+  opacity:.5;
+}
+
+/* MAIN BUTTON */
+.run{
+  margin-top:16px;
+  padding:18px;
+  border-radius:18px;
+  text-align:center;
+  font-weight:700;
+  background:linear-gradient(90deg,#1c2a4a,#2d3f75);
+  cursor:pointer;
+}
+
+/* ACTIONS */
+.actions{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+.actions div{
+  padding:14px;
+  border-radius:14px;
+  text-align:center;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  cursor:pointer;
+}
+
+footer{
+  margin-top:30px;
+  opacity:.6;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Lucky Drop</h1>
+<div class="sub">Pure Random • Real Luck</div>
+
+<div class="grid">
+  <div class="btn active" data-len="1">1 ตัว</div>
+  <div class="btn" data-len="2">2 ตัว</div>
+  <div class="btn" data-len="3">3 ตัว</div>
+  <div class="btn" data-len="4">4 ตัว</div>
+  <div class="btn" data-len="5">5 ตัว</div>
+  <div class="btn" data-len="6">6 ตัว</div>
+</div>
+
+<div class="card">
+  <div class="label" id="label">เลขนำโชค 1 ตัว</div>
+  <div class="result" id="result">-</div>
+  <div class="hint">เลขล่าสุด</div>
+</div>
+
+<div class="run" id="run">🎲 สุ่มเลข</div>
+
+<div class="actions">
+  <div id="copy">Copy</div>
+  <div id="share">Share</div>
+  <div id="story">Save Story</div>
+  <div id="square">Save Square</div>
+</div>
+
+<footer>
+Lucky Random • Full Random
+</footer>
+
 <script>
-  const pickButtons = [...document.querySelectorAll(".pick-btn")];
-  const resultLabel = document.getElementById("resultLabel");
-  const resultEl = document.getElementById("result");
-  const resultHint = document.getElementById("resultHint");
+const resultEl = document.getElementById("result");
+const labelEl = document.getElementById("label");
+let len = 1;
+let value = "";
 
-  const runBtn = document.getElementById("runBtn");
-  const copyBtn = document.getElementById("copyBtn");
-  const saveStoryBtn = document.getElementById("saveStoryBtn");
-  const saveSquareBtn = document.getElementById("saveSquareBtn");
-  const shareBtn = document.getElementById("shareBtn");
-  const lineBtn = document.getElementById("lineBtn");
+/* RANDOM */
+function random(n){
+  let s="";
+  for(let i=0;i<n;i++) s+=Math.floor(Math.random()*10);
+  return s;
+}
 
-  const state = {
-    len: 2,
-    value: "",
-    spinning: false
-  };
+/* AUTO SCALE (สำคัญ) */
+function fit(){
+  if(!value)return;
 
-  function randomDigits(len) {
-    let out = "";
-    for (let i = 0; i < len; i += 1) {
-      out += Math.floor(Math.random() * 10).toString();
-    }
-    return out;
+  let base = 140;
+  if(len===2) base=130;
+  if(len===3) base=115;
+  if(len===4) base=100;
+  if(len===5) base=85;
+  if(len===6) base=70;
+
+  resultEl.style.fontSize = base+"px";
+
+  const max = resultEl.parentElement.clientWidth - 30;
+  const w = resultEl.scrollWidth;
+
+  if(w>max){
+    const ratio = max/w;
+    resultEl.style.fontSize = (base*ratio)+"px";
   }
+}
 
-  function getBaseFontSize(len, viewportWidth) {
-    const isSmallPhone = viewportWidth <= 420;
-    const isTablet = viewportWidth >= 900;
-
-    if (isTablet) {
-      if (len === 1) return 250;
-      if (len === 2) return 220;
-      if (len === 3) return 195;
-      if (len === 4) return 170;
-      if (len === 5) return 146;
-      return 128;
-    }
-
-    if (isSmallPhone) {
-      if (len === 1) return 150;
-      if (len === 2) return 132;
-      if (len === 3) return 118;
-      if (len === 4) return 102;
-      if (len === 5) return 86;
-      return 74;
-    }
-
-    if (len === 1) return 190;
-    if (len === 2) return 168;
-    if (len === 3) return 146;
-    if (len === 4) return 124;
-    if (len === 5) return 104;
-    return 90;
+/* BUTTON SELECT */
+document.querySelectorAll(".btn").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll(".btn").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    len = Number(b.dataset.len);
+    labelEl.innerText = `เลขนำโชค ${len} ตัว`;
+    resultEl.innerText="-";
+    value="";
   }
+});
 
-  function fitResultText(value) {
-    if (!value) return;
+/* RUN */
+document.getElementById("run").onclick=()=>{
+  value = random(len);
+  resultEl.innerText = value;
+  fit();
+};
 
-    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-    const stage = resultEl.closest(".stage");
-    const stageWidth = stage ? stage.clientWidth : viewportWidth;
-    const availableWidth = Math.max(120, stageWidth - 52);
+/* COPY */
+document.getElementById("copy").onclick=()=>{
+  if(!value)return alert("ยังไม่มีเลข");
+  navigator.clipboard.writeText(value);
+};
 
-    const baseSize = getBaseFontSize(value.length, viewportWidth);
-
-    resultEl.style.fontSize = `${baseSize}px`;
-
-    const actualWidth = resultEl.scrollWidth;
-    if (actualWidth > availableWidth) {
-      const ratio = availableWidth / actualWidth;
-      const nextSize = Math.floor(baseSize * ratio * 0.98);
-      resultEl.style.fontSize = `${Math.max(nextSize, 42)}px`;
-    }
-
-    if (value.length >= 5) {
-      resultEl.style.letterSpacing = "-0.085em";
-    } else if (value.length === 4) {
-      resultEl.style.letterSpacing = "-0.08em";
-    } else {
-      resultEl.style.letterSpacing = "-0.075em";
-    }
+/* SHARE */
+document.getElementById("share").onclick=()=>{
+  if(!value)return;
+  const text=`Lucky Drop: ${value}`;
+  if(navigator.share){
+    navigator.share({text});
+  }else{
+    navigator.clipboard.writeText(text);
+    alert("คัดลอกแล้ว");
   }
+};
 
-  function renderValue(value) {
-    resultEl.textContent = value;
-    requestAnimationFrame(() => fitResultText(value));
-  }
+/* SAVE IMAGE */
+function save(type){
+  if(!value)return;
 
-  function setLength(len) {
-    if (state.spinning) return;
+  const c=document.createElement("canvas");
+  const ctx=c.getContext("2d");
 
-    state.len = len;
-    pickButtons.forEach((btn) => {
-      btn.classList.toggle("active", Number(btn.dataset.len) === len);
-    });
+  c.width=1080;
+  c.height= type==="story"?1920:1080;
 
-    resultLabel.textContent = `เลขนำโชค ${len} ตัว`;
+  const g=ctx.createLinearGradient(0,0,0,c.height);
+  g.addColorStop(0,"#06080f");
+  g.addColorStop(1,"#0a1224");
+  ctx.fillStyle=g;
+  ctx.fillRect(0,0,c.width,c.height);
 
-    if (!state.value) {
-      renderValue("-".repeat(len));
-      return;
-    }
+  ctx.fillStyle="#fff";
+  ctx.textAlign="center";
 
-    state.value = randomDigits(len);
-    renderValue(state.value);
-  }
+  ctx.font="bold 60px Inter";
+  ctx.fillText(`เลขนำโชค ${len} ตัว`,540, type==="story"?500:350);
 
-  async function spinNumber() {
-    if (state.spinning) return;
+  let size=200-(len*15);
+  ctx.font=`900 ${size}px Inter`;
+  ctx.fillText(value,540,type==="story"?900:550);
 
-    state.spinning = true;
-    runBtn.disabled = true;
+  const a=document.createElement("a");
+  a.href=c.toDataURL();
+  a.download="lucky.png";
+  a.click();
+}
 
-    const finalValue = randomDigits(state.len);
+document.getElementById("story").onclick=()=>save("story");
+document.getElementById("square").onclick=()=>save("square");
 
-    const rounds = 22;
-    const startDelay = 40;
-    const slowStep = 8;
-
-    for (let i = 0; i < rounds; i += 1) {
-      resultEl.style.transform = "translateY(10px) scale(0.985)";
-      resultEl.style.opacity = "0.58";
-      renderValue(randomDigits(state.len));
-
-      const delay = startDelay + (i * slowStep);
-      await new Promise((resolve) => setTimeout(resolve, delay));
-    }
-
-    resultEl.style.transform = "translateY(0) scale(1)";
-    resultEl.style.opacity = "1";
-
-    state.value = finalValue;
-    renderValue(finalValue);
-    resultHint.textContent = "เลขล่าสุด";
-
-    runBtn.disabled = false;
-    state.spinning = false;
-  }
-
-  async function copyResult() {
-    if (!state.value) {
-      alert("ยังไม่มีเลขให้คัดลอก");
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(state.value);
-      resultHint.textContent = "คัดลอกแล้ว";
-      setTimeout(() => {
-        resultHint.textContent = "เลขล่าสุด";
-      }, 900);
-    } catch (error) {
-      alert("คัดลอกไม่สำเร็จ");
-    }
-  }
-
-  async function shareResult() {
-    if (!state.value) {
-      alert("ยังไม่มีเลขให้แชร์");
-      return;
-    }
-
-    const text = `Lucky Drop\nเลขนำโชค ${state.len} ตัว: ${state.value}`;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: "Lucky Drop",
-          text
-        });
-        return;
-      } catch (error) {}
-    }
-
-    try {
-      await navigator.clipboard.writeText(text);
-      alert("คัดลอกข้อความสำหรับแชร์แล้ว");
-    } catch (error) {
-      alert(text);
-    }
-  }
-
-  function shareToLine() {
-    if (!state.value) {
-      alert("ยังไม่มีเลขให้แชร์");
-      return;
-    }
-
-    const text = encodeURIComponent(`Lucky Drop - เลขนำโชค ${state.len} ตัว: ${state.value}`);
-    const mobileUrl = `line://msg/text/${text}`;
-    const fallbackUrl = `https://line.me/R/msg/text/?${text}`;
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-    if (isMobile) {
-      window.location.href = mobileUrl;
-      setTimeout(() => {
-        window.location.href = fallbackUrl;
-      }, 900);
-    } else {
-      window.open(fallbackUrl, "_blank");
-    }
-  }
-
-  function formatThaiDate() {
-    const now = new Date();
-    const thaiYear = now.getFullYear() + 543;
-    const day = now.getDate();
-    const month = now.getMonth() + 1;
-    return `${day}/${month}/${thaiYear}`;
-  }
-
-  function drawBackground(ctx, width, height) {
-    const bg = ctx.createLinearGradient(0, 0, 0, height);
-    bg.addColorStop(0, "#06080f");
-    bg.addColorStop(1, "#0a1224");
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, width, height);
-
-    const glow1 = ctx.createRadialGradient(
-      width * 0.08, height * 0.14, 0,
-      width * 0.08, height * 0.14, width * 0.22
-    );
-    glow1.addColorStop(0, "rgba(255,255,255,0.05)");
-    glow1.addColorStop(1, "rgba(255,255,255,0)");
-    ctx.fillStyle = glow1;
-    ctx.fillRect(0, 0, width, height);
-
-    const glow2 = ctx.createRadialGradient(
-      width * 0.90, height * 0.16, 0,
-      width * 0.90, height * 0.16, width * 0.16
-    );
-    glow2.addColorStop(0, "rgba(92,78,255,0.12)");
-    glow2.addColorStop(1, "rgba(92,78,255,0)");
-    ctx.fillStyle = glow2;
-    ctx.fillRect(0, 0, width, height);
-
-    const centerGlow = ctx.createRadialGradient(
-      width / 2, height * 0.52, 0,
-      width / 2, height * 0.52, width * 0.20
-    );
-    centerGlow.addColorStop(0, "rgba(255,255,255,0.035)");
-    centerGlow.addColorStop(1, "rgba(255,255,255,0)");
-    ctx.fillStyle = centerGlow;
-    ctx.fillRect(0, 0, width, height);
-  }
-
-  function drawPoster(type = "story") {
-    if (!state.value) {
-      alert("ยังไม่มีเลขให้บันทึก");
-      return null;
-    }
-
-    const isStory = type === "story";
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    canvas.width = 1080;
-    canvas.height = isStory ? 1920 : 1080;
-
-    const width = canvas.width;
-    const height = canvas.height;
-
-    drawBackground(ctx, width, height);
-
-    ctx.textAlign = "left";
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "800 26px Inter, Arial, sans-serif";
-    ctx.fillText("Random 100% • ไม่เกี่ยวกับ AI", 70, 86);
-
-    ctx.font = "900 84px Inter, Arial, sans-serif";
-    ctx.fillText("Lucky Drop", 70, 162);
-
-    ctx.fillStyle = "rgba(255,255,255,0.82)";
-    ctx.font = "700 36px Inter, Arial, sans-serif";
-    ctx.fillText("Pure Random • Real Luck", 70, 214);
-
-    const labelY = isStory ? 430 : 340;
-    const numberY = isStory ? 900 : 565;
-    const hintY = isStory ? 1080 : 690;
-
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#ffffff";
-    ctx.font = `800 ${isStory ? 64 : 54}px Inter, Arial, sans-serif`;
-    ctx.fillText(`เลขนำโชค ${state.len} ตัว`, width / 2, labelY);
-
-    let fontSize = isStory ? 228 : 180;
-    if (state.len === 2) fontSize = isStory ? 212 : 168;
-    if (state.len === 3) fontSize = isStory ? 196 : 154;
-    if (state.len === 4) fontSize = isStory ? 176 : 138;
-    if (state.len === 5) fontSize = isStory ? 156 : 122;
-    if (state.len === 6) fontSize = isStory ? 142 : 110;
-
-    let gap = isStory ? 152 : 118;
-    if (state.len === 2) gap = isStory ? 176 : 140;
-    if (state.len === 3) gap = isStory ? 140 : 110;
-    if (state.len === 4) gap = isStory ? 118 : 92;
-    if (state.len === 5) gap = isStory ? 98 : 76;
-    if (state.len === 6) gap = isStory ? 84 : 64;
-
-    const chars = state.value.split("");
-    const startX = width / 2 - ((chars.length - 1) * gap) / 2;
-
-    ctx.fillStyle = "#ffffff";
-    ctx.font = `900 ${fontSize}px Inter, Arial, sans-serif`;
-    ctx.textBaseline = "middle";
-    ctx.shadowColor = "rgba(0,0,0,0.24)";
-    ctx.shadowBlur = 18;
-
-    chars.forEach((char, index) => {
-      ctx.fillText(char, startX + (index * gap), numberY);
-    });
-
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = "rgba(255,255,255,0.80)";
-    ctx.font = `700 ${isStory ? 40 : 32}px Inter, Arial, sans-serif`;
-    ctx.fillText("เลขล่าสุด", width / 2, hintY);
-
-    ctx.textAlign = "left";
-    ctx.fillStyle = "rgba(255,255,255,0.84)";
-    ctx.font = "800 34px Inter, Arial, sans-serif";
-    ctx.fillText("Lucky Random • Full Random", 70, height - 96);
-
-    ctx.fillStyle = "rgba(255,255,255,0.64)";
-    ctx.font = "700 24px Inter, Arial, sans-serif";
-    ctx.fillText(formatThaiDate(), 70, height - 50);
-
-    return canvas;
-  }
-
-  function savePoster(type = "story") {
-    const canvas = drawPoster(type);
-    if (!canvas) return;
-
-    const link = document.createElement("a");
-    link.download = `lucky-drop-${type}-${state.value}.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-  }
-
-  function refitCurrentNumber() {
-    if (state.value) {
-      renderValue(state.value);
-      return;
-    }
-    renderValue("-".repeat(state.len));
-  }
-
-  pickButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      setLength(Number(btn.dataset.len));
-    });
-  });
-
-  runBtn.addEventListener("click", spinNumber);
-  copyBtn.addEventListener("click", copyResult);
-  saveStoryBtn.addEventListener("click", () => savePoster("story"));
-  saveSquareBtn.addEventListener("click", () => savePoster("square"));
-  shareBtn.addEventListener("click", shareResult);
-  lineBtn.addEventListener("click", shareToLine);
-
-  window.addEventListener("resize", refitCurrentNumber);
-  window.addEventListener("orientationchange", () => {
-    setTimeout(refitCurrentNumber, 120);
-  });
-
-  setLength(2);
-  resultEl.style.transition = "transform 0.12s ease, opacity 0.12s ease, font-size 0.12s ease";
+window.onresize=fit;
 </script>
+
 </body>
 </html>
