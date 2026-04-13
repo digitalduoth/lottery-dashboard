@@ -1,259 +1,718 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Lucky Drop</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+  <title>Lucky Drop</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#070b14" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&display=swap" rel="stylesheet">
 
-body{
-  background: linear-gradient(180deg,#06080f,#0a1224);
-  color:#fff;
-  padding:20px;
-}
+  <style>
+    :root {
+      --bg-top: #05070d;
+      --bg-bottom: #091327;
+      --panel-top: #0d1424;
+      --panel-bottom: #0a1120;
+      --btn-top: #161f31;
+      --btn-bottom: #111828;
+      --btn-active-top: #222d43;
+      --btn-active-bottom: #182133;
+      --line: rgba(255,255,255,0.08);
+      --text: #f8fafc;
+      --muted: rgba(255,255,255,0.72);
+      --muted-2: rgba(255,255,255,0.46);
+      --shadow: 0 24px 60px rgba(0,0,0,0.36);
+    }
 
-/* HEADER */
-h1{
-  font-size:42px;
-  font-weight:900;
-}
-.sub{
-  opacity:.7;
-  margin-bottom:20px;
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
 
-/* GRID */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
-  margin-bottom:20px;
-}
+    html, body {
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 8% 14%, rgba(255,255,255,0.04), transparent 18%),
+        radial-gradient(circle at 88% 16%, rgba(72, 79, 255, 0.10), transparent 16%),
+        linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+      color: var(--text);
+      overflow-x: hidden;
+    }
 
-.btn{
-  padding:18px;
-  border-radius:16px;
-  background:rgba(255,255,255,0.05);
-  text-align:center;
-  font-weight:700;
-  border:1px solid rgba(255,255,255,0.08);
-  cursor:pointer;
-}
+    body {
+      padding: 20px;
+    }
 
-.btn.active{
-  background:rgba(255,255,255,0.12);
-}
+    .app {
+      width: 100%;
+      max-width: 1320px;
+      margin: 0 auto;
+    }
 
-/* RESULT CARD */
-.card{
-  margin-top:10px;
-  padding:30px 16px;
-  border-radius:20px;
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.08);
-  text-align:center;
-}
+    .hero {
+      margin-bottom: 22px;
+    }
 
-.label{
-  font-size:18px;
-  opacity:.7;
-}
+    .eyebrow {
+      font-size: clamp(14px, 2vw, 18px);
+      font-weight: 800;
+      color: rgba(255,255,255,0.90);
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
 
-.result{
-  width:100%;
-  font-weight:900;
-  font-size:140px;
-  letter-spacing:-0.07em;
-  white-space:nowrap;
-  margin:20px 0;
-}
+    .title {
+      font-size: clamp(54px, 11vw, 112px);
+      font-weight: 900;
+      line-height: 0.92;
+      letter-spacing: -0.07em;
+      margin-bottom: 10px;
+    }
 
-.hint{
-  opacity:.5;
-}
+    .subtitle {
+      font-size: clamp(18px, 3.2vw, 30px);
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: -0.03em;
+    }
 
-/* MAIN BUTTON */
-.run{
-  margin-top:16px;
-  padding:18px;
-  border-radius:18px;
-  text-align:center;
-  font-weight:700;
-  background:linear-gradient(90deg,#1c2a4a,#2d3f75);
-  cursor:pointer;
-}
+    .picker-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin: 24px 0 22px;
+    }
 
-/* ACTIONS */
-.actions{
-  margin-top:14px;
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-}
+    .pick-btn,
+    .run-btn,
+    .action-btn {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      color: var(--text);
+      cursor: pointer;
+      transition: transform .16s ease, opacity .16s ease, border-color .16s ease, box-shadow .16s ease;
+      box-shadow: 0 14px 34px rgba(0,0,0,0.24);
+    }
 
-.actions div{
-  padding:14px;
-  border-radius:14px;
-  text-align:center;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.08);
-  cursor:pointer;
-}
+    .pick-btn:hover,
+    .run-btn:hover,
+    .action-btn:hover {
+      opacity: 0.97;
+    }
 
-footer{
-  margin-top:30px;
-  opacity:.6;
-  font-size:14px;
-}
-</style>
+    .pick-btn:active,
+    .run-btn:active,
+    .action-btn:active {
+      transform: scale(0.985);
+    }
+
+    .pick-btn {
+      min-height: 92px;
+      font-size: clamp(22px, 2.4vw, 30px);
+      font-weight: 800;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)),
+        linear-gradient(180deg, var(--btn-top), var(--btn-bottom));
+    }
+
+    .pick-btn.active {
+      background:
+        radial-gradient(circle at 50% 30%, rgba(255,255,255,0.06), transparent 42%),
+        linear-gradient(180deg, var(--btn-active-top), var(--btn-active-bottom));
+      border-color: rgba(255,255,255,0.14);
+      box-shadow:
+        0 18px 38px rgba(0,0,0,0.28),
+        0 0 28px rgba(120,144,255,0.08);
+    }
+
+    .stage {
+      position: relative;
+      min-height: 430px;
+      border-radius: 34px;
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 12% 82%, rgba(84, 124, 255, 0.06), transparent 14%),
+        radial-gradient(circle at 88% 18%, rgba(84, 124, 255, 0.05), transparent 12%),
+        linear-gradient(180deg, var(--panel-top), var(--panel-bottom));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 54%, rgba(255,255,255,0.035), transparent 20%);
+      pointer-events: none;
+    }
+
+    .stage-inner {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      min-height: 430px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 26px 16px;
+      text-align: center;
+    }
+
+    .result-label {
+      font-size: clamp(30px, 4.2vw, 58px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 26px;
+      color: #ffffff;
+    }
+
+    .result-wrap {
+      width: 100%;
+      max-width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 180px;
+    }
+
+    .result {
+      width: 100%;
+      max-width: 100%;
+      padding: 0 8px;
+      text-align: center;
+      white-space: nowrap;
+      overflow: visible;
+      font-size: 160px;
+      line-height: 0.84;
+      font-weight: 900;
+      letter-spacing: -0.08em;
+      color: #ffffff;
+      text-shadow:
+        0 10px 26px rgba(0,0,0,0.24),
+        0 0 20px rgba(255,255,255,0.03);
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1, "lnum" 1;
+      transition: transform .11s ease, opacity .11s ease, font-size .12s ease, letter-spacing .12s ease;
+    }
+
+    .result.spinning {
+      opacity: 0.60;
+      transform: translateY(10px) scale(0.986);
+    }
+
+    .result-hint {
+      margin-top: 20px;
+      font-size: clamp(20px, 2.8vw, 34px);
+      font-weight: 700;
+      color: rgba(255,255,255,0.78);
+      letter-spacing: -0.02em;
+    }
+
+    .run-btn {
+      width: 100%;
+      min-height: 88px;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255,255,255,0.06), transparent 30%),
+        linear-gradient(180deg, #20293d, #141b2c);
+      font-size: clamp(26px, 3vw, 38px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #eef2ff;
+      margin-bottom: 16px;
+    }
+
+    .run-btn:disabled {
+      opacity: 0.74;
+      cursor: default;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .action-btn {
+      min-height: 74px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)),
+        linear-gradient(180deg, #161d2d, #111828);
+      font-size: clamp(18px, 1.8vw, 22px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .footer-note {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted-2);
+    }
+
+    @media (max-width: 980px) {
+      .actions {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 14px;
+      }
+
+      .picker-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .pick-btn {
+        min-height: 76px;
+        border-radius: 18px;
+      }
+
+      .stage {
+        min-height: 360px;
+        border-radius: 28px;
+      }
+
+      .stage-inner {
+        min-height: 360px;
+      }
+
+      .run-btn {
+        min-height: 76px;
+        border-radius: 18px;
+      }
+
+      .actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .action-btn {
+        min-height: 66px;
+        border-radius: 16px;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <main class="app">
+    <section class="hero">
+      <div class="eyebrow">Random 100% • ไม่เกี่ยวกับ AI</div>
+      <h1 class="title">Lucky Drop</h1>
+      <div class="subtitle">Pure Random • Real Luck</div>
+    </section>
 
-<h1>Lucky Drop</h1>
-<div class="sub">Pure Random • Real Luck</div>
+    <section class="picker-grid">
+      <button class="pick-btn" data-len="1" type="button">1 ตัว</button>
+      <button class="pick-btn active" data-len="2" type="button">2 ตัว</button>
+      <button class="pick-btn" data-len="3" type="button">3 ตัว</button>
+      <button class="pick-btn" data-len="4" type="button">4 ตัว</button>
+      <button class="pick-btn" data-len="5" type="button">5 ตัว</button>
+      <button class="pick-btn" data-len="6" type="button">6 ตัว</button>
+    </section>
 
-<div class="grid">
-  <div class="btn active" data-len="1">1 ตัว</div>
-  <div class="btn" data-len="2">2 ตัว</div>
-  <div class="btn" data-len="3">3 ตัว</div>
-  <div class="btn" data-len="4">4 ตัว</div>
-  <div class="btn" data-len="5">5 ตัว</div>
-  <div class="btn" data-len="6">6 ตัว</div>
-</div>
+    <section class="stage">
+      <div class="stage-inner">
+        <div class="result-label" id="resultLabel">เลขนำโชค 2 ตัว</div>
+        <div class="result-wrap">
+          <div class="result" id="result">--</div>
+        </div>
+        <div class="result-hint" id="resultHint">เลขล่าสุด</div>
+      </div>
+    </section>
 
-<div class="card">
-  <div class="label" id="label">เลขนำโชค 1 ตัว</div>
-  <div class="result" id="result">-</div>
-  <div class="hint">เลขล่าสุด</div>
-</div>
+    <button class="run-btn" id="runBtn" type="button">🎲 สุ่มเลข</button>
 
-<div class="run" id="run">🎲 สุ่มเลข</div>
+    <section class="actions">
+      <button class="action-btn" id="copyBtn" type="button">Copy</button>
+      <button class="action-btn" id="saveStoryBtn" type="button">Save Story</button>
+      <button class="action-btn" id="saveSquareBtn" type="button">Save Square</button>
+      <button class="action-btn" id="shareBtn" type="button">Share</button>
+      <button class="action-btn" id="lineBtn" type="button">LINE</button>
+    </section>
 
-<div class="actions">
-  <div id="copy">Copy</div>
-  <div id="share">Share</div>
-  <div id="story">Save Story</div>
-  <div id="square">Save Square</div>
-</div>
+    <div class="footer-note">Lucky Random • Full Random</div>
+  </main>
 
-<footer>
-Lucky Random • Full Random
-</footer>
+  <script>
+    const pickButtons = [...document.querySelectorAll(".pick-btn")];
+    const resultLabel = document.getElementById("resultLabel");
+    const resultEl = document.getElementById("result");
+    const resultHint = document.getElementById("resultHint");
 
-<script>
-const resultEl = document.getElementById("result");
-const labelEl = document.getElementById("label");
-let len = 1;
-let value = "";
+    const runBtn = document.getElementById("runBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const saveStoryBtn = document.getElementById("saveStoryBtn");
+    const saveSquareBtn = document.getElementById("saveSquareBtn");
+    const shareBtn = document.getElementById("shareBtn");
+    const lineBtn = document.getElementById("lineBtn");
 
-/* RANDOM */
-function random(n){
-  let s="";
-  for(let i=0;i<n;i++) s+=Math.floor(Math.random()*10);
-  return s;
-}
+    const state = {
+      len: 2,
+      value: "",
+      spinning: false
+    };
 
-/* AUTO SCALE (สำคัญ) */
-function fit(){
-  if(!value)return;
+    function randomDigits(len) {
+      let out = "";
+      for (let i = 0; i < len; i += 1) {
+        out += Math.floor(Math.random() * 10).toString();
+      }
+      return out;
+    }
 
-  let base = 140;
-  if(len===2) base=130;
-  if(len===3) base=115;
-  if(len===4) base=100;
-  if(len===5) base=85;
-  if(len===6) base=70;
+    function getBaseFontSize(len, viewportWidth) {
+      const isSmallPhone = viewportWidth <= 420;
+      const isTablet = viewportWidth >= 900;
 
-  resultEl.style.fontSize = base+"px";
+      if (isTablet) {
+        if (len === 1) return 250;
+        if (len === 2) return 220;
+        if (len === 3) return 195;
+        if (len === 4) return 170;
+        if (len === 5) return 146;
+        return 126;
+      }
 
-  const max = resultEl.parentElement.clientWidth - 30;
-  const w = resultEl.scrollWidth;
+      if (isSmallPhone) {
+        if (len === 1) return 156;
+        if (len === 2) return 138;
+        if (len === 3) return 120;
+        if (len === 4) return 102;
+        if (len === 5) return 84;
+        return 72;
+      }
 
-  if(w>max){
-    const ratio = max/w;
-    resultEl.style.fontSize = (base*ratio)+"px";
-  }
-}
+      if (len === 1) return 190;
+      if (len === 2) return 168;
+      if (len === 3) return 146;
+      if (len === 4) return 124;
+      if (len === 5) return 102;
+      return 88;
+    }
 
-/* BUTTON SELECT */
-document.querySelectorAll(".btn").forEach(b=>{
-  b.onclick=()=>{
-    document.querySelectorAll(".btn").forEach(x=>x.classList.remove("active"));
-    b.classList.add("active");
-    len = Number(b.dataset.len);
-    labelEl.innerText = `เลขนำโชค ${len} ตัว`;
-    resultEl.innerText="-";
-    value="";
-  }
-});
+    function fitResultText(value) {
+      if (!value) return;
 
-/* RUN */
-document.getElementById("run").onclick=()=>{
-  value = random(len);
-  resultEl.innerText = value;
-  fit();
-};
+      const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+      const stage = resultEl.closest(".stage");
+      const stageWidth = stage ? stage.clientWidth : viewportWidth;
+      const availableWidth = Math.max(120, stageWidth - 42);
 
-/* COPY */
-document.getElementById("copy").onclick=()=>{
-  if(!value)return alert("ยังไม่มีเลข");
-  navigator.clipboard.writeText(value);
-};
+      const baseSize = getBaseFontSize(value.length, viewportWidth);
+      resultEl.style.fontSize = `${baseSize}px`;
 
-/* SHARE */
-document.getElementById("share").onclick=()=>{
-  if(!value)return;
-  const text=`Lucky Drop: ${value}`;
-  if(navigator.share){
-    navigator.share({text});
-  }else{
-    navigator.clipboard.writeText(text);
-    alert("คัดลอกแล้ว");
-  }
-};
+      const actualWidth = resultEl.scrollWidth;
+      if (actualWidth > availableWidth) {
+        const ratio = availableWidth / actualWidth;
+        const nextSize = Math.floor(baseSize * ratio * 0.98);
+        resultEl.style.fontSize = `${Math.max(nextSize, 42)}px`;
+      }
 
-/* SAVE IMAGE */
-function save(type){
-  if(!value)return;
+      if (value.length >= 5) {
+        resultEl.style.letterSpacing = "-0.09em";
+      } else if (value.length === 4) {
+        resultEl.style.letterSpacing = "-0.085em";
+      } else {
+        resultEl.style.letterSpacing = "-0.08em";
+      }
+    }
 
-  const c=document.createElement("canvas");
-  const ctx=c.getContext("2d");
+    function renderValue(value) {
+      resultEl.textContent = value;
+      requestAnimationFrame(() => fitResultText(value));
+    }
 
-  c.width=1080;
-  c.height= type==="story"?1920:1080;
+    function setLength(len) {
+      if (state.spinning) return;
 
-  const g=ctx.createLinearGradient(0,0,0,c.height);
-  g.addColorStop(0,"#06080f");
-  g.addColorStop(1,"#0a1224");
-  ctx.fillStyle=g;
-  ctx.fillRect(0,0,c.width,c.height);
+      state.len = len;
+      pickButtons.forEach((btn) => {
+        btn.classList.toggle("active", Number(btn.dataset.len) === len);
+      });
 
-  ctx.fillStyle="#fff";
-  ctx.textAlign="center";
+      resultLabel.textContent = `เลขนำโชค ${len} ตัว`;
 
-  ctx.font="bold 60px Inter";
-  ctx.fillText(`เลขนำโชค ${len} ตัว`,540, type==="story"?500:350);
+      if (!state.value) {
+        renderValue("-".repeat(len));
+      } else {
+        state.value = randomDigits(len);
+        renderValue(state.value);
+      }
+    }
 
-  let size=200-(len*15);
-  ctx.font=`900 ${size}px Inter`;
-  ctx.fillText(value,540,type==="story"?900:550);
+    async function spinNumber() {
+      if (state.spinning) return;
 
-  const a=document.createElement("a");
-  a.href=c.toDataURL();
-  a.download="lucky.png";
-  a.click();
-}
+      state.spinning = true;
+      runBtn.disabled = true;
 
-document.getElementById("story").onclick=()=>save("story");
-document.getElementById("square").onclick=()=>save("square");
+      const finalValue = randomDigits(state.len);
 
-window.onresize=fit;
-</script>
+      // เริ่มเร็ว แล้วค่อยช้าลงก่อนหยุด
+      const rounds = 24;
+      const startDelay = 28;
+      const stepDelay = 7;
 
+      resultEl.classList.add("spinning");
+
+      for (let i = 0; i < rounds; i += 1) {
+        renderValue(randomDigits(state.len));
+        const delay = startDelay + (i * stepDelay);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+
+      resultEl.classList.remove("spinning");
+      state.value = finalValue;
+      renderValue(finalValue);
+      resultHint.textContent = "เลขล่าสุด";
+
+      runBtn.disabled = false;
+      state.spinning = false;
+    }
+
+    async function copyResult() {
+      if (!state.value) {
+        alert("ยังไม่มีเลขให้คัดลอก");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(state.value);
+        resultHint.textContent = "คัดลอกแล้ว";
+        setTimeout(() => {
+          resultHint.textContent = "เลขล่าสุด";
+        }, 900);
+      } catch (error) {
+        alert("คัดลอกไม่สำเร็จ");
+      }
+    }
+
+    async function shareResult() {
+      if (!state.value) {
+        alert("ยังไม่มีเลขให้แชร์");
+        return;
+      }
+
+      const text = `Lucky Drop\nเลขนำโชค ${state.len} ตัว: ${state.value}`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: "Lucky Drop",
+            text
+          });
+          return;
+        } catch (error) {}
+      }
+
+      try {
+        await navigator.clipboard.writeText(text);
+        alert("คัดลอกข้อความสำหรับแชร์แล้ว");
+      } catch (error) {
+        alert(text);
+      }
+    }
+
+    function shareToLine() {
+      if (!state.value) {
+        alert("ยังไม่มีเลขให้แชร์");
+        return;
+      }
+
+      const text = encodeURIComponent(`Lucky Drop - เลขนำโชค ${state.len} ตัว: ${state.value}`);
+      const mobileUrl = `line://msg/text/${text}`;
+      const fallbackUrl = `https://line.me/R/msg/text/?${text}`;
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        window.location.href = mobileUrl;
+        setTimeout(() => {
+          window.location.href = fallbackUrl;
+        }, 900);
+      } else {
+        window.open(fallbackUrl, "_blank");
+      }
+    }
+
+    function formatThaiDate() {
+      const now = new Date();
+      const thaiYear = now.getFullYear() + 543;
+      const day = now.getDate();
+      const month = now.getMonth() + 1;
+      return `${day}/${month}/${thaiYear}`;
+    }
+
+    function drawBackground(ctx, width, height) {
+      const bg = ctx.createLinearGradient(0, 0, 0, height);
+      bg.addColorStop(0, "#06080f");
+      bg.addColorStop(1, "#0a1224");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, width, height);
+
+      const glow1 = ctx.createRadialGradient(
+        width * 0.08, height * 0.14, 0,
+        width * 0.08, height * 0.14, width * 0.22
+      );
+      glow1.addColorStop(0, "rgba(255,255,255,0.05)");
+      glow1.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = glow1;
+      ctx.fillRect(0, 0, width, height);
+
+      const glow2 = ctx.createRadialGradient(
+        width * 0.90, height * 0.16, 0,
+        width * 0.90, height * 0.16, width * 0.16
+      );
+      glow2.addColorStop(0, "rgba(92,78,255,0.12)");
+      glow2.addColorStop(1, "rgba(92,78,255,0)");
+      ctx.fillStyle = glow2;
+      ctx.fillRect(0, 0, width, height);
+
+      const centerGlow = ctx.createRadialGradient(
+        width / 2, height * 0.52, 0,
+        width / 2, height * 0.52, width * 0.18
+      );
+      centerGlow.addColorStop(0, "rgba(255,255,255,0.035)");
+      centerGlow.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = centerGlow;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    function drawPoster(type = "story") {
+      if (!state.value) {
+        alert("ยังไม่มีเลขให้บันทึก");
+        return null;
+      }
+
+      const isStory = type === "story";
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = 1080;
+      canvas.height = isStory ? 1920 : 1080;
+
+      const width = canvas.width;
+      const height = canvas.height;
+
+      drawBackground(ctx, width, height);
+
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "800 26px Inter, Arial, sans-serif";
+      ctx.fillText("Random 100% • ไม่เกี่ยวกับ AI", 70, 86);
+
+      ctx.font = "900 84px Inter, Arial, sans-serif";
+      ctx.fillText("Lucky Drop", 70, 162);
+
+      ctx.fillStyle = "rgba(255,255,255,0.82)";
+      ctx.font = "700 36px Inter, Arial, sans-serif";
+      ctx.fillText("Pure Random • Real Luck", 70, 214);
+
+      const labelY = isStory ? 430 : 340;
+      const numberY = isStory ? 900 : 565;
+      const hintY = isStory ? 1080 : 690;
+
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#ffffff";
+      ctx.font = `800 ${isStory ? 64 : 54}px Inter, Arial, sans-serif`;
+      ctx.fillText(`เลขนำโชค ${state.len} ตัว`, width / 2, labelY);
+
+      let fontSize = isStory ? 228 : 180;
+      if (state.len === 2) fontSize = isStory ? 212 : 168;
+      if (state.len === 3) fontSize = isStory ? 196 : 154;
+      if (state.len === 4) fontSize = isStory ? 176 : 138;
+      if (state.len === 5) fontSize = isStory ? 156 : 122;
+      if (state.len === 6) fontSize = isStory ? 142 : 110;
+
+      let gap = isStory ? 152 : 118;
+      if (state.len === 2) gap = isStory ? 176 : 140;
+      if (state.len === 3) gap = isStory ? 140 : 110;
+      if (state.len === 4) gap = isStory ? 118 : 92;
+      if (state.len === 5) gap = isStory ? 98 : 76;
+      if (state.len === 6) gap = isStory ? 84 : 64;
+
+      const chars = state.value.split("");
+      const startX = width / 2 - ((chars.length - 1) * gap) / 2;
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = `900 ${fontSize}px Inter, Arial, sans-serif`;
+      ctx.textBaseline = "middle";
+      ctx.shadowColor = "rgba(0,0,0,0.24)";
+      ctx.shadowBlur = 18;
+
+      chars.forEach((char, index) => {
+        ctx.fillText(char, startX + (index * gap), numberY);
+      });
+
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = "rgba(255,255,255,0.80)";
+      ctx.font = `700 ${isStory ? 40 : 32}px Inter, Arial, sans-serif`;
+      ctx.fillText("เลขล่าสุด", width / 2, hintY);
+
+      ctx.textAlign = "left";
+      ctx.fillStyle = "rgba(255,255,255,0.84)";
+      ctx.font = "800 34px Inter, Arial, sans-serif";
+      ctx.fillText("Lucky Random • Full Random", 70, height - 96);
+
+      ctx.fillStyle = "rgba(255,255,255,0.64)";
+      ctx.font = "700 24px Inter, Arial, sans-serif";
+      ctx.fillText(formatThaiDate(), 70, height - 50);
+
+      return canvas;
+    }
+
+    function savePoster(type = "story") {
+      const canvas = drawPoster(type);
+      if (!canvas) return;
+
+      const link = document.createElement("a");
+      link.download = `lucky-drop-${type}-${state.value}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }
+
+    function refitCurrentNumber() {
+      if (state.value) {
+        renderValue(state.value);
+      } else {
+        renderValue("-".repeat(state.len));
+      }
+    }
+
+    pickButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        setLength(Number(btn.dataset.len));
+      });
+    });
+
+    runBtn.addEventListener("click", spinNumber);
+    copyBtn.addEventListener("click", copyResult);
+    saveStoryBtn.addEventListener("click", () => savePoster("story"));
+    saveSquareBtn.addEventListener("click", () => savePoster("square"));
+    shareBtn.addEventListener("click", shareResult);
+    lineBtn.addEventListener("click", shareToLine);
+
+    window.addEventListener("resize", refitCurrentNumber);
+    window.addEventListener("orientationchange", () => {
+      setTimeout(refitCurrentNumber, 120);
+    });
+
+    setLength(2);
+  </script>
 </body>
 </html>
