@@ -1,662 +1,372 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
-  />
-  <title>Lucky Drop</title>
+<script>
+  const pickButtons = [...document.querySelectorAll(".pick-btn")];
+  const resultLabel = document.getElementById("resultLabel");
+  const resultEl = document.getElementById("result");
+  const resultHint = document.getElementById("resultHint");
 
-  <meta name="theme-color" content="#080b12" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="format-detection" content="telephone=no" />
+  const runBtn = document.getElementById("runBtn");
+  const copyBtn = document.getElementById("copyBtn");
+  const saveStoryBtn = document.getElementById("saveStoryBtn");
+  const saveSquareBtn = document.getElementById("saveSquareBtn");
+  const shareBtn = document.getElementById("shareBtn");
+  const lineBtn = document.getElementById("lineBtn");
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&display=swap" rel="stylesheet">
+  const state = {
+    len: 2,
+    value: "",
+    spinning: false
+  };
 
-  <style>
-    :root {
-      --bg-top: #06080f;
-      --bg-bottom: #0a1224;
+  function randomDigits(len) {
+    let out = "";
+    for (let i = 0; i < len; i += 1) {
+      out += Math.floor(Math.random() * 10).toString();
+    }
+    return out;
+  }
 
-      --panel: rgba(15, 20, 34, 0.82);
-      --panel-2: rgba(18, 25, 42, 0.88);
-      --panel-soft: rgba(255, 255, 255, 0.04);
-      --line: rgba(255, 255, 255, 0.08);
+  function getBaseFontSize(len, viewportWidth) {
+    const isSmallPhone = viewportWidth <= 420;
+    const isTablet = viewportWidth >= 900;
 
-      --text: #f8fafc;
-      --muted: #a8b0c3;
-      --muted-2: rgba(255,255,255,0.68);
-
-      --accent: #cdd6f8;
-      --accent-soft: rgba(205, 214, 248, 0.12);
-      --glow-blue: rgba(123, 153, 255, 0.18);
-      --glow-purple: rgba(102, 92, 255, 0.10);
-
-      --btn-dark-top: #141b2b;
-      --btn-dark-bottom: #0f1626;
-      --btn-active-top: #20293d;
-      --btn-active-bottom: #161d2b;
-
-      --primary-top: #20283c;
-      --primary-bottom: #141a28;
-      --primary-border: rgba(255,255,255,0.12);
-
-      --shadow: 0 22px 60px rgba(0,0,0,0.35);
-      --shadow-soft: 0 12px 30px rgba(0,0,0,0.22);
-      --radius-xl: 34px;
-      --radius-lg: 22px;
-      --radius-md: 18px;
-      --radius-sm: 14px;
+    if (isTablet) {
+      if (len === 1) return 250;
+      if (len === 2) return 220;
+      if (len === 3) return 195;
+      if (len === 4) return 170;
+      if (len === 5) return 146;
+      return 128;
     }
 
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
+    if (isSmallPhone) {
+      if (len === 1) return 150;
+      if (len === 2) return 132;
+      if (len === 3) return 118;
+      if (len === 4) return 102;
+      if (len === 5) return 86;
+      return 74;
     }
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      min-height: 100%;
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 8% 8%, rgba(255,255,255,0.05), transparent 18%),
-        radial-gradient(circle at 88% 14%, rgba(92, 78, 255, 0.10), transparent 15%),
-        linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
-      overflow-x: hidden;
+    if (len === 1) return 190;
+    if (len === 2) return 168;
+    if (len === 3) return 146;
+    if (len === 4) return 124;
+    if (len === 5) return 104;
+    return 90;
+  }
+
+  function fitResultText(value) {
+    if (!value) return;
+
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    const stage = resultEl.closest(".stage");
+    const stageWidth = stage ? stage.clientWidth : viewportWidth;
+    const availableWidth = Math.max(120, stageWidth - 52);
+
+    const baseSize = getBaseFontSize(value.length, viewportWidth);
+
+    resultEl.style.fontSize = `${baseSize}px`;
+
+    const actualWidth = resultEl.scrollWidth;
+    if (actualWidth > availableWidth) {
+      const ratio = availableWidth / actualWidth;
+      const nextSize = Math.floor(baseSize * ratio * 0.98);
+      resultEl.style.fontSize = `${Math.max(nextSize, 42)}px`;
     }
 
-    body {
-      user-select: none;
+    if (value.length >= 5) {
+      resultEl.style.letterSpacing = "-0.085em";
+    } else if (value.length === 4) {
+      resultEl.style.letterSpacing = "-0.08em";
+    } else {
+      resultEl.style.letterSpacing = "-0.075em";
     }
+  }
 
-    .app {
-      width: 100%;
-      max-width: 1380px;
-      margin: 0 auto;
-      padding:
-        max(20px, env(safe-area-inset-top))
-        24px
-        max(28px, env(safe-area-inset-bottom))
-        24px;
-    }
+  function renderValue(value) {
+    resultEl.textContent = value;
+    requestAnimationFrame(() => fitResultText(value));
+  }
 
-    .hero {
-      margin-bottom: 20px;
-    }
+  function setLength(len) {
+    if (state.spinning) return;
 
-    .eyebrow {
-      color: rgba(255,255,255,0.88);
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: -0.01em;
-      margin-bottom: 6px;
-    }
-
-    .title {
-      margin: 0;
-      font-size: clamp(56px, 9vw, 104px);
-      line-height: 0.94;
-      font-weight: 900;
-      letter-spacing: -0.055em;
-    }
-
-    .subtitle {
-      margin-top: 14px;
-      color: var(--muted-2);
-      font-size: clamp(18px, 2.2vw, 28px);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .picker-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-      margin: 26px 0 22px;
-    }
-
-    .pick-btn,
-    .action-btn,
-    .run-btn {
-      border: 1px solid var(--line);
-      color: var(--text);
-      cursor: pointer;
-      transition: transform 0.16s ease, opacity 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .pick-btn:hover,
-    .action-btn:hover,
-    .run-btn:hover {
-      opacity: 0.97;
-    }
-
-    .pick-btn:active,
-    .action-btn:active,
-    .run-btn:active {
-      transform: scale(0.985);
-    }
-
-    .pick-btn {
-      min-height: 92px;
-      border-radius: 22px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00)),
-        linear-gradient(180deg, var(--btn-dark-top), var(--btn-dark-bottom));
-      font-size: clamp(22px, 2vw, 30px);
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-
-    .pick-btn.active {
-      border-color: rgba(205, 214, 248, 0.22);
-      background:
-        radial-gradient(circle at 50% 35%, rgba(255,255,255,0.06), transparent 40%),
-        linear-gradient(180deg, var(--btn-active-top), var(--btn-active-bottom));
-      box-shadow:
-        0 18px 40px rgba(0,0,0,0.28),
-        0 0 0 1px rgba(255,255,255,0.04) inset,
-        0 0 28px rgba(123,153,255,0.08);
-    }
-
-    .stage {
-      position: relative;
-      min-height: 430px;
-      border-radius: 34px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background:
-        radial-gradient(circle at 12% 82%, rgba(123,153,255,0.06), transparent 16%),
-        radial-gradient(circle at 88% 18%, rgba(102,92,255,0.06), transparent 14%),
-        linear-gradient(180deg, rgba(8,12,20,0.98), rgba(8,15,31,0.96));
-      box-shadow: var(--shadow);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      margin-bottom: 18px;
-    }
-
-    .stage::before {
-      content: "";
-      position: absolute;
-      width: 480px;
-      height: 480px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,255,255,0.04), rgba(255,255,255,0));
-      filter: blur(6px);
-      opacity: 0.6;
-      pointer-events: none;
-    }
-
-    .stage-inner {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      padding: 34px 16px;
-      text-align: center;
-    }
-
-    .result-label {
-      color: rgba(255,255,255,0.96);
-      font-size: clamp(28px, 3.5vw, 52px);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      margin-bottom: 26px;
-    }
-
-    .result {
-      font-size: clamp(112px, 18vw, 280px);
-      line-height: 0.85;
-      font-weight: 900;
-      letter-spacing: -0.07em;
-      color: #ffffff;
-      text-shadow:
-        0 10px 26px rgba(0,0,0,0.24),
-        0 0 24px rgba(255,255,255,0.03);
-      font-variant-numeric: tabular-nums;
-      transition: transform 0.12s ease, opacity 0.12s ease;
-      min-height: 1em;
-    }
-
-    .result-hint {
-      margin-top: 22px;
-      color: rgba(255,255,255,0.78);
-      font-size: clamp(20px, 2vw, 30px);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .run-btn {
-      width: 100%;
-      min-height: 88px;
-      border-radius: 24px;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(255,255,255,0.06), transparent 30%),
-        linear-gradient(180deg, var(--primary-top), var(--primary-bottom));
-      border-color: var(--primary-border);
-      font-size: clamp(26px, 2.2vw, 38px);
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      margin-bottom: 16px;
-      color: #eef2ff;
-    }
-
-    .run-btn .dice {
-      margin-right: 10px;
-      opacity: 0.92;
-    }
-
-    .actions {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 14px;
-      margin-bottom: 14px;
-    }
-
-    .action-btn {
-      min-height: 74px;
-      border-radius: 18px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00)),
-        linear-gradient(180deg, #161d2d, #111828);
-      font-size: clamp(18px, 1.4vw, 22px);
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-
-    .footer-note {
-      text-align: center;
-      color: rgba(255,255,255,0.38);
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      margin-top: 8px;
-    }
-
-    @media (max-width: 980px) {
-      .actions {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 760px) {
-      .app {
-        padding-left: 14px;
-        padding-right: 14px;
-      }
-
-      .picker-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-      }
-
-      .pick-btn {
-        min-height: 74px;
-        border-radius: 18px;
-      }
-
-      .stage {
-        min-height: 360px;
-        border-radius: 26px;
-      }
-
-      .result-label {
-        margin-bottom: 16px;
-      }
-
-      .run-btn {
-        min-height: 76px;
-        border-radius: 20px;
-      }
-
-      .actions {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-      }
-
-      .action-btn {
-        min-height: 66px;
-        border-radius: 16px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <main class="app">
-    <section class="hero">
-      <div class="eyebrow">Random 100% • ไม่เกี่ยวกับ AI</div>
-      <h1 class="title">Lucky Drop</h1>
-      <div class="subtitle">Pure Random • Real Luck</div>
-    </section>
-
-    <section class="picker-grid" aria-label="เลือกจำนวนหลัก">
-      <button class="pick-btn" data-len="1" type="button">1 ตัว</button>
-      <button class="pick-btn active" data-len="2" type="button">2 ตัว</button>
-      <button class="pick-btn" data-len="3" type="button">3 ตัว</button>
-      <button class="pick-btn" data-len="4" type="button">4 ตัว</button>
-      <button class="pick-btn" data-len="5" type="button">5 ตัว</button>
-      <button class="pick-btn" data-len="6" type="button">6 ตัว</button>
-    </section>
-
-    <section class="stage">
-      <div class="stage-inner">
-        <div class="result-label" id="resultLabel">เลขนำโชค 2 ตัว</div>
-        <div class="result" id="result">--</div>
-        <div class="result-hint" id="resultHint">เลขล่าสุด</div>
-      </div>
-    </section>
-
-    <button class="run-btn" id="runBtn" type="button">
-      <span class="dice">🎲</span>สุ่มเลข
-    </button>
-
-    <section class="actions">
-      <button class="action-btn" id="copyBtn" type="button">Copy</button>
-      <button class="action-btn" id="saveStoryBtn" type="button">Save Story</button>
-      <button class="action-btn" id="saveSquareBtn" type="button">Save Square</button>
-      <button class="action-btn" id="shareBtn" type="button">Share</button>
-      <button class="action-btn" id="lineBtn" type="button">LINE</button>
-    </section>
-
-    <div class="footer-note">Lucky Random • Full Random</div>
-  </main>
-    <script>
-    const pickButtons = [...document.querySelectorAll(".pick-btn")];
-    const resultLabel = document.getElementById("resultLabel");
-    const resultEl = document.getElementById("result");
-    const resultHint = document.getElementById("resultHint");
-
-    const runBtn = document.getElementById("runBtn");
-    const copyBtn = document.getElementById("copyBtn");
-    const saveStoryBtn = document.getElementById("saveStoryBtn");
-    const saveSquareBtn = document.getElementById("saveSquareBtn");
-    const shareBtn = document.getElementById("shareBtn");
-    const lineBtn = document.getElementById("lineBtn");
-
-    const state = {
-      len: 2,
-      value: "",
-      spinning: false
-    };
-
-    function setLength(len) {
-      if (state.spinning) return;
-
-      state.len = len;
-      pickButtons.forEach((btn) => {
-        btn.classList.toggle("active", Number(btn.dataset.len) === len);
-      });
-
-      resultLabel.textContent = `เลขนำโชค ${len} ตัว`;
-
-      if (!state.value) {
-        resultEl.textContent = "-".repeat(len);
-      } else {
-        state.value = randomDigits(len);
-        resultEl.textContent = state.value;
-      }
-    }
-
-    function randomDigits(len) {
-      let out = "";
-      for (let i = 0; i < len; i += 1) {
-        out += Math.floor(Math.random() * 10).toString();
-      }
-      return out;
-    }
-
-    async function spinNumber() {
-      if (state.spinning) return;
-
-      state.spinning = true;
-      runBtn.disabled = true;
-
-      const finalValue = randomDigits(state.len);
-
-      const rounds = 22;
-      const startDelay = 40;
-      const slowStep = 8;
-
-      for (let i = 0; i < rounds; i += 1) {
-        resultEl.style.transform = "translateY(10px) scale(0.985)";
-        resultEl.style.opacity = "0.58";
-        resultEl.textContent = randomDigits(state.len);
-
-        const delay = startDelay + (i * slowStep);
-        await new Promise((resolve) => setTimeout(resolve, delay));
-      }
-
-      resultEl.style.transform = "translateY(0) scale(1)";
-      resultEl.style.opacity = "1";
-      resultEl.textContent = finalValue;
-      state.value = finalValue;
-      resultHint.textContent = "เลขล่าสุด";
-
-      runBtn.disabled = false;
-      state.spinning = false;
-    }
-
-    async function copyResult() {
-      if (!state.value) {
-        alert("ยังไม่มีเลขให้คัดลอก");
-        return;
-      }
-
-      try {
-        await navigator.clipboard.writeText(state.value);
-        resultHint.textContent = "คัดลอกแล้ว";
-        setTimeout(() => {
-          resultHint.textContent = "เลขล่าสุด";
-        }, 900);
-      } catch (error) {
-        alert("คัดลอกไม่สำเร็จ");
-      }
-    }
-
-    async function shareResult() {
-      if (!state.value) {
-        alert("ยังไม่มีเลขให้แชร์");
-        return;
-      }
-
-      const text = `Lucky Drop\nเลขนำโชค ${state.len} ตัว: ${state.value}`;
-
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: "Lucky Drop",
-            text
-          });
-          return;
-        } catch (error) {}
-      }
-
-      try {
-        await navigator.clipboard.writeText(text);
-        alert("คัดลอกข้อความสำหรับแชร์แล้ว");
-      } catch (error) {
-        alert(text);
-      }
-    }
-
-    function shareToLine() {
-      if (!state.value) {
-        alert("ยังไม่มีเลขให้แชร์");
-        return;
-      }
-
-      const text = encodeURIComponent(`Lucky Drop - เลขนำโชค ${state.len} ตัว: ${state.value}`);
-      const mobileUrl = `line://msg/text/${text}`;
-      const fallbackUrl = `https://line.me/R/msg/text/?${text}`;
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-      if (isMobile) {
-        window.location.href = mobileUrl;
-        setTimeout(() => {
-          window.location.href = fallbackUrl;
-        }, 900);
-      } else {
-        window.open(fallbackUrl, "_blank");
-      }
-    }
-
-    function formatThaiDate() {
-      const now = new Date();
-      const thaiYear = now.getFullYear() + 543;
-      const day = now.getDate();
-      const month = now.getMonth() + 1;
-      return `${day}/${month}/${thaiYear}`;
-    }
-
-    function drawBackground(ctx, width, height) {
-      const bg = ctx.createLinearGradient(0, 0, 0, height);
-      bg.addColorStop(0, "#06080f");
-      bg.addColorStop(1, "#0a1224");
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, width, height);
-
-      const glow1 = ctx.createRadialGradient(
-        width * 0.08, height * 0.14, 0,
-        width * 0.08, height * 0.14, width * 0.22
-      );
-      glow1.addColorStop(0, "rgba(255,255,255,0.05)");
-      glow1.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = glow1;
-      ctx.fillRect(0, 0, width, height);
-
-      const glow2 = ctx.createRadialGradient(
-        width * 0.90, height * 0.16, 0,
-        width * 0.90, height * 0.16, width * 0.16
-      );
-      glow2.addColorStop(0, "rgba(92,78,255,0.12)");
-      glow2.addColorStop(1, "rgba(92,78,255,0)");
-      ctx.fillStyle = glow2;
-      ctx.fillRect(0, 0, width, height);
-
-      const centerGlow = ctx.createRadialGradient(
-        width / 2, height * 0.52, 0,
-        width / 2, height * 0.52, width * 0.20
-      );
-      centerGlow.addColorStop(0, "rgba(255,255,255,0.035)");
-      centerGlow.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = centerGlow;
-      ctx.fillRect(0, 0, width, height);
-    }
-
-    function drawPoster(type = "story") {
-      if (!state.value) {
-        alert("ยังไม่มีเลขให้บันทึก");
-        return null;
-      }
-
-      const isStory = type === "story";
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-      canvas.width = 1080;
-      canvas.height = isStory ? 1920 : 1080;
-
-      const width = canvas.width;
-      const height = canvas.height;
-
-      drawBackground(ctx, width, height);
-
-      ctx.textAlign = "left";
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "800 26px Inter, Arial, sans-serif";
-      ctx.fillText("Random 100% • ไม่เกี่ยวกับ AI", 70, 86);
-
-      ctx.font = "900 84px Inter, Arial, sans-serif";
-      ctx.fillText("Lucky Drop", 70, 162);
-
-      ctx.fillStyle = "rgba(255,255,255,0.82)";
-      ctx.font = "700 36px Inter, Arial, sans-serif";
-      ctx.fillText("Pure Random • Real Luck", 70, 214);
-
-      const labelY = isStory ? 430 : 340;
-      const numberY = isStory ? 900 : 565;
-      const hintY = isStory ? 1080 : 690;
-
-      ctx.textAlign = "center";
-      ctx.fillStyle = "#ffffff";
-      ctx.font = `800 ${isStory ? 64 : 54}px Inter, Arial, sans-serif`;
-      ctx.fillText(`เลขนำโชค ${state.len} ตัว`, width / 2, labelY);
-
-      let fontSize = isStory ? 228 : 180;
-      if (state.len === 2) fontSize = isStory ? 212 : 168;
-      if (state.len === 3) fontSize = isStory ? 196 : 154;
-      if (state.len === 4) fontSize = isStory ? 176 : 138;
-      if (state.len === 5) fontSize = isStory ? 156 : 122;
-      if (state.len === 6) fontSize = isStory ? 142 : 110;
-
-      let gap = isStory ? 152 : 118;
-      if (state.len === 2) gap = isStory ? 176 : 140;
-      if (state.len === 3) gap = isStory ? 140 : 110;
-      if (state.len === 4) gap = isStory ? 118 : 92;
-      if (state.len === 5) gap = isStory ? 98 : 76;
-      if (state.len === 6) gap = isStory ? 84 : 64;
-
-      const chars = state.value.split("");
-      const startX = width / 2 - ((chars.length - 1) * gap) / 2;
-
-      ctx.fillStyle = "#ffffff";
-      ctx.font = `900 ${fontSize}px Inter, Arial, sans-serif`;
-      ctx.textBaseline = "middle";
-      ctx.shadowColor = "rgba(0,0,0,0.24)";
-      ctx.shadowBlur = 18;
-
-      chars.forEach((char, index) => {
-        ctx.fillText(char, startX + (index * gap), numberY);
-      });
-
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = "rgba(255,255,255,0.80)";
-      ctx.font = `700 ${isStory ? 40 : 32}px Inter, Arial, sans-serif`;
-      ctx.fillText("เลขล่าสุด", width / 2, hintY);
-
-      ctx.textAlign = "left";
-      ctx.fillStyle = "rgba(255,255,255,0.84)";
-      ctx.font = "800 34px Inter, Arial, sans-serif";
-      ctx.fillText("Lucky Random • Full Random", 70, height - 96);
-
-      ctx.fillStyle = "rgba(255,255,255,0.64)";
-      ctx.font = "700 24px Inter, Arial, sans-serif";
-      ctx.fillText(formatThaiDate(), 70, height - 50);
-
-      return canvas;
-    }
-
-    function savePoster(type = "story") {
-      const canvas = drawPoster(type);
-      if (!canvas) return;
-
-      const link = document.createElement("a");
-      link.download = `lucky-drop-${type}-${state.value}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    }
-
+    state.len = len;
     pickButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        setLength(Number(btn.dataset.len));
-      });
+      btn.classList.toggle("active", Number(btn.dataset.len) === len);
     });
 
-    runBtn.addEventListener("click", spinNumber);
-    copyBtn.addEventListener("click", copyResult);
-    saveStoryBtn.addEventListener("click", () => savePoster("story"));
-    saveSquareBtn.addEventListener("click", () => savePoster("square"));
-    shareBtn.addEventListener("click", shareResult);
-    lineBtn.addEventListener("click", shareToLine);
+    resultLabel.textContent = `เลขนำโชค ${len} ตัว`;
 
-    setLength(2);
-    resultEl.style.transition = "transform 0.12s ease, opacity 0.12s ease";
-  </script>
+    if (!state.value) {
+      renderValue("-".repeat(len));
+      return;
+    }
+
+    state.value = randomDigits(len);
+    renderValue(state.value);
+  }
+
+  async function spinNumber() {
+    if (state.spinning) return;
+
+    state.spinning = true;
+    runBtn.disabled = true;
+
+    const finalValue = randomDigits(state.len);
+
+    const rounds = 22;
+    const startDelay = 40;
+    const slowStep = 8;
+
+    for (let i = 0; i < rounds; i += 1) {
+      resultEl.style.transform = "translateY(10px) scale(0.985)";
+      resultEl.style.opacity = "0.58";
+      renderValue(randomDigits(state.len));
+
+      const delay = startDelay + (i * slowStep);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+
+    resultEl.style.transform = "translateY(0) scale(1)";
+    resultEl.style.opacity = "1";
+
+    state.value = finalValue;
+    renderValue(finalValue);
+    resultHint.textContent = "เลขล่าสุด";
+
+    runBtn.disabled = false;
+    state.spinning = false;
+  }
+
+  async function copyResult() {
+    if (!state.value) {
+      alert("ยังไม่มีเลขให้คัดลอก");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(state.value);
+      resultHint.textContent = "คัดลอกแล้ว";
+      setTimeout(() => {
+        resultHint.textContent = "เลขล่าสุด";
+      }, 900);
+    } catch (error) {
+      alert("คัดลอกไม่สำเร็จ");
+    }
+  }
+
+  async function shareResult() {
+    if (!state.value) {
+      alert("ยังไม่มีเลขให้แชร์");
+      return;
+    }
+
+    const text = `Lucky Drop\nเลขนำโชค ${state.len} ตัว: ${state.value}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Lucky Drop",
+          text
+        });
+        return;
+      } catch (error) {}
+    }
+
+    try {
+      await navigator.clipboard.writeText(text);
+      alert("คัดลอกข้อความสำหรับแชร์แล้ว");
+    } catch (error) {
+      alert(text);
+    }
+  }
+
+  function shareToLine() {
+    if (!state.value) {
+      alert("ยังไม่มีเลขให้แชร์");
+      return;
+    }
+
+    const text = encodeURIComponent(`Lucky Drop - เลขนำโชค ${state.len} ตัว: ${state.value}`);
+    const mobileUrl = `line://msg/text/${text}`;
+    const fallbackUrl = `https://line.me/R/msg/text/?${text}`;
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      window.location.href = mobileUrl;
+      setTimeout(() => {
+        window.location.href = fallbackUrl;
+      }, 900);
+    } else {
+      window.open(fallbackUrl, "_blank");
+    }
+  }
+
+  function formatThaiDate() {
+    const now = new Date();
+    const thaiYear = now.getFullYear() + 543;
+    const day = now.getDate();
+    const month = now.getMonth() + 1;
+    return `${day}/${month}/${thaiYear}`;
+  }
+
+  function drawBackground(ctx, width, height) {
+    const bg = ctx.createLinearGradient(0, 0, 0, height);
+    bg.addColorStop(0, "#06080f");
+    bg.addColorStop(1, "#0a1224");
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, width, height);
+
+    const glow1 = ctx.createRadialGradient(
+      width * 0.08, height * 0.14, 0,
+      width * 0.08, height * 0.14, width * 0.22
+    );
+    glow1.addColorStop(0, "rgba(255,255,255,0.05)");
+    glow1.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = glow1;
+    ctx.fillRect(0, 0, width, height);
+
+    const glow2 = ctx.createRadialGradient(
+      width * 0.90, height * 0.16, 0,
+      width * 0.90, height * 0.16, width * 0.16
+    );
+    glow2.addColorStop(0, "rgba(92,78,255,0.12)");
+    glow2.addColorStop(1, "rgba(92,78,255,0)");
+    ctx.fillStyle = glow2;
+    ctx.fillRect(0, 0, width, height);
+
+    const centerGlow = ctx.createRadialGradient(
+      width / 2, height * 0.52, 0,
+      width / 2, height * 0.52, width * 0.20
+    );
+    centerGlow.addColorStop(0, "rgba(255,255,255,0.035)");
+    centerGlow.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = centerGlow;
+    ctx.fillRect(0, 0, width, height);
+  }
+
+  function drawPoster(type = "story") {
+    if (!state.value) {
+      alert("ยังไม่มีเลขให้บันทึก");
+      return null;
+    }
+
+    const isStory = type === "story";
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = 1080;
+    canvas.height = isStory ? 1920 : 1080;
+
+    const width = canvas.width;
+    const height = canvas.height;
+
+    drawBackground(ctx, width, height);
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "800 26px Inter, Arial, sans-serif";
+    ctx.fillText("Random 100% • ไม่เกี่ยวกับ AI", 70, 86);
+
+    ctx.font = "900 84px Inter, Arial, sans-serif";
+    ctx.fillText("Lucky Drop", 70, 162);
+
+    ctx.fillStyle = "rgba(255,255,255,0.82)";
+    ctx.font = "700 36px Inter, Arial, sans-serif";
+    ctx.fillText("Pure Random • Real Luck", 70, 214);
+
+    const labelY = isStory ? 430 : 340;
+    const numberY = isStory ? 900 : 565;
+    const hintY = isStory ? 1080 : 690;
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#ffffff";
+    ctx.font = `800 ${isStory ? 64 : 54}px Inter, Arial, sans-serif`;
+    ctx.fillText(`เลขนำโชค ${state.len} ตัว`, width / 2, labelY);
+
+    let fontSize = isStory ? 228 : 180;
+    if (state.len === 2) fontSize = isStory ? 212 : 168;
+    if (state.len === 3) fontSize = isStory ? 196 : 154;
+    if (state.len === 4) fontSize = isStory ? 176 : 138;
+    if (state.len === 5) fontSize = isStory ? 156 : 122;
+    if (state.len === 6) fontSize = isStory ? 142 : 110;
+
+    let gap = isStory ? 152 : 118;
+    if (state.len === 2) gap = isStory ? 176 : 140;
+    if (state.len === 3) gap = isStory ? 140 : 110;
+    if (state.len === 4) gap = isStory ? 118 : 92;
+    if (state.len === 5) gap = isStory ? 98 : 76;
+    if (state.len === 6) gap = isStory ? 84 : 64;
+
+    const chars = state.value.split("");
+    const startX = width / 2 - ((chars.length - 1) * gap) / 2;
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = `900 ${fontSize}px Inter, Arial, sans-serif`;
+    ctx.textBaseline = "middle";
+    ctx.shadowColor = "rgba(0,0,0,0.24)";
+    ctx.shadowBlur = 18;
+
+    chars.forEach((char, index) => {
+      ctx.fillText(char, startX + (index * gap), numberY);
+    });
+
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = "rgba(255,255,255,0.80)";
+    ctx.font = `700 ${isStory ? 40 : 32}px Inter, Arial, sans-serif`;
+    ctx.fillText("เลขล่าสุด", width / 2, hintY);
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = "rgba(255,255,255,0.84)";
+    ctx.font = "800 34px Inter, Arial, sans-serif";
+    ctx.fillText("Lucky Random • Full Random", 70, height - 96);
+
+    ctx.fillStyle = "rgba(255,255,255,0.64)";
+    ctx.font = "700 24px Inter, Arial, sans-serif";
+    ctx.fillText(formatThaiDate(), 70, height - 50);
+
+    return canvas;
+  }
+
+  function savePoster(type = "story") {
+    const canvas = drawPoster(type);
+    if (!canvas) return;
+
+    const link = document.createElement("a");
+    link.download = `lucky-drop-${type}-${state.value}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }
+
+  function refitCurrentNumber() {
+    if (state.value) {
+      renderValue(state.value);
+      return;
+    }
+    renderValue("-".repeat(state.len));
+  }
+
+  pickButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      setLength(Number(btn.dataset.len));
+    });
+  });
+
+  runBtn.addEventListener("click", spinNumber);
+  copyBtn.addEventListener("click", copyResult);
+  saveStoryBtn.addEventListener("click", () => savePoster("story"));
+  saveSquareBtn.addEventListener("click", () => savePoster("square"));
+  shareBtn.addEventListener("click", shareResult);
+  lineBtn.addEventListener("click", shareToLine);
+
+  window.addEventListener("resize", refitCurrentNumber);
+  window.addEventListener("orientationchange", () => {
+    setTimeout(refitCurrentNumber, 120);
+  });
+
+  setLength(2);
+  resultEl.style.transition = "transform 0.12s ease, opacity 0.12s ease, font-size 0.12s ease";
+</script>
 </body>
 </html>
