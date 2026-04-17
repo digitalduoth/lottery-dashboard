@@ -473,7 +473,7 @@
         </div>
       </div>
     </section>
-    <script>
+<script>
   const DATA_URL = "data.json";
 
   const state = {
@@ -506,7 +506,7 @@
   }
 
   function weightByIndex(i) {
-    return 1.85 * Math.exp(-i / 10) + 0.15;
+    return 1.2 * Math.exp(-i / 6) + 0.08;
   }
 
   function addScore(map, key, score) {
@@ -515,10 +515,13 @@
 
   function normalizeTop(list) {
     if (!list.length) return list;
-    const max = list[0].score || 1;
-    return list.map(item => ({
+
+    const top = list.slice(0, 10);
+    const sum = top.reduce((acc, item) => acc + item.score, 0) || 1;
+
+    return top.map(item => ({
       ...item,
-      percent: ((item.score / max) * 100).toFixed(2)
+      percent: ((item.score / sum) * 100).toFixed(2)
     }));
   }
 
@@ -561,7 +564,7 @@
       (pairFreq[num.slice(0, 2)] || 0) +
       (pairFreq[num.slice(1, 3)] || 0);
 
-    return (exact * 0.58) + (pos * 0.27) + (pair * 0.15);
+    return (exact * 0.50) + (pos * 0.30) + (pair * 0.20);
   }
 
   function buildTop3Forecast(history) {
@@ -596,7 +599,7 @@
       }))
       .sort((a, b) => b.score - a.score);
 
-    return normalizeTop(scored.slice(0, 10));
+    return normalizeTop(scored);
   }
 
   function buildBottom3Forecast(history) {
@@ -631,7 +634,7 @@
       }))
       .sort((a, b) => b.score - a.score);
 
-    return normalizeTop(scored.slice(0, 10));
+    return normalizeTop(scored);
   }
 
   function buildLast2Forecast(history) {
@@ -661,20 +664,20 @@
         const pos = (digitPos[0][num[0]] || 0) + (digitPos[1][num[1]] || 0);
         return {
           num,
-          score: (exact * 0.7) + (pos * 0.3)
+          score: (exact * 0.62) + (pos * 0.38)
         };
       })
       .sort((a, b) => b.score - a.score);
 
-    return normalizeTop(scored.slice(0, 10));
+    return normalizeTop(scored);
   }
 
   function buildHybridForecast(top3, bottom3) {
     const map = {};
-    top3.forEach((item, idx) => addScore(map, item.num, item.score * (1 - idx * 0.025)));
-    bottom3.forEach((item, idx) => addScore(map, item.num, item.score * (1 - idx * 0.025)));
+    top3.forEach((item, idx) => addScore(map, item.num, item.score * (1 - idx * 0.03)));
+    bottom3.forEach((item, idx) => addScore(map, item.num, item.score * (1 - idx * 0.03)));
 
-    return normalizeTop(sortMap(map).slice(0, 10));
+    return normalizeTop(sortMap(map));
   }
 
   function buildForecast(history) {
