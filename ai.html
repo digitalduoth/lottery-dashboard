@@ -2,112 +2,80 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>AI Analysis</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
   <style>
     :root{
-      --bg1:#030712;
-      --bg2:#071120;
-      --bg3:#0b1730;
-
-      --panel:rgba(10,21,40,.84);
-      --panel-strong:rgba(6,14,28,.92);
-      --panel-soft:rgba(255,255,255,.03);
+      --bg:#05070d;
+      --bg2:#091327;
+      --panel:#0c1424;
       --line:rgba(255,255,255,.08);
-
-      --text:#eef4ff;
-      --muted:#94a3b8;
-
-      --cyan:#22d3ee;
-      --blue:#60a5fa;
-      --purple:#8b5cf6;
-      --purple2:#a855f7;
-      --green:#22c55e;
-      --gold:#f59e0b;
-      --pink:#ec4899;
-      --red:#ef4444;
-      --slate:#334155;
-
-      --shadow:0 24px 70px rgba(0,0,0,.32);
+      --text:#f8fafc;
+      --muted:rgba(255,255,255,.68);
+      --muted2:rgba(255,255,255,.46);
+      --accent:#7c8fff;
+      --accent2:#9d7cff;
+      --good:#8ef0b1;
+      --warn:#ffd66b;
+      --bad:#ff9a9a;
+      --shadow:0 20px 50px rgba(0,0,0,.34);
     }
 
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0}
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+      -webkit-tap-highlight-color:transparent;
+      font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+
+    html,body{
+      min-height:100%;
+      background:
+        radial-gradient(circle at 10% 8%, rgba(123,143,255,.08), transparent 18%),
+        radial-gradient(circle at 90% 10%, rgba(157,124,255,.08), transparent 18%),
+        linear-gradient(180deg,var(--bg),var(--bg2));
+      color:var(--text);
+    }
 
     body{
-      min-height:100vh;
-      color:var(--text);
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-      background:
-        radial-gradient(circle at 10% 8%, rgba(34,211,238,.10), transparent 18%),
-        radial-gradient(circle at 90% 10%, rgba(168,85,247,.12), transparent 20%),
-        radial-gradient(circle at 50% 100%, rgba(96,165,250,.10), transparent 24%),
-        linear-gradient(180deg,var(--bg1),var(--bg2) 55%,var(--bg3));
+      padding:18px;
     }
 
     .container{
-      max-width:1440px;
+      width:100%;
+      max-width:1380px;
       margin:0 auto;
-      padding:18px 14px 42px;
-    }
-
-    .hero,
-    .card,
-    .mini-box{
-      border:1px solid var(--line);
-      border-radius:24px;
-      background:var(--panel);
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(16px);
     }
 
     .hero{
-      padding:22px;
-      position:relative;
-      overflow:hidden;
       background:
-        radial-gradient(circle at 100% 0%, rgba(34,211,238,.10), transparent 20%),
-        radial-gradient(circle at 0% 0%, rgba(168,85,247,.12), transparent 18%),
-        linear-gradient(135deg, rgba(59,130,246,.10), rgba(10,21,40,.92) 56%, rgba(10,21,40,.98));
-    }
-
-    .hero::before{
-      content:"";
-      position:absolute;
-      width:260px;
-      height:260px;
-      border-radius:50%;
-      background:radial-gradient(circle, rgba(34,211,238,.12), transparent 70%);
-      left:-120px;
-      top:-110px;
-      pointer-events:none;
-    }
-
-    .hero::after{
-      content:"";
-      position:absolute;
-      width:320px;
-      height:320px;
-      border-radius:50%;
-      background:radial-gradient(circle, rgba(168,85,247,.14), transparent 72%);
-      right:-140px;
-      top:-120px;
-      pointer-events:none;
+        linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)),
+        linear-gradient(180deg, #0b1220, #0a1020);
+      border:1px solid var(--line);
+      border-radius:26px;
+      padding:22px;
+      box-shadow:var(--shadow);
+      margin-bottom:16px;
     }
 
     h1{
-      margin:0 0 10px;
-      font-size:clamp(32px,4vw,48px);
-      line-height:1.02;
-      letter-spacing:-.02em;
+      font-size:clamp(34px,5vw,56px);
+      font-weight:900;
+      letter-spacing:-.05em;
+      margin-bottom:6px;
     }
 
     .sub{
-      margin:0;
       color:var(--muted);
       font-size:14px;
-      line-height:1.75;
-      max-width:980px;
+      font-weight:600;
+      line-height:1.6;
     }
 
     .toolbar{
@@ -118,286 +86,255 @@
     }
 
     .btn{
-      min-height:48px;
-      padding:10px 16px;
       border:none;
       border-radius:14px;
-      color:#fff;
+      padding:12px 16px;
       font-weight:800;
+      font-size:14px;
       cursor:pointer;
-      box-shadow:0 10px 24px rgba(0,0,0,.18);
-      transition:transform .15s ease, opacity .15s ease;
+      color:#fff;
+      background:linear-gradient(180deg,#1d2740,#141c2f);
+      border:1px solid var(--line);
     }
 
-    .btn:hover{
-      transform:translateY(-1px);
-      opacity:.97;
+    .btn.primary{
+      background:linear-gradient(180deg,#7c8fff,#6a71ff);
+      color:#081120;
     }
 
-    .btn.primary{background:linear-gradient(135deg,#7c3aed,#a855f7)}
-    .btn.secondary{background:linear-gradient(135deg,#334155,#1e293b)}
-    .btn.success{background:linear-gradient(135deg,#15803d,#22c55e)}
-
-    .grid-4,
-    .grid-2,
-    .grid-main{
+    .grid-summary{
       display:grid;
-      gap:16px;
-      margin-top:16px;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:14px;
+      margin-bottom:16px;
     }
 
-    .grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
-    .grid-2{grid-template-columns:1fr 1fr}
-    .grid-main{grid-template-columns:1.04fr .96fr}
-
-    .card{padding:18px}
-
-    .mini-box{
-      padding:16px;
+    .mini{
       background:
-        linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01)),
-        rgba(6,14,28,.78);
+        linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)),
+        linear-gradient(180deg,#0f1829,#0b1324);
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:16px;
+      box-shadow:var(--shadow);
     }
 
-    .label{
-      font-size:13px;
+    .mini .label{
       color:var(--muted);
+      font-size:13px;
+      font-weight:700;
       margin-bottom:8px;
     }
 
-    .big{
-      font-size:clamp(30px,4vw,42px);
-      line-height:1;
+    .mini .value{
+      font-size:clamp(34px,4vw,48px);
       font-weight:900;
-      color:#fff;
-      letter-spacing:.01em;
+      letter-spacing:-.05em;
+      line-height:.95;
     }
 
-    .meta{
+    .mini .meta{
       margin-top:8px;
-      color:#dbeafe;
+      color:var(--muted2);
       font-size:12px;
+      font-weight:700;
+      line-height:1.5;
     }
 
-    .section-title{
-      margin:0 0 8px;
-      font-size:22px;
-      line-height:1.2;
-    }
-
-    .section-sub{
-      margin:0 0 14px;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.7;
-    }
-
-    .analysis{
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.06);
-      background:
-        linear-gradient(135deg, rgba(59,130,246,.08), rgba(168,85,247,.08)),
-        rgba(255,255,255,.02);
-      color:#dbeafe;
-      padding:16px;
-      font-size:14px;
-      line-height:1.8;
-      white-space:pre-line;
-    }
-
-    .rank-grid{
+    .grid-main{
       display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-      gap:12px;
+      grid-template-columns:1.25fr .95fr;
+      gap:14px;
     }
 
-    .rank-card{
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.08);
-      padding:12px;
-      min-height:132px;
+    .left-col,.right-col{
       display:flex;
       flex-direction:column;
-      justify-content:space-between;
-      background:var(--panel-soft);
+      gap:14px;
     }
 
-    .rank-card.green{
-      background:rgba(34,197,94,.10);
-      border-color:rgba(34,197,94,.18);
+    .card{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)),
+        linear-gradient(180deg,#0d1526,#091121);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:18px;
+      box-shadow:var(--shadow);
     }
 
-    .rank-card.gold{
-      background:rgba(245,158,11,.10);
-      border-color:rgba(245,158,11,.18);
-    }
-
-    .rank-card.pink{
-      background:rgba(236,72,153,.10);
-      border-color:rgba(236,72,153,.18);
-    }
-
-    .rank-card.purple{
-      background:rgba(168,85,247,.12);
-      border-color:rgba(168,85,247,.18);
-    }
-
-    .rank-top{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:8px;
-      color:#e2e8f0;
-      font-size:12px;
-      font-weight:800;
-    }
-
-    .rank-number{
-      font-size:34px;
-      line-height:1;
+    .card h2{
+      font-size:22px;
       font-weight:900;
-      color:#fff;
-      letter-spacing:.04em;
+      letter-spacing:-.04em;
+      margin-bottom:6px;
     }
 
-    .rank-score{
-      font-size:14px;
-      font-weight:800;
-      color:#f8fafc;
-    }
-
-    .rank-sub{
+    .card .small{
+      color:var(--muted);
       font-size:12px;
-      color:#cbd5e1;
-      line-height:1.6;
+      font-weight:700;
+      margin-bottom:14px;
+      line-height:1.55;
+    }
+
+    .text-box{
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.05);
+      border-radius:16px;
+      padding:14px;
+      color:var(--text);
+      font-size:14px;
+      line-height:1.7;
+      white-space:pre-line;
+      min-height:140px;
     }
 
     .score-grid{
       display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      grid-template-columns:repeat(2,minmax(0,1fr));
       gap:12px;
     }
 
-    .score-card{
+    .rank-grid{
+      display:grid;
+      grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:10px;
+    }
+
+    .rank-card{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)),
+        linear-gradient(180deg,#171f31,#111827);
+      border:1px solid var(--line);
       border-radius:18px;
-      border:1px solid rgba(255,255,255,.08);
-      background:var(--panel-soft);
-      padding:14px;
+      padding:14px 12px;
+      min-height:112px;
     }
 
-    .score-card.good{
-      background:rgba(34,197,94,.10);
-      border-color:rgba(34,197,94,.18);
-    }
-
-    .score-card.bad{
-      background:rgba(239,68,68,.10);
-      border-color:rgba(239,68,68,.18);
-    }
-
-    .score-title{
-      font-size:13px;
-      color:#dbeafe;
+    .rank-card .rank{
+      color:var(--muted);
+      font-size:12px;
       font-weight:800;
+      margin-bottom:6px;
+    }
+
+    .rank-card .num{
+      font-size:clamp(28px,3vw,40px);
+      line-height:.9;
+      font-weight:900;
+      letter-spacing:-.05em;
       margin-bottom:8px;
     }
 
-    .score-value{
-      font-size:26px;
-      font-weight:900;
-      margin-bottom:6px;
-      color:#fff;
+    .rank-card .score{
+      font-size:12px;
+      font-weight:800;
+      color:var(--muted);
+      margin-bottom:4px;
     }
 
-    .score-sub{
-      font-size:12px;
-      color:#cbd5e1;
-      line-height:1.6;
+    .rank-card .hint{
+      font-size:11px;
+      font-weight:700;
+      color:var(--muted2);
+      line-height:1.45;
     }
 
     .bars{
-      display:grid;
-      gap:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:10px;
     }
 
     .bar-row{
       display:grid;
-      grid-template-columns:74px 1fr 72px;
-      gap:16px;
+      grid-template-columns:64px 1fr 58px;
+      gap:10px;
       align-items:center;
-      font-size:14px;
+      font-size:13px;
+      font-weight:800;
     }
 
-    .bar-track{
-      height:12px;
-      background:#1e293b;
+    .bar{
+      height:8px;
       border-radius:999px;
+      background:rgba(255,255,255,.08);
       overflow:hidden;
-      border:1px solid rgba(255,255,255,.04);
     }
 
-    .bar-fill{
+    .fill{
       height:100%;
       border-radius:999px;
-      background:linear-gradient(90deg,var(--cyan),var(--purple2));
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
     }
 
-    .bar-score{
-      text-align:right;
-      color:#e2e8f0;
-      font-weight:800;
-    }
-
-    .heur-grid{
+    .accuracy-grid{
       display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+      grid-template-columns:repeat(2,minmax(0,1fr));
       gap:12px;
+      margin-top:14px;
     }
 
-    .heur-card{
+    .acc-box{
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.05);
       border-radius:16px;
-      border:1px solid rgba(255,255,255,.06);
-      background:rgba(6,14,28,.78);
       padding:14px;
+      min-height:120px;
+      font-size:14px;
+      line-height:1.65;
     }
 
-    .heur-title{
-      font-size:14px;
+    .acc-box h3{
+      font-size:15px;
       font-weight:900;
-      margin-bottom:6px;
-      color:#fff;
+      margin-bottom:8px;
     }
 
-    .heur-detail{
-      font-size:13px;
-      color:#cbd5e1;
-      line-height:1.7;
+    .footer-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:12px;
+      margin-top:14px;
     }
 
-    .heur-hint{
-      margin-top:8px;
-      font-size:13px;
-      font-weight:800;
-      color:#f8fafc;
+    .foot-mini{
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.05);
+      border-radius:16px;
+      padding:14px;
+      min-height:92px;
     }
 
-    .empty{
+    .foot-mini .title{
+      font-size:12px;
+      font-weight:900;
       color:var(--muted);
-      font-size:14px;
-      padding:8px 0;
+      margin-bottom:8px;
+    }
+
+    .foot-mini .body{
+      font-size:13px;
+      font-weight:700;
+      line-height:1.55;
+      color:#fff;
+      white-space:pre-line;
     }
 
     @media (max-width:1100px){
-      .grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .grid-2,.grid-main{grid-template-columns:1fr}
+      .grid-summary{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .grid-main{ grid-template-columns:1fr; }
+      .rank-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+      .footer-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
     }
 
     @media (max-width:700px){
-      .grid-4{grid-template-columns:1fr}
-      .toolbar{flex-direction:column}
-      .btn{width:100%}
-      .rank-grid{grid-template-columns:1fr 1fr}
-      .score-grid{grid-template-columns:1fr}
+      body{ padding:12px; }
+      .rank-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .score-grid,.accuracy-grid,.footer-grid{ grid-template-columns:1fr; }
+      .bar-row{ grid-template-columns:56px 1fr 50px; }
     }
   </style>
 </head>
@@ -405,1123 +342,693 @@
   <div class="container">
     <section class="hero">
       <h1>AI Analysis</h1>
-      <p class="sub">ระบบวิเคราะห์เลข • Forecast Now • Last Settled Check • Backtest Accuracy • Heuristic Insights แบบแยกจาก AI</p>
-
+      <div class="sub">ระบบวิเคราะห์เลข • Forecast Now • Last Settled Check • Backtest Accuracy • ใช้ 3 ตัวบนจริงจากรางวัลที่ 1 • เลขหน้า 3 ตัวแยกออก ไม่เอามาปนเป็น 3 ตัวบน</div>
       <div class="toolbar">
         <button class="btn primary" id="runBtn">Run AI</button>
-        <button class="btn secondary" id="accuracyBtn">Check Accuracy</button>
-        <button class="btn success" id="copyBtn">Copy ชุดเลข</button>
+        <button class="btn" id="accuracyBtn">Check Accuracy</button>
+        <button class="btn" id="copyBtn">Copy ชุดเลข</button>
       </div>
     </section>
 
-    <section class="grid-4">
-      <div class="mini-box">
+    <section class="grid-summary">
+      <div class="mini">
         <div class="label">2 ตัวเด่น</div>
-        <div class="big" id="stat2D">--</div>
-        <div class="meta" id="stat2DMeta">ยังไม่มีข้อมูล</div>
+        <div class="value" id="summaryLast2">--</div>
+        <div class="meta" id="summaryLast2Meta">คะแนน --</div>
       </div>
-      <div class="mini-box">
+      <div class="mini">
         <div class="label">3 ตัวบน</div>
-        <div class="big" id="statTop3">---</div>
-        <div class="meta" id="statTop3Meta">ยังไม่มีข้อมูล</div>
+        <div class="value" id="summaryTop3">---</div>
+        <div class="meta" id="summaryTop3Meta">คะแนน --</div>
       </div>
-      <div class="mini-box">
+      <div class="mini">
         <div class="label">3 ตัวล่าง</div>
-        <div class="big" id="statBottom3">---</div>
-        <div class="meta" id="statBottom3Meta">ยังไม่มีข้อมูล</div>
+        <div class="value" id="summaryBottom3">---</div>
+        <div class="meta" id="summaryBottom3Meta">คะแนน --</div>
       </div>
-      <div class="mini-box">
+      <div class="mini">
         <div class="label">Hybrid</div>
-        <div class="big" id="statHybrid">---</div>
-        <div class="meta" id="statHybridMeta">ยังไม่มีข้อมูล</div>
-      </div>
-    </section>
-
-    <section class="grid-2">
-      <div class="card">
-        <h2 class="section-title">Forecast Now</h2>
-        <p class="section-sub">เลขสำหรับงวดถัดไป สถานะยังรอผลจริง</p>
-        <div class="analysis" id="forecastBox">ยังไม่ได้รัน AI</div>
-      </div>
-
-      <div class="card">
-        <h2 class="section-title">Last Settled Check</h2>
-        <p class="section-sub">ตรวจงวดล่าสุดที่มีผลจริงแล้ว โดยใช้ข้อมูลงวดก่อนหน้าเท่านั้น</p>
-        <div class="analysis" id="lastSettledBox">กด Check Accuracy เพื่อดูผล</div>
-      </div>
-    </section>
-
-    <section class="grid-2">
-      <div class="card">
-        <h2 class="section-title">สรุปประจำงวด</h2>
-        <p class="section-sub">อ่านเร็ว ใช้ตัดสินใจไว</p>
-        <div class="analysis" id="summaryBox">ยังไม่ได้รัน AI</div>
-      </div>
-
-      <div class="card">
-        <h2 class="section-title">Near Match Insight</h2>
-        <p class="section-sub">ข้อมูลเสริม ไม่ถูกรวมใน Accuracy หลัก</p>
-        <div class="analysis" id="nearMatchBox">กด Check Accuracy เพื่อดูผล</div>
+        <div class="value" id="summaryHybrid">---</div>
+        <div class="meta" id="summaryHybridMeta">คะแนน --</div>
       </div>
     </section>
 
     <section class="grid-main">
-      <div style="display:grid;gap:16px;">
-        <div class="card">
-          <h2 class="section-title">เลข 2 ตัวเด่น</h2>
-          <div class="rank-grid" id="twoBox">
-            <div class="empty">ยังไม่มีข้อมูล</div>
+      <div class="left-col">
+        <div class="score-grid">
+          <div class="card">
+            <h2>Forecast Now</h2>
+            <div class="small">เลขที่คาดสำหรับงวดถัดไปจากฐานข้อมูลล่าสุดทั้งหมด</div>
+            <div class="text-box" id="forecastNowText">กำลังโหลด...</div>
+          </div>
+          <div class="card">
+            <h2>Last Settled Check</h2>
+            <div class="small">ตรวจงวดล่าสุดด้วย forecast ที่สร้างจากข้อมูลก่อนงวดนั้นเท่านั้น</div>
+            <div class="text-box" id="lastSettledText">กำลังโหลด...</div>
+          </div>
+        </div>
+
+        <div class="score-grid">
+          <div class="card">
+            <h2>สรุปประจำงวด</h2>
+            <div class="small">ดูผลจริงล่าสุดและเลขเด่นที่ระบบคาดสำหรับงวดถัดไป</div>
+            <div class="text-box" id="roundSummaryText">กำลังโหลด...</div>
+          </div>
+          <div class="card">
+            <h2>Near Match Insight</h2>
+            <div class="small">ดูเลขที่ใกล้เคียงกับ forecast เดิมของงวดล่าสุด</div>
+            <div class="text-box" id="nearMatchText">กำลังโหลด...</div>
           </div>
         </div>
 
         <div class="card">
-          <h2 class="section-title">3 ตัวบน</h2>
-          <div class="rank-grid" id="top3Box">
-            <div class="empty">ยังไม่มีข้อมูล</div>
-          </div>
+          <h2>เลข 2 ตัวเด่น</h2>
+          <div class="small">Top 10 เลข 2 ตัว</div>
+          <div class="rank-grid" id="gridLast2"></div>
         </div>
 
         <div class="card">
-          <h2 class="section-title">3 ตัวล่าง</h2>
-          <div class="rank-grid" id="bottom3Box">
-            <div class="empty">ยังไม่มีข้อมูล</div>
-          </div>
+          <h2>3 ตัวบน</h2>
+          <div class="small">ใช้ 3 ตัวท้ายของรางวัลที่ 1 เท่านั้น</div>
+          <div class="rank-grid" id="gridTop3"></div>
         </div>
 
         <div class="card">
-          <h2 class="section-title">Hybrid AI</h2>
-          <div class="rank-grid" id="hybridBox">
-            <div class="empty">ยังไม่มีข้อมูล</div>
-          </div>
-        </div>
-      </div>
-
-      <div style="display:grid;gap:16px;">
-        <div class="card">
-          <h2 class="section-title">Top 10</h2>
-
-          <div style="font-weight:900;margin-bottom:8px;">Top 10 เลข 2 ตัว</div>
-          <div class="bars" id="bars2D">
-            <div class="empty">ยังไม่มีข้อมูล</div>
-          </div>
-
-          <div style="height:18px;"></div>
-
-          <div style="font-weight:900;margin-bottom:8px;">Top 10 3 ตัวบน</div>
-          <div class="bars" id="barsTop3">
-            <div class="empty">ยังไม่มีข้อมูล</div>
-          </div>
-
-          <div style="height:18px;"></div>
-
-          <div style="font-weight:900;margin-bottom:8px;">Top 10 3 ตัวล่าง</div>
-          <div class="bars" id="barsBottom3">
-            <div class="empty">ยังไม่มีข้อมูล</div>
-          </div>
+          <h2>3 ตัวล่าง</h2>
+          <div class="small">ใช้เลขท้าย 3 ตัวจากผลจริง</div>
+          <div class="rank-grid" id="gridBottom3"></div>
         </div>
 
         <div class="card">
-          <h2 class="section-title">Backtest Accuracy</h2>
-          <p class="section-sub">Strict = Top 5 • Practical = Top 10 • ย้อนหลัง 20 งวด</p>
-          <div class="analysis" id="accuracySummaryBox">กด Check Accuracy เพื่อดูผล</div>
-          <div style="height:14px;"></div>
-          <div class="score-grid" id="accuracyCardsBox">
-            <div class="empty">ยังไม่มีข้อมูล</div>
-          </div>
+          <h2>Hybrid AI</h2>
+          <div class="small">ผสมคะแนนข้ามหมวดแบบไม่ดึงผลจริงงวดเดียวกันมาปน</div>
+          <div class="rank-grid" id="gridHybrid"></div>
+        </div>
+
+        <div class="card">
+          <h2>Heuristic Insights</h2>
+          <div class="small">ข้อมูลประกอบการดูระบบ ไม่ได้เอาผลงวดล่าสุดไปใช้ผิดลำดับ</div>
+          <div class="footer-grid" id="heuristicGrid"></div>
         </div>
       </div>
-    </section>
 
-    <section class="card" style="margin-top:16px;">
-      <h2 class="section-title">Heuristic Insights</h2>
-      <p class="section-sub">ฟีเจอร์นี้เป็นมุมมองเสริมสำหรับคนที่ชอบดูสูตร ไม่ได้ถูกใช้คำนวณ AI และไม่ถูกใช้คำนวณ Accuracy</p>
-      <div class="heur-grid" id="heuristicBox">
-        <div class="empty">ยังไม่มีข้อมูล</div>
+      <div class="right-col">
+        <div class="card">
+          <h2>Top 10</h2>
+          <div class="small">ดูคะแนนรวมแบบ bar</div>
+
+          <div class="small">Top 10 เลข 2 ตัว</div>
+          <div class="bars" id="barsLast2"></div>
+
+          <div class="small" style="margin-top:14px;">Top 10 3 ตัวบน</div>
+          <div class="bars" id="barsTop3"></div>
+
+          <div class="small" style="margin-top:14px;">Top 10 3 ตัวล่าง</div>
+          <div class="bars" id="barsBottom3"></div>
+        </div>
+
+        <div class="card">
+          <h2>Backtest Accuracy</h2>
+          <div class="small">Strict = Top 5 • Practical = Top 10 • ย้อนหลัง 20 งวด</div>
+          <div class="text-box" id="backtestIntro">กำลังโหลด...</div>
+
+          <div class="accuracy-grid">
+            <div class="acc-box">
+              <h3>Strict</h3>
+              <div id="strictText">กำลังโหลด...</div>
+            </div>
+            <div class="acc-box">
+              <h3>Practical</h3>
+              <div id="practicalText">กำลังโหลด...</div>
+            </div>
+            <div class="acc-box">
+              <h3>ตัวอย่างงวดล่าสุด</h3>
+              <div id="latestCheckText">กำลังโหลด...</div>
+            </div>
+            <div class="acc-box">
+              <h3>หมายเหตุ</h3>
+              <div id="backtestNoteText">กำลังโหลด...</div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
     <script>
-  const CONFIG = {
-    mode: "balanced",
-    modes: {
-      stable: {
-        shortDecay2D: 8,
-        longDecay2D: 20,
-        shortDecay3D: 10,
-        longDecay3D: 24,
-        burst2D: 5,
-        burst3D: 6,
-        recentDigits: 12
-      },
-      balanced: {
-        shortDecay2D: 6,
-        longDecay2D: 14,
-        shortDecay3D: 8,
-        longDecay3D: 18,
-        burst2D: 4,
-        burst3D: 5,
-        recentDigits: 10
-      },
-      dynamic: {
-        shortDecay2D: 4,
-        longDecay2D: 10,
-        shortDecay3D: 5,
-        longDecay3D: 12,
-        burst2D: 3,
-        burst3D: 4,
-        recentDigits: 8
-      }
-    },
-    hybrid: {
-      target: 0.55,
-      combined: 0.30,
-      opposite: 0.15
-    },
-    accuracy: {
-      strictTop: 5,
-      practicalTop: 10,
-      lookback: 20
-    }
+  const DATA_URL = "data.json";
+
+  const state = {
+    data: [],
+    forecastNow: null,
+    lastSettledForecast: null,
+    settled: null,
+    backtest: null
   };
 
-  let records = [];
-  let cachedScores2D = [];
-  let cachedScoresTop3 = [];
-  let cachedScoresBottom3 = [];
-  let cachedScoresCombined3 = [];
-  let cachedHybridTop3 = [];
-  let cachedHybridBottom3 = [];
-  let cachedHybridMix = [];
-  let cachedBundleText = "";
-
-  function getModeConfig() {
-    return CONFIG.modes[CONFIG.mode];
-  }
-
-  function normalizeNumber(value, size) {
-    const cleaned = String(value ?? "").replace(/[^\d]/g, "").trim();
-    if (!cleaned) return null;
-    return cleaned.padStart(size, "0").slice(-size);
-  }
-
-  function safeArray(value) {
-    return Array.isArray(value) ? value : [];
-  }
-
-  function sortDateDesc(list) {
-    return [...list].sort((a, b) => String(b.date).localeCompare(String(a.date)));
-  }
-
-  function countMap(list) {
-    const map = {};
-    for (const item of list) {
-      if (!item) continue;
-      map[item] = (map[item] || 0) + 1;
-    }
-    return map;
-  }
-
-  function maxValue(obj) {
-    const values = Object.values(obj);
-    return values.length ? Math.max(...values) : 1;
-  }
-
-  function normalize(value, max) {
-    if (!max) return 0;
-    return value / max;
-  }
-
-  function decayWeight(index, decay) {
-    return Math.exp(-index / decay);
-  }
-
-  function createDigitMap() {
-    return { "0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0 };
-  }
-
   async function loadData() {
-    const res = await fetch("./data.json?v=" + Date.now(), { cache: "no-store" });
+    const res = await fetch(`${DATA_URL}?v=${Date.now()}`);
     if (!res.ok) throw new Error("โหลด data.json ไม่สำเร็จ");
 
-    const raw = await res.json();
+    const data = await res.json();
 
-    records = sortDateDesc(
-      raw.map((row, index) => {
-        const last2 = normalizeNumber(row.last2, 2);
+    const clean = data
+      .filter(row =>
+        row &&
+        typeof row.date === "string" &&
+        typeof row.firstPrize === "string" &&
+        typeof row.top3 === "string" &&
+        Array.isArray(row.front3) &&
+        Array.isArray(row.bottom3) &&
+        typeof row.last2 === "string"
+      )
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        let top3 = safeArray(row.top3).map(x => normalizeNumber(x, 3)).filter(Boolean);
-        let bottom3 = safeArray(row.bottom3).map(x => normalizeNumber(x, 3)).filter(Boolean);
-
-        if ((!top3.length && !bottom3.length) && Array.isArray(row.last3)) {
-          const mixed = row.last3.map(x => normalizeNumber(x, 3)).filter(Boolean);
-          top3 = mixed.slice(0, 2);
-          bottom3 = mixed.slice(2, 4);
-        }
-
-        return {
-          id: index + 1,
-          date: String(row.date || "").trim(),
-          last2,
-          top3,
-          bottom3,
-          last3: [...top3, ...bottom3]
-        };
-      }).filter(row => row.date && row.last2)
-    );
+    return clean;
   }
 
-  function antiFrequencyPenalty(rawCount, alpha = 0.10) {
-    return 1 / (1 + rawCount * alpha);
+  function weightByIndex(i) {
+    return 1.85 * Math.exp(-i / 10) + 0.15;
   }
 
-  function dominanceCap(rawCount, threshold = 3, beta = 0.12) {
-    return 1 / (1 + Math.max(0, rawCount - threshold) * beta);
+  function addScore(map, key, score) {
+    map[key] = (map[key] || 0) + score;
   }
 
-  function buildDecayScore2D(sourceRecords, decay) {
-    const map = {};
-    sourceRecords.forEach((row, index) => {
-      const w = decayWeight(index, decay);
-      map[row.last2] = (map[row.last2] || 0) + w;
-    });
-    return map;
-  }
-
-  function buildDecayScore3D(list, decay) {
-    const map = {};
-    list.forEach((num, index) => {
-      const w = decayWeight(index, decay);
-      map[num] = (map[num] || 0) + w;
-    });
-    return map;
-  }
-
-  function buildPositionScore2D(sourceRecords, decay) {
-    const tens = createDigitMap();
-    const units = createDigitMap();
-
-    sourceRecords.forEach((row, index) => {
-      const w = decayWeight(index, decay);
-      tens[row.last2[0]] += w;
-      units[row.last2[1]] += w;
-    });
-
-    return { tens, units };
-  }
-
-  function buildPositionScore3D(list, decay) {
-    const h = createDigitMap();
-    const t = createDigitMap();
-    const u = createDigitMap();
-
-    list.forEach((num, index) => {
-      const w = decayWeight(index, decay);
-      h[num[0]] += w;
-      t[num[1]] += w;
-      u[num[2]] += w;
-    });
-
-    return { h, t, u };
-  }
-
-  function buildDigitPool2D(sourceRecords, decay) {
-    const pool = createDigitMap();
-
-    sourceRecords.forEach((row, index) => {
-      const w = decayWeight(index, decay);
-      pool[row.last2[0]] += w;
-      pool[row.last2[1]] += w;
-    });
-
-    return pool;
-  }
-
-  function buildDigitPool3D(list, decay) {
-    const pool = createDigitMap();
-
-    list.forEach((num, index) => {
-      const w = decayWeight(index, decay);
-      pool[num[0]] += w;
-      pool[num[1]] += w;
-      pool[num[2]] += w;
-    });
-
-    return pool;
-  }
-
-  function buildPairScore3D(list, decay) {
-    const front = {};
-    const back = {};
-
-    list.forEach((num, index) => {
-      const w = decayWeight(index, decay);
-      const f = num.slice(0, 2);
-      const b = num.slice(1, 3);
-      front[f] = (front[f] || 0) + w;
-      back[b] = (back[b] || 0) + w;
-    });
-
-    return { front, back };
-  }
-
-  function buildBurst2D(sourceRecords, windowSize) {
-    return countMap(sourceRecords.slice(0, windowSize).map(row => row.last2));
-  }
-
-  function buildBurst3D(list, windowSize) {
-    return countMap(list.slice(0, windowSize));
-  }
-
-  function isDouble2D(num) {
-    return num[0] === num[1];
-  }
-
-  function patternScore3D(num) {
-    const [a, b, c] = num.split("");
-    let score = 0;
-
-    if (a === b || b === c || a === c) score += 0.55;
-    if (a === b && b === c) score += 0.25;
-
-    const asc = Number(b) - Number(a) === 1 && Number(c) - Number(b) === 1;
-    const desc = Number(a) - Number(b) === 1 && Number(b) - Number(c) === 1;
-    if (asc || desc) score += 0.20;
-
-    return score;
-  }
-
-  function spreadScore3D(num) {
-    const unique = new Set(num.split("")).size;
-    if (unique === 3) return 1;
-    if (unique === 2) return 0.75;
-    return 0.45;
-  }
-
-  function exactPositionMatch(a, b) {
-    let hit = 0;
-    for (let i = 0; i < Math.min(a.length, b.length); i++) {
-      if (a[i] === b[i]) hit++;
-    }
-    return hit;
-  }
-
-  function unorderedDigitMatch(a, b) {
-    const used = new Array(b.length).fill(false);
-    let hit = 0;
-
-    for (let i = 0; i < a.length; i++) {
-      for (let j = 0; j < b.length; j++) {
-        if (!used[j] && a[i] === b[j]) {
-          used[j] = true;
-          hit++;
-          break;
-        }
-      }
-    }
-
-    return hit;
-  }
-
-  function nearMatch3D(actualList, predictedList) {
-    let best = null;
-
-    for (const actual of actualList) {
-      for (const predicted of predictedList) {
-        const exact = exactPositionMatch(actual, predicted);
-        const loose = unorderedDigitMatch(actual, predicted);
-        const current = { actual, predicted, exact, loose };
-
-        if (!best) {
-          best = current;
-          continue;
-        }
-
-        const bestScore = best.exact * 10 + best.loose;
-        const currScore = current.exact * 10 + current.loose;
-
-        if (currScore > bestScore) best = current;
-      }
-    }
-
-    return best;
-  }
-
-  function getHotDigitsFromRecent(sourceRecords, take = 10) {
-    const map = createDigitMap();
-
-    sourceRecords.slice(0, take).forEach(row => {
-      row.last2.split("").forEach(d => map[d]++);
-      row.top3.forEach(n => n.split("").forEach(d => map[d]++));
-      row.bottom3.forEach(n => n.split("").forEach(d => map[d]++));
-    });
-
-    return Object.entries(map)
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-      .slice(0, 3)
-      .map(entry => entry[0]);
-  }
-
-  function getMissingDigitsFromRecent(sourceRecords, take = 10) {
-    const used = new Set();
-
-    sourceRecords.slice(0, take).forEach(row => {
-      row.last2.split("").forEach(d => used.add(d));
-      row.top3.forEach(n => n.split("").forEach(d => used.add(d)));
-      row.bottom3.forEach(n => n.split("").forEach(d => used.add(d)));
-    });
-
-    return Array.from({ length: 10 }, (_, i) => String(i)).filter(d => !used.has(d));
-  }
-
-  function score2D(sourceRecords) {
-    const mode = getModeConfig();
-
-    const rawCounts = countMap(sourceRecords.map(row => row.last2));
-
-    const shortDecay = buildDecayScore2D(sourceRecords, mode.shortDecay2D);
-    const longDecay = buildDecayScore2D(sourceRecords, mode.longDecay2D);
-    const pos = buildPositionScore2D(sourceRecords, mode.longDecay2D);
-    const pool = buildDigitPool2D(sourceRecords, mode.longDecay2D);
-    const burst = buildBurst2D(sourceRecords, mode.burst2D);
-    const hotDigits = new Set(getHotDigitsFromRecent(sourceRecords, mode.recentDigits));
-
-    const maxShort = maxValue(shortDecay);
-    const maxLong = maxValue(longDecay);
-    const maxTens = maxValue(pos.tens);
-    const maxUnits = maxValue(pos.units);
-    const maxPool = maxValue(pool);
-    const maxBurst = maxValue(burst);
-
-    return Object.keys(rawCounts).map(num => {
-      const shortScore = normalize(shortDecay[num] || 0, maxShort);
-      const longScore = normalize(longDecay[num] || 0, maxLong);
-      const tensScore = normalize(pos.tens[num[0]] || 0, maxTens);
-      const unitScore = normalize(pos.units[num[1]] || 0, maxUnits);
-      const poolScore = (
-        normalize(pool[num[0]] || 0, maxPool) +
-        normalize(pool[num[1]] || 0, maxPool)
-      ) / 2;
-      const burstScore = normalize(burst[num] || 0, maxBurst);
-      const doubleBonus = isDouble2D(num) ? 1 : 0;
-      const coverageBonus = (hotDigits.has(num[0]) || hotDigits.has(num[1])) ? 1 : 0;
-
-      const penalty = antiFrequencyPenalty(rawCounts[num] || 0);
-      const cap = dominanceCap(rawCounts[num] || 0);
-
-      const base =
-        shortScore * 0.24 +
-        longScore * 0.16 +
-        tensScore * 0.14 +
-        unitScore * 0.14 +
-        poolScore * 0.10 +
-        burstScore * 0.12 +
-        doubleBonus * 0.06 +
-        coverageBonus * 0.04;
-
-      const finalScore = base * penalty * cap;
-
-      return {
-        number: num,
-        score: Number((finalScore * 100).toFixed(2)),
-        totalCount: rawCounts[num] || 0
-      };
-    }).sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
-  }
-
-  function score3D(list, sourceRecords) {
-    const mode = getModeConfig();
-
-    const rawCounts = countMap(list);
-
-    const shortDecay = buildDecayScore3D(list, mode.shortDecay3D);
-    const longDecay = buildDecayScore3D(list, mode.longDecay3D);
-    const pos = buildPositionScore3D(list, mode.longDecay3D);
-    const pool = buildDigitPool3D(list, mode.longDecay3D);
-    const pairs = buildPairScore3D(list, mode.longDecay3D);
-    const burst = buildBurst3D(list, mode.burst3D);
-    const hotDigits = new Set(getHotDigitsFromRecent(sourceRecords, mode.recentDigits));
-
-    const maxShort = maxValue(shortDecay);
-    const maxLong = maxValue(longDecay);
-    const maxH = maxValue(pos.h);
-    const maxT = maxValue(pos.t);
-    const maxU = maxValue(pos.u);
-    const maxPool = maxValue(pool);
-    const maxFront = maxValue(pairs.front);
-    const maxBack = maxValue(pairs.back);
-    const maxBurst = maxValue(burst);
-
-    return Object.keys(rawCounts).map(num => {
-      const shortScore = normalize(shortDecay[num] || 0, maxShort);
-      const longScore = normalize(longDecay[num] || 0, maxLong);
-
-      const positionScore = (
-        normalize(pos.h[num[0]] || 0, maxH) +
-        normalize(pos.t[num[1]] || 0, maxT) +
-        normalize(pos.u[num[2]] || 0, maxU)
-      ) / 3;
-
-      const pairScore = (
-        normalize(pairs.front[num.slice(0, 2)] || 0, maxFront) +
-        normalize(pairs.back[num.slice(1, 3)] || 0, maxBack)
-      ) / 2;
-
-      const poolScore = (
-        normalize(pool[num[0]] || 0, maxPool) +
-        normalize(pool[num[1]] || 0, maxPool) +
-        normalize(pool[num[2]] || 0, maxPool)
-      ) / 3;
-
-      const burstScore = normalize(burst[num] || 0, maxBurst);
-      const pattern = patternScore3D(num);
-      const spread = spreadScore3D(num);
-
-      let coverageBonus = 0;
-      num.split("").forEach(d => {
-        if (hotDigits.has(d)) coverageBonus += 1;
-      });
-      coverageBonus = coverageBonus / 3;
-
-      const penalty = antiFrequencyPenalty(rawCounts[num] || 0);
-      const cap = dominanceCap(rawCounts[num] || 0);
-
-      const base =
-        shortScore * 0.16 +
-        longScore * 0.10 +
-        positionScore * 0.18 +
-        pairScore * 0.18 +
-        poolScore * 0.12 +
-        burstScore * 0.10 +
-        pattern * 0.08 +
-        spread * 0.05 +
-        coverageBonus * 0.03;
-
-      const finalScore = base * penalty * cap;
-
-      return {
-        number: num,
-        score: Number((finalScore * 100).toFixed(2)),
-        totalCount: rawCounts[num] || 0
-      };
-    }).sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
-  }
-
-  function hybridMerge(targetScores, combinedScores, oppositeScores) {
-    const targetMap = Object.fromEntries(targetScores.map(item => [item.number, item.score]));
-    const combinedMap = Object.fromEntries(combinedScores.map(item => [item.number, item.score]));
-    const oppositeMap = Object.fromEntries(oppositeScores.map(item => [item.number, item.score]));
-
-    const keys = new Set([
-      ...Object.keys(targetMap),
-      ...Object.keys(combinedMap),
-      ...Object.keys(oppositeMap)
-    ]);
-
-    return [...keys].map(number => {
-      const score =
-        (targetMap[number] || 0) * CONFIG.hybrid.target +
-        (combinedMap[number] || 0) * CONFIG.hybrid.combined +
-        (oppositeMap[number] || 0) * CONFIG.hybrid.opposite;
-
-      return {
-        number,
-        score: Number(score.toFixed(2))
-      };
-    }).sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
-  }
-
-  function buildAllScores(sourceRecords) {
-    const top3List = sourceRecords.flatMap(row => row.top3);
-    const bottom3List = sourceRecords.flatMap(row => row.bottom3);
-    const combined3List = sourceRecords.flatMap(row => row.last3);
-
-    const scores2D = score2D(sourceRecords);
-    const scoresTop3 = score3D(top3List, sourceRecords);
-    const scoresBottom3 = score3D(bottom3List, sourceRecords);
-    const scoresCombined3 = score3D(combined3List, sourceRecords);
-
-    const hybridTop3 = hybridMerge(scoresTop3, scoresCombined3, scoresBottom3);
-    const hybridBottom3 = hybridMerge(scoresBottom3, scoresCombined3, scoresTop3);
-
-    const hybridMix = [...new Map(
-      [...hybridTop3.slice(0, 10), ...hybridBottom3.slice(0, 10)]
-        .map(item => [item.number, item])
-    ).values()].sort((a, b) => b.score - a.score || a.number.localeCompare(b.number));
-
-    return {
-      scores2D,
-      scoresTop3,
-      scoresBottom3,
-      scoresCombined3,
-      hybridTop3,
-      hybridBottom3,
-      hybridMix
-    };
-  }
-
-  function buildPredictions(historyRecords, topN) {
-    const result = buildAllScores(historyRecords);
-
-    return {
-      top2: result.scores2D.slice(0, topN).map(item => item.number),
-      top3Top: result.hybridTop3.slice(0, topN).map(item => item.number),
-      top3Bottom: result.hybridBottom3.slice(0, topN).map(item => item.number)
-    };
-  }
-
-  function evaluateExactHit(actual, predicted) {
-    return {
-      hit2: predicted.top2.includes(actual.last2),
-      hitTop: actual.top3.some(num => predicted.top3Top.includes(num)),
-      hitBottom: actual.bottom3.some(num => predicted.top3Bottom.includes(num))
-    };
-  }
-      function createRankCard(item, index, variant, subText = "") {
-    return `
-      <div class="rank-card ${variant}">
-        <div class="rank-top">
-          <span>#${index + 1}</span>
-          <span class="rank-score">${item.score}%</span>
-        </div>
-        <div class="rank-number">${item.number}</div>
-        <div class="rank-sub">${subText}</div>
-      </div>
-    `;
-  }
-
-  function createBarRows(list, limit = 10) {
-    if (!list.length) return `<div class="empty">ยังไม่มีข้อมูล</div>`;
+  function normalizeTop(list) {
+    if (!list.length) return list;
     const max = list[0].score || 1;
+    return list.map(item => ({
+      ...item,
+      percent: ((item.score / max) * 100).toFixed(2)
+    }));
+  }
 
-    return list.slice(0, limit).map(item => `
-      <div class="bar-row">
-        <div>${item.number}</div>
-        <div class="bar-track">
-          <div class="bar-fill" style="width:${(item.score / max) * 100}%"></div>
+  function sortMap(map) {
+    return Object.entries(map)
+      .map(([num, score]) => ({ num, score }))
+      .sort((a, b) => b.score - a.score);
+  }
+
+  function digitFreqFromList(values) {
+    const pos = [{}, {}, {}];
+    values.forEach((value, i) => {
+      const w = weightByIndex(i);
+      value.split("").forEach((d, idx) => {
+        pos[idx][d] = (pos[idx][d] || 0) + w;
+      });
+    });
+    return pos;
+  }
+
+  function pairFreqFromList(values) {
+    const map = {};
+    values.forEach((value, i) => {
+      const w = weightByIndex(i);
+      const a = value.slice(0, 2);
+      const b = value.slice(1, 3);
+      map[a] = (map[a] || 0) + w;
+      map[b] = (map[b] || 0) + w;
+    });
+    return map;
+  }
+
+  function scoreCandidate3(num, exactMap, posFreq, pairFreq) {
+    const exact = exactMap[num] || 0;
+    const pos =
+      (posFreq[0][num[0]] || 0) +
+      (posFreq[1][num[1]] || 0) +
+      (posFreq[2][num[2]] || 0);
+    const pair =
+      (pairFreq[num.slice(0, 2)] || 0) +
+      (pairFreq[num.slice(1, 3)] || 0);
+
+    return (exact * 0.58) + (pos * 0.27) + (pair * 0.15);
+  }
+
+  function buildTop3Forecast(history) {
+    const values = history.map(r => r.top3);
+    const exactMap = {};
+
+    values.forEach((value, i) => addScore(exactMap, value, weightByIndex(i)));
+
+    const posFreq = digitFreqFromList(values);
+    const pairFreq = pairFreqFromList(values);
+    const candidateSet = new Set(values);
+
+    for (let a = 0; a <= 9; a++) {
+      for (let b = 0; b <= 9; b++) {
+        for (let c = 0; c <= 9; c++) {
+          const num = `${a}${b}${c}`;
+          if (
+            (posFreq[0][String(a)] || 0) > 0 &&
+            (posFreq[1][String(b)] || 0) > 0 &&
+            (posFreq[2][String(c)] || 0) > 0
+          ) {
+            candidateSet.add(num);
+          }
+        }
+      }
+    }
+
+    const scored = [...candidateSet]
+      .map(num => ({
+        num,
+        score: scoreCandidate3(num, exactMap, posFreq, pairFreq)
+      }))
+      .sort((a, b) => b.score - a.score);
+
+    return normalizeTop(scored.slice(0, 10));
+  }
+
+  function buildBottom3Forecast(history) {
+    const values = history.flatMap(r => r.bottom3);
+    const exactMap = {};
+
+    values.forEach((value, i) => addScore(exactMap, value, weightByIndex(i)));
+
+    const posFreq = digitFreqFromList(values);
+    const pairFreq = pairFreqFromList(values);
+    const candidateSet = new Set(values);
+
+    for (let a = 0; a <= 9; a++) {
+      for (let b = 0; b <= 9; b++) {
+        for (let c = 0; c <= 9; c++) {
+          const num = `${a}${b}${c}`;
+          if (
+            (posFreq[0][String(a)] || 0) > 0 &&
+            (posFreq[1][String(b)] || 0) > 0 &&
+            (posFreq[2][String(c)] || 0) > 0
+          ) {
+            candidateSet.add(num);
+          }
+        }
+      }
+    }
+
+    const scored = [...candidateSet]
+      .map(num => ({
+        num,
+        score: scoreCandidate3(num, exactMap, posFreq, pairFreq)
+      }))
+      .sort((a, b) => b.score - a.score);
+
+    return normalizeTop(scored.slice(0, 10));
+  }
+
+  function buildLast2Forecast(history) {
+    const exactMap = {};
+    const digitPos = [{}, {}];
+
+    history.forEach((row, i) => {
+      const value = row.last2;
+      const w = weightByIndex(i);
+
+      addScore(exactMap, value, w);
+      digitPos[0][value[0]] = (digitPos[0][value[0]] || 0) + w;
+      digitPos[1][value[1]] = (digitPos[1][value[1]] || 0) + w;
+    });
+
+    const candidateSet = new Set(history.map(r => r.last2));
+
+    for (let a = 0; a <= 9; a++) {
+      for (let b = 0; b <= 9; b++) {
+        candidateSet.add(`${a}${b}`);
+      }
+    }
+
+    const scored = [...candidateSet]
+      .map(num => {
+        const exact = exactMap[num] || 0;
+        const pos = (digitPos[0][num[0]] || 0) + (digitPos[1][num[1]] || 0);
+        return {
+          num,
+          score: (exact * 0.7) + (pos * 0.3)
+        };
+      })
+      .sort((a, b) => b.score - a.score);
+
+    return normalizeTop(scored.slice(0, 10));
+  }
+
+  function buildHybridForecast(top3, bottom3) {
+    const map = {};
+    top3.forEach((item, idx) => addScore(map, item.num, item.score * (1 - idx * 0.025)));
+    bottom3.forEach((item, idx) => addScore(map, item.num, item.score * (1 - idx * 0.025)));
+
+    return normalizeTop(sortMap(map).slice(0, 10));
+  }
+
+  function buildForecast(history) {
+    const last2 = buildLast2Forecast(history);
+    const top3 = buildTop3Forecast(history);
+    const bottom3 = buildBottom3Forecast(history);
+    const hybrid = buildHybridForecast(top3, bottom3);
+
+    return { last2, top3, bottom3, hybrid };
+  }
+
+  function checkHit(list, actual, topN = 5) {
+    const nums = list.slice(0, topN).map(x => x.num);
+    if (Array.isArray(actual)) return actual.some(x => nums.includes(x));
+    return nums.includes(actual);
+  }
+
+  function nearMatch3(list, actualSet) {
+    const hits = [];
+
+    list.forEach(item => {
+      actualSet.forEach(real => {
+        const sameDigits = [...item.num].filter(d => real.includes(d)).length;
+        const samePos =
+          (item.num[0] === real[0] ? 1 : 0) +
+          (item.num[1] === real[1] ? 1 : 0) +
+          (item.num[2] === real[2] ? 1 : 0);
+
+        if (sameDigits >= 2 || samePos >= 2) {
+          hits.push(`${item.num} ~ ${real} | ซ้ำ ${sameDigits} | ตำแหน่ง ${samePos}`);
+        }
+      });
+    });
+
+    return [...new Set(hits)].slice(0, 6);
+  }
+
+  function runBacktest(data, rounds = 20) {
+    const limit = Math.min(rounds, data.length - 1);
+
+    const strict = { last2: 0, top3: 0, bottom3: 0 };
+    const practical = { last2: 0, top3: 0, bottom3: 0 };
+    const rows = [];
+
+    for (let i = 0; i < limit; i++) {
+      const settled = data[i];
+      const history = data.slice(i + 1);
+      if (history.length < 6) continue;
+
+      const forecast = buildForecast(history);
+
+      const strictLast2 = checkHit(forecast.last2, settled.last2, 5);
+      const strictTop3 = checkHit(forecast.top3, settled.top3, 5);
+      const strictBottom3 = checkHit(forecast.bottom3, settled.bottom3, 5);
+
+      const practicalLast2 = checkHit(forecast.last2, settled.last2, 10);
+      const practicalTop3 = checkHit(forecast.top3, settled.top3, 10);
+      const practicalBottom3 = checkHit(forecast.bottom3, settled.bottom3, 10);
+
+      strict.last2 += strictLast2 ? 1 : 0;
+      strict.top3 += strictTop3 ? 1 : 0;
+      strict.bottom3 += strictBottom3 ? 1 : 0;
+
+      practical.last2 += practicalLast2 ? 1 : 0;
+      practical.top3 += practicalTop3 ? 1 : 0;
+      practical.bottom3 += practicalBottom3 ? 1 : 0;
+
+      rows.push({
+        date: settled.date,
+        settled,
+        forecast,
+        strictLast2,
+        strictTop3,
+        strictBottom3,
+        practicalLast2,
+        practicalTop3,
+        practicalBottom3
+      });
+    }
+
+    const count = rows.length || 1;
+
+    return {
+      count,
+      rows,
+      strictRate: {
+        last2: (strict.last2 / count) * 100,
+        top3: (strict.top3 / count) * 100,
+        bottom3: (strict.bottom3 / count) * 100
+      },
+      practicalRate: {
+        last2: (practical.last2 / count) * 100,
+        top3: (practical.top3 / count) * 100,
+        bottom3: (practical.bottom3 / count) * 100
+      }
+    };
+  }
+
+  function pct(score) {
+    return `${Number(score).toFixed(2)}%`;
+  }
+          function makeRankCards(elId, list, label) {
+      const el = document.getElementById(elId);
+      el.innerHTML = list.map((item, idx) => `
+        <div class="rank-card">
+          <div class="rank">#${idx + 1}</div>
+          <div class="num">${item.num}</div>
+          <div class="score">${pct(item.percent)}</div>
+          <div class="hint">${label}</div>
         </div>
-        <div class="bar-score">${item.score}%</div>
-      </div>
-    `).join("");
-  }
+      `).join("");
+    }
 
-  function updateStats() {
-    document.getElementById("stat2D").textContent = cachedScores2D[0]?.number || "--";
-    document.getElementById("stat2DMeta").textContent =
-      cachedScores2D[0] ? `คะแนน ${cachedScores2D[0].score}% | ออก ${cachedScores2D[0].totalCount} ครั้ง` : "ยังไม่มีข้อมูล";
+    function makeBars(elId, list) {
+      const el = document.getElementById(elId);
+      el.innerHTML = list.map(item => `
+        <div class="bar-row">
+          <div>${item.num}</div>
+          <div class="bar"><div class="fill" style="width:${item.percent}%"></div></div>
+          <div>${pct(item.percent)}</div>
+        </div>
+      `).join("");
+    }
 
-    document.getElementById("statTop3").textContent = cachedHybridTop3[0]?.number || "---";
-    document.getElementById("statTop3Meta").textContent =
-      cachedHybridTop3[0] ? `คะแนน ${cachedHybridTop3[0].score}%` : "ยังไม่มีข้อมูล";
+    function renderSummary(forecast) {
+      document.getElementById("summaryLast2").textContent = forecast.last2[0]?.num || "--";
+      document.getElementById("summaryTop3").textContent = forecast.top3[0]?.num || "---";
+      document.getElementById("summaryBottom3").textContent = forecast.bottom3[0]?.num || "---";
+      document.getElementById("summaryHybrid").textContent = forecast.hybrid[0]?.num || "---";
 
-    document.getElementById("statBottom3").textContent = cachedHybridBottom3[0]?.number || "---";
-    document.getElementById("statBottom3Meta").textContent =
-      cachedHybridBottom3[0] ? `คะแนน ${cachedHybridBottom3[0].score}%` : "ยังไม่มีข้อมูล";
+      document.getElementById("summaryLast2Meta").textContent = `คะแนน ${pct(forecast.last2[0]?.percent || 0)}`;
+      document.getElementById("summaryTop3Meta").textContent = `คะแนน ${pct(forecast.top3[0]?.percent || 0)}`;
+      document.getElementById("summaryBottom3Meta").textContent = `คะแนน ${pct(forecast.bottom3[0]?.percent || 0)}`;
+      document.getElementById("summaryHybridMeta").textContent = `คะแนน ${pct(forecast.hybrid[0]?.percent || 0)}`;
+    }
 
-    document.getElementById("statHybrid").textContent = cachedHybridMix[0]?.number || "---";
-    document.getElementById("statHybridMeta").textContent =
-      cachedHybridMix[0] ? `คะแนน ${cachedHybridMix[0].score}%` : "ยังไม่มีข้อมูล";
-  }
-
-  function updateSummary() {
-    const top2 = cachedScores2D.slice(0, 5).map(x => x.number).join(", ") || "-";
-    const topTop = cachedHybridTop3.slice(0, 5).map(x => x.number).join(", ") || "-";
-    const topBottom = cachedHybridBottom3.slice(0, 5).map(x => x.number).join(", ") || "-";
-    const topHybrid = cachedHybridMix.slice(0, 5).map(x => x.number).join(", ") || "-";
-
-    document.getElementById("summaryBox").textContent =
-`โหมดปัจจุบัน: ${CONFIG.mode}
-- 2 ตัวเด่น: ${top2}
-- 3 ตัวบนเด่น: ${topTop}
-- 3 ตัวล่างเด่น: ${topBottom}
-- Hybrid เด่น: ${topHybrid}
-
-แนวใช้เร็ว:
-- ใช้ 2 ตัวจากกล่องแรกเป็นแกนหลัก
-- ใช้ 3 ตัวบน/ล่างจาก Hybrid เพื่อดูเลขซ้อน
-- ถ้าเลขไปซ้ำหลายกลุ่ม ถือว่าเด่นในระบบ`;
-  }
-
-  function updateForecast() {
-    const top2 = cachedScores2D.slice(0, 5).map(x => x.number);
-    const topTop = cachedHybridTop3.slice(0, 5).map(x => x.number);
-    const topBottom = cachedHybridBottom3.slice(0, 5).map(x => x.number);
-
-    document.getElementById("forecastBox").textContent =
-`งวดเป้าหมาย: งวดถัดไป
-สถานะ: รอผลจริง
-
-2 ตัวเด่น: ${top2.join(", ") || "-"}
-3 ตัวบน: ${topTop.join(", ") || "-"}
-3 ตัวล่าง: ${topBottom.join(", ") || "-"}
+    function renderForecastText(forecast) {
+      document.getElementById("forecastNowText").textContent =
+`งวดถัดไปที่คาด:
+2 ตัวเด่น: ${forecast.last2.slice(0, 6).map(x => x.num).join(", ")}
+3 ตัวบน: ${forecast.top3.slice(0, 6).map(x => x.num).join(", ")}
+3 ตัวล่าง: ${forecast.bottom3.slice(0, 6).map(x => x.num).join(", ")}
+Hybrid: ${forecast.hybrid.slice(0, 6).map(x => x.num).join(", ")}
 
 หมายเหตุ:
-- ส่วนนี้ยังไม่เช็ค Accuracy
-- ต้องรอผลจริงของงวดถัดไปก่อน`;
-  }
-
-  function updateRankSections() {
-    document.getElementById("twoBox").innerHTML = cachedScores2D.length
-      ? cachedScores2D.slice(0, 6).map((item, index) =>
-          createRankCard(item, index, "green", `ออก ${item.totalCount} ครั้ง`)
-        ).join("")
-      : `<div class="empty">ยังไม่มีข้อมูล</div>`;
-
-    document.getElementById("top3Box").innerHTML = cachedHybridTop3.length
-      ? cachedHybridTop3.slice(0, 10).map((item, index) =>
-          createRankCard(item, index, "gold", "3 ตัวบน")
-        ).join("")
-      : `<div class="empty">ยังไม่มีข้อมูล</div>`;
-
-    document.getElementById("bottom3Box").innerHTML = cachedHybridBottom3.length
-      ? cachedHybridBottom3.slice(0, 10).map((item, index) =>
-          createRankCard(item, index, "pink", "3 ตัวล่าง")
-        ).join("")
-      : `<div class="empty">ยังไม่มีข้อมูล</div>`;
-
-    document.getElementById("hybridBox").innerHTML = cachedHybridMix.length
-      ? cachedHybridMix.slice(0, 10).map((item, index) =>
-          createRankCard(item, index, "purple", "Hybrid")
-        ).join("")
-      : `<div class="empty">ยังไม่มีข้อมูล</div>`;
-  }
-
-  function updateBars() {
-    document.getElementById("bars2D").innerHTML = createBarRows(cachedScores2D, 10);
-    document.getElementById("barsTop3").innerHTML = createBarRows(cachedHybridTop3, 10);
-    document.getElementById("barsBottom3").innerHTML = createBarRows(cachedHybridBottom3, 10);
-  }
-
-  function buildBundleText() {
-    const twoMain = cachedScores2D.slice(0, 5).map(x => x.number);
-    const topMain = cachedHybridTop3.slice(0, 5).map(x => x.number);
-    const bottomMain = cachedHybridBottom3.slice(0, 5).map(x => x.number);
-
-    cachedBundleText =
-`2 ตัวเด่น: ${twoMain.join(", ")}
-3 ตัวบน: ${topMain.join(", ")}
-3 ตัวล่าง: ${bottomMain.join(", ")}`;
-
-    return cachedBundleText;
-  }
-
-  function updateLastSettled() {
-    if (records.length < 2) {
-      document.getElementById("lastSettledBox").textContent = "ข้อมูลยังไม่พอสำหรับตรวจ";
-      return;
+- 3 ตัวบนใช้จากรางวัลที่ 1 เท่านั้น
+- เลขหน้า 3 ตัวไม่ถูกเอาไปใช้เป็น 3 ตัวบน
+- forecast ชุดนี้ใช้ข้อมูลล่าสุดทั้งหมดเพื่อทำนายงวดถัดไป`;
     }
 
-    const actual = records[0];
-    const history = records.slice(1);
-    const pred = buildPredictions(history, CONFIG.accuracy.practicalTop);
-    const result = evaluateExactHit(actual, pred);
+    function renderRoundSummary(data, forecast) {
+      const latest = data[0];
+      document.getElementById("roundSummaryText").textContent =
+`ผลงวดล่าสุด:
+วันที่: ${latest.date}
+รางวัลที่ 1: ${latest.firstPrize}
+3 ตัวบน: ${latest.top3}
+เลขหน้า 3 ตัว: ${latest.front3.join(", ")}
+เลขท้าย 3 ตัว: ${latest.bottom3.join(", ")}
+เลขท้าย 2 ตัว: ${latest.last2}
 
-    document.getElementById("lastSettledBox").textContent =
-`งวดล่าสุด: ${actual.date}
+Forecast Now เด่น:
+2 ตัว: ${forecast.last2.slice(0, 3).map(x => x.num).join(", ")}
+3 ตัวบน: ${forecast.top3.slice(0, 3).map(x => x.num).join(", ")}
+3 ตัวล่าง: ${forecast.bottom3.slice(0, 3).map(x => x.num).join(", ")}
+Hybrid: ${forecast.hybrid.slice(0, 3).map(x => x.num).join(", ")}`;
+    }
+
+    function renderLastSettled(settled, forecast) {
+      const strict2 = checkHit(forecast.last2, settled.last2, 5);
+      const strictTop = checkHit(forecast.top3, settled.top3, 5);
+      const strictBottom = checkHit(forecast.bottom3, settled.bottom3, 5);
+
+      const practical2 = checkHit(forecast.last2, settled.last2, 10);
+      const practicalTop = checkHit(forecast.top3, settled.top3, 10);
+      const practicalBottom = checkHit(forecast.bottom3, settled.bottom3, 10);
+
+      document.getElementById("lastSettledText").textContent =
+`งวดที่ตรวจ: ${settled.date}
 
 ผลจริง:
-2 ตัว: ${actual.last2}
-3 ตัวบน: ${actual.top3.join(", ") || "-"}
-3 ตัวล่าง: ${actual.bottom3.join(", ") || "-"}
+2 ตัว: ${settled.last2}
+3 ตัวบน: ${settled.top3}
+เลขหน้า 3 ตัว: ${settled.front3.join(", ")}
+3 ตัวล่าง: ${settled.bottom3.join(", ")}
 
-ผลวิเคราะห์ก่อนงวดออก:
-2 ตัว: ${pred.top2.join(", ")}
-3 ตัวบน: ${pred.top3Top.join(", ")}
-3 ตัวล่าง: ${pred.top3Bottom.join(", ")}
+Forecast ที่ใช้ตรวจ:
+2 ตัว: ${forecast.last2.slice(0, 10).map(x => x.num).join(", ")}
+3 ตัวบน: ${forecast.top3.slice(0, 10).map(x => x.num).join(", ")}
+3 ตัวล่าง: ${forecast.bottom3.slice(0, 10).map(x => x.num).join(", ")}
 
-ผลลัพธ์:
-2 ตัว: ${result.hit2 ? "เข้า" : "ไม่เข้า"}
-3 ตัวบน: ${result.hitTop ? "เข้า" : "ไม่เข้า"}
-3 ตัวล่าง: ${result.hitBottom ? "เข้า" : "ไม่เข้า"}`;
-  }
-
-  function buildNearMatchInsight(actual, predicted) {
-    const topNear = nearMatch3D(actual.top3, predicted.top3Top);
-    const bottomNear = nearMatch3D(actual.bottom3, predicted.top3Bottom);
-    const lines = [];
-
-    if (topNear) {
-      let level = "Near-loose";
-      if (topNear.exact === 3) level = "Exact";
-      else if (topNear.exact >= 2) level = "Near-positional";
-
-      lines.push(
-        `3 ตัวบนใกล้สุด: ${topNear.actual} ↔ ${topNear.predicted} | ${level} | ตรงตำแหน่ง ${topNear.exact}/3 | เลขซ้ำรวม ${topNear.loose}/3`
-      );
+ผลตรวจ:
+Strict Top 5 → 2 ตัว: ${strict2 ? "เข้า" : "ไม่เข้า"} | 3 ตัวบน: ${strictTop ? "เข้า" : "ไม่เข้า"} | 3 ตัวล่าง: ${strictBottom ? "เข้า" : "ไม่เข้า"}
+Practical Top 10 → 2 ตัว: ${practical2 ? "เข้า" : "ไม่เข้า"} | 3 ตัวบน: ${practicalTop ? "เข้า" : "ไม่เข้า"} | 3 ตัวล่าง: ${practicalBottom ? "เข้า" : "ไม่เข้า"}`;
     }
 
-    if (bottomNear) {
-      let level = "Near-loose";
-      if (bottomNear.exact === 3) level = "Exact";
-      else if (bottomNear.exact >= 2) level = "Near-positional";
+    function renderNearMatch(settled, forecast) {
+      const topHits = nearMatch3(forecast.top3.slice(0, 10), [settled.top3]);
+      const bottomHits = nearMatch3(forecast.bottom3.slice(0, 10), settled.bottom3);
 
-      lines.push(
-        `3 ตัวล่างใกล้สุด: ${bottomNear.actual} ↔ ${bottomNear.predicted} | ${level} | ตรงตำแหน่ง ${bottomNear.exact}/3 | เลขซ้ำรวม ${bottomNear.loose}/3`
-      );
+      document.getElementById("nearMatchText").textContent =
+`ใกล้เคียง 3 ตัวบน:
+${topHits.length ? topHits.join("\n") : "ไม่มี near match เด่น"}
+
+ใกล้เคียง 3 ตัวล่าง:
+${bottomHits.length ? bottomHits.join("\n") : "ไม่มี near match เด่น"}`;
     }
 
-    if (!lines.length) {
-      lines.push("ยังไม่มี near match ที่คำนวณได้");
+    function renderBacktest(backtest) {
+      document.getElementById("backtestIntro").textContent =
+`ตรวจย้อนหลังทั้งหมด ${backtest.count} งวดแบบ walk-forward
+ทุกงวดจะใช้เฉพาะข้อมูลที่เก่ากว่างวดนั้นเท่านั้น`;
+
+      document.getElementById("strictText").innerHTML =
+`2 ตัว: <span class="warn">${pct(backtest.strictRate.last2)}</span><br>
+3 ตัวบน: <span class="warn">${pct(backtest.strictRate.top3)}</span><br>
+3 ตัวล่าง: <span class="warn">${pct(backtest.strictRate.bottom3)}</span>`;
+
+      document.getElementById("practicalText").innerHTML =
+`2 ตัว: <span class="ok">${pct(backtest.practicalRate.last2)}</span><br>
+3 ตัวบน: <span class="ok">${pct(backtest.practicalRate.top3)}</span><br>
+3 ตัวล่าง: <span class="ok">${pct(backtest.practicalRate.bottom3)}</span>`;
+
+      const latest = backtest.rows[0];
+      document.getElementById("latestCheckText").textContent =
+latest
+  ? `งวด ${latest.date}
+Strict → 2 ตัว: ${latest.strictLast2 ? "เข้า" : "ไม่เข้า"} | 3 ตัวบน: ${latest.strictTop3 ? "เข้า" : "ไม่เข้า"} | 3 ตัวล่าง: ${latest.strictBottom3 ? "เข้า" : "ไม่เข้า"}
+Practical → 2 ตัว: ${latest.practicalLast2 ? "เข้า" : "ไม่เข้า"} | 3 ตัวบน: ${latest.practicalTop3 ? "เข้า" : "ไม่เข้า"} | 3 ตัวล่าง: ${latest.practicalBottom3 ? "เข้า" : "ไม่เข้า"}`
+  : "ยังไม่มีข้อมูลเพียงพอ";
+
+      document.getElementById("backtestNoteText").textContent =
+`กติกา:
+- 3 ตัวบน = 3 ตัวท้ายของรางวัลที่ 1
+- เลขหน้า 3 ตัวแยกเก็บไว้ ไม่ถูกใช้แทน 3 ตัวบน
+- งวดล่าสุดจะไม่ถูกใช้ทำนายตัวเอง`;
     }
 
-    return lines.join("\n");
-  }
+    function renderHeuristics(data, forecast) {
+      const latest = data[0];
+      const prev = data[1];
 
-  function runAccuracy() {
-    if (!records.length) {
-      document.getElementById("accuracySummaryBox").textContent = "ยังไม่มีข้อมูล";
-      document.getElementById("accuracyCardsBox").innerHTML = `<div class="empty">ยังไม่มีข้อมูล</div>`;
-      document.getElementById("nearMatchBox").textContent = "ยังไม่มีข้อมูล";
-      document.getElementById("lastSettledBox").textContent = "ยังไม่มีข้อมูล";
-      return;
+      const items = [
+        {
+          title: "ดูภาพรวมล่าสุด",
+          body: `งวดล่าสุด ${latest.date}
+รางวัลที่ 1 ${latest.firstPrize}
+3 ตัวบน ${latest.top3}
+2 ตัว ${latest.last2}`
+        },
+        {
+          title: "ดูงวดก่อนหน้า",
+          body: prev
+            ? `งวดก่อน ${prev.date}
+รางวัลที่ 1 ${prev.firstPrize}
+3 ตัวบน ${prev.top3}
+2 ตัว ${prev.last2}`
+            : "ไม่มีข้อมูล"
+        },
+        {
+          title: "คะแนนเด่นรอบนี้",
+          body: `2 ตัว ${forecast.last2[0].num}
+3 ตัวบน ${forecast.top3[0].num}
+3 ตัวล่าง ${forecast.bottom3[0].num}`
+        },
+        {
+          title: "ข้อสำคัญของ logic",
+          body: `Last Settled ใช้ data.slice(1)
+Forecast Now ใช้ data ทั้งหมด
+ไม่เอาผลล่าสุดมาปั่นงวดเดียวกัน`
+        }
+      ];
+
+      document.getElementById("heuristicGrid").innerHTML = items.map(item => `
+        <div class="foot-mini">
+          <div class="title">${item.title}</div>
+          <div class="body">${item.body}</div>
+        </div>
+      `).join("");
+    }
+          function buildCopyText() {
+      const f = state.forecastNow;
+      return `AI Forecast
+2 ตัว: ${f.last2.slice(0, 10).map(x => x.num).join(", ")}
+3 ตัวบน: ${f.top3.slice(0, 10).map(x => x.num).join(", ")}
+3 ตัวล่าง: ${f.bottom3.slice(0, 10).map(x => x.num).join(", ")}
+Hybrid: ${f.hybrid.slice(0, 10).map(x => x.num).join(", ")}`;
     }
 
-    if (records.length < 10) {
-      document.getElementById("accuracySummaryBox").textContent = "ข้อมูลน้อยเกินไปสำหรับ Accuracy";
-      document.getElementById("accuracyCardsBox").innerHTML = `<div class="empty">ข้อมูลน้อยเกินไป</div>`;
-      document.getElementById("nearMatchBox").textContent = "ข้อมูลน้อยเกินไปสำหรับ Near Match";
-      document.getElementById("lastSettledBox").textContent = "ข้อมูลน้อยเกินไปสำหรับตรวจ";
-      return;
+    async function copyForecast() {
+      if (!state.forecastNow) return;
+      try {
+        await navigator.clipboard.writeText(buildCopyText());
+        alert("คัดลอกชุดเลขแล้ว");
+      } catch (e) {
+        alert("คัดลอกไม่สำเร็จ");
+      }
     }
 
-    updateLastSettled();
+    function renderAll() {
+      renderSummary(state.forecastNow);
+      renderForecastText(state.forecastNow);
+      renderRoundSummary(state.data, state.forecastNow);
+      renderLastSettled(state.settled, state.lastSettledForecast);
+      renderNearMatch(state.settled, state.lastSettledForecast);
+      renderBacktest(state.backtest);
+      renderHeuristics(state.data, state.forecastNow);
 
-    const latestActual = records[0];
-    const latestHistory = records.slice(1);
+      makeRankCards("gridLast2", state.forecastNow.last2, "เลข 2 ตัว");
+      makeRankCards("gridTop3", state.forecastNow.top3, "3 ตัวบน");
+      makeRankCards("gridBottom3", state.forecastNow.bottom3, "3 ตัวล่าง");
+      makeRankCards("gridHybrid", state.forecastNow.hybrid, "Hybrid");
 
-    const strictPred = buildPredictions(latestHistory, CONFIG.accuracy.strictTop);
-    const practicalPred = buildPredictions(latestHistory, CONFIG.accuracy.practicalTop);
-
-    const strictHit = evaluateExactHit(latestActual, strictPred);
-    const practicalHit = evaluateExactHit(latestActual, practicalPred);
-
-    let strict2 = 0;
-    let strictTop = 0;
-    let strictBottom = 0;
-    let practical2 = 0;
-    let practicalTop = 0;
-    let practicalBottom = 0;
-    let total = 0;
-
-    const lookback = Math.min(CONFIG.accuracy.lookback, records.length - 1);
-
-    for (let i = 0; i < lookback; i++) {
-      const actual = records[i];
-      const history = records.slice(i + 1);
-      if (history.length < 10) continue;
-
-      const pStrict = buildPredictions(history, CONFIG.accuracy.strictTop);
-      const pPractical = buildPredictions(history, CONFIG.accuracy.practicalTop);
-
-      const hStrict = evaluateExactHit(actual, pStrict);
-      const hPractical = evaluateExactHit(actual, pPractical);
-
-      strict2 += hStrict.hit2 ? 1 : 0;
-      strictTop += hStrict.hitTop ? 1 : 0;
-      strictBottom += hStrict.hitBottom ? 1 : 0;
-
-      practical2 += hPractical.hit2 ? 1 : 0;
-      practicalTop += hPractical.hitTop ? 1 : 0;
-      practicalBottom += hPractical.hitBottom ? 1 : 0;
-
-      total++;
+      makeBars("barsLast2", state.forecastNow.last2);
+      makeBars("barsTop3", state.forecastNow.top3);
+      makeBars("barsBottom3", state.forecastNow.bottom3);
     }
 
-    const fmt = (n) => total ? `${n}/${total} = ${((n / total) * 100).toFixed(2)}%` : "0/0 = 0.00%";
+    async function runAI() {
+      const data = await loadData();
+      if (data.length < 8) throw new Error("ข้อมูลไม่พอสำหรับวิเคราะห์");
 
-    document.getElementById("accuracySummaryBox").textContent =
-`งวดที่ใช้ตรวจล่าสุด: ${latestActual.date}
-ผลจริง:
-- 2 ตัว: ${latestActual.last2}
-- 3 ตัวบน: ${latestActual.top3.join(", ") || "-"}
-- 3 ตัวล่าง: ${latestActual.bottom3.join(", ") || "-"}
+      state.data = data;
+      state.settled = data[0];
+      state.lastSettledForecast = buildForecast(data.slice(1));
+      state.forecastNow = buildForecast(data);
+      state.backtest = runBacktest(data, 20);
 
-ย้อนหลัง ${total} งวด
-Strict 2 ตัว: ${fmt(strict2)}
-Strict 3 ตัวบน: ${fmt(strictTop)}
-Strict 3 ตัวล่าง: ${fmt(strictBottom)}
-
-Practical 2 ตัว: ${fmt(practical2)}
-Practical 3 ตัวบน: ${fmt(practicalTop)}
-Practical 3 ตัวล่าง: ${fmt(practicalBottom)}`;
-
-    document.getElementById("accuracyCardsBox").innerHTML = `
-      <div class="score-card ${strictHit.hit2 ? "good" : "bad"}">
-        <div class="score-title">Strict • 2 ตัว</div>
-        <div class="score-value">${strictHit.hit2 ? "เข้า" : "ไม่เข้า"}</div>
-        <div class="score-sub">${strictPred.top2.join(", ")}</div>
-      </div>
-      <div class="score-card ${strictHit.hitTop ? "good" : "bad"}">
-        <div class="score-title">Strict • 3 ตัวบน</div>
-        <div class="score-value">${strictHit.hitTop ? "เข้า" : "ไม่เข้า"}</div>
-        <div class="score-sub">${strictPred.top3Top.join(", ")}</div>
-      </div>
-      <div class="score-card ${strictHit.hitBottom ? "good" : "bad"}">
-        <div class="score-title">Strict • 3 ตัวล่าง</div>
-        <div class="score-value">${strictHit.hitBottom ? "เข้า" : "ไม่เข้า"}</div>
-        <div class="score-sub">${strictPred.top3Bottom.join(", ")}</div>
-      </div>
-      <div class="score-card ${practicalHit.hit2 ? "good" : "bad"}">
-        <div class="score-title">Practical • 2 ตัว</div>
-        <div class="score-value">${practicalHit.hit2 ? "เข้า" : "ไม่เข้า"}</div>
-        <div class="score-sub">${practicalPred.top2.join(", ")}</div>
-      </div>
-      <div class="score-card ${practicalHit.hitTop ? "good" : "bad"}">
-        <div class="score-title">Practical • 3 ตัวบน</div>
-        <div class="score-value">${practicalHit.hitTop ? "เข้า" : "ไม่เข้า"}</div>
-        <div class="score-sub">${practicalPred.top3Top.join(", ")}</div>
-      </div>
-      <div class="score-card ${practicalHit.hitBottom ? "good" : "bad"}">
-        <div class="score-title">Practical • 3 ตัวล่าง</div>
-        <div class="score-value">${practicalHit.hitBottom ? "เข้า" : "ไม่เข้า"}</div>
-        <div class="score-sub">${practicalPred.top3Bottom.join(", ")}</div>
-      </div>
-    `;
-
-    document.getElementById("nearMatchBox").textContent =
-      buildNearMatchInsight(latestActual, practicalPred);
-  }
-
-  function heuristicSumFormula() {
-    if (records.length < 2) return null;
-
-    const prev = records[1];
-    const firstTop = prev.top3[0] || "000";
-    const last2 = prev.last2 || "00";
-    const digits = [...firstTop.split(""), ...last2.split("")].map(Number);
-    const sum = digits.reduce((acc, n) => acc + n, 0);
-    const derived = String(sum).padStart(2, "0");
-
-    return {
-      title: "สูตรบวกเลขบนล่าง",
-      detail: `ใช้ ${firstTop} + ${last2} = ${sum}`,
-      hint: `เลขเด่น: ${derived[0]}, ${derived[1]}`
-    };
-  }
-
-  function heuristicParity() {
-    if (!records.length) return null;
-
-    const latest = records[0];
-    const digits = latest.last2.split("").map(Number);
-    const odd = digits.filter(n => n % 2 !== 0).length;
-    const even = digits.length - odd;
-
-    let hint = "มุมมองเสริม: สมดุลคี่คู่";
-    if (odd > even) hint = "มุมมองเสริม: ฝั่งคู่มีลุ้นมากขึ้น";
-    if (even > odd) hint = "มุมมองเสริม: ฝั่งคี่มีลุ้นมากขึ้น";
-
-    return {
-      title: "สูตรคี่ / คู่",
-      detail: `งวดล่าสุดมีคี่ ${odd} ตัว | คู่ ${even} ตัว`,
-      hint
-    };
-  }
-
-  function heuristicHotMissingDigits() {
-    if (!records.length) return null;
-
-    const hot = getHotDigitsFromRecent(records, 10);
-    const missing = getMissingDigitsFromRecent(records, 10);
-
-    return {
-      title: "เลขกระจุก / เลขหาย",
-      detail: `เลขเด่นช่วงสั้น: ${hot.join(", ") || "-"}`,
-      hint: `เลขหายหลายงวด: ${missing.join(", ") || "-"}`
-    };
-  }
-
-  function heuristicMultiply() {
-    if (!records.length) return null;
-
-    const latest = records[0];
-    const seed = latest.top3[0] || "000";
-    const a = Number(seed[0] || 0);
-    const b = Number(seed[1] || 0);
-    const result = a * b;
-    const digit = String(result).slice(-1);
-
-    return {
-      title: "สูตรคูณหลัก",
-      detail: `${a} × ${b} = ${result}`,
-      hint: `เลขเด่น: ${digit}`
-    };
-  }
-
-  function renderHeuristics() {
-    const cards = [
-      heuristicSumFormula(),
-      heuristicParity(),
-      heuristicHotMissingDigits(),
-      heuristicMultiply()
-    ].filter(Boolean);
-
-    document.getElementById("heuristicBox").innerHTML = cards.length
-      ? cards.map(card => `
-          <div class="heur-card">
-            <div class="heur-title">${card.title}</div>
-            <div class="heur-detail">${card.detail}</div>
-            <div class="heur-hint">${card.hint}</div>
-          </div>
-        `).join("")
-      : `<div class="empty">ยังไม่มีข้อมูล</div>`;
-  }
-
-  function runAI() {
-    if (!records.length) return;
-
-    const result = buildAllScores(records);
-
-    cachedScores2D = result.scores2D;
-    cachedScoresTop3 = result.scoresTop3;
-    cachedScoresBottom3 = result.scoresBottom3;
-    cachedScoresCombined3 = result.scoresCombined3;
-    cachedHybridTop3 = result.hybridTop3;
-    cachedHybridBottom3 = result.hybridBottom3;
-    cachedHybridMix = result.hybridMix;
-
-    updateStats();
-    updateSummary();
-    updateForecast();
-    updateRankSections();
-    updateBars();
-    renderHeuristics();
-    buildBundleText();
-  }
-
-  async function copyBundle() {
-    if (!cachedBundleText) buildBundleText();
-
-    if (!cachedBundleText) {
-      alert("ยังไม่มีข้อมูลให้คัดลอก");
-      return;
+      renderAll();
     }
 
-    try {
-      await navigator.clipboard.writeText(cachedBundleText);
-      alert("คัดลอกชุดเลขแล้ว");
-    } catch (error) {
-      alert("คัดลอกไม่สำเร็จ");
-    }
-  }
+    document.getElementById("runBtn").addEventListener("click", async () => {
+      try {
+        await runAI();
+      } catch (e) {
+        alert(e.message);
+      }
+    });
 
-  document.getElementById("runBtn").addEventListener("click", runAI);
-  document.getElementById("accuracyBtn").addEventListener("click", runAccuracy);
-  document.getElementById("copyBtn").addEventListener("click", copyBundle);
+    document.getElementById("accuracyBtn").addEventListener("click", async () => {
+      try {
+        await runAI();
+        alert("เช็ก Accuracy แล้ว");
+      } catch (e) {
+        alert(e.message);
+      }
+    });
 
-  (async function init() {
-    try {
-      await loadData();
-      runAI();
-    } catch (error) {
-      console.error(error);
-      document.getElementById("forecastBox").textContent = "โหลดข้อมูลไม่สำเร็จ";
-      document.getElementById("lastSettledBox").textContent = "โหลดข้อมูลไม่สำเร็จ";
-      document.getElementById("summaryBox").textContent = "โหลดข้อมูลไม่สำเร็จ";
-      document.getElementById("nearMatchBox").textContent = "โหลดข้อมูลไม่สำเร็จ";
-      document.getElementById("accuracySummaryBox").textContent = "โหลดข้อมูลไม่สำเร็จ";
-      document.getElementById("accuracyCardsBox").innerHTML = `<div class="empty">โหลดข้อมูลไม่สำเร็จ</div>`;
-      document.getElementById("heuristicBox").innerHTML = `<div class="empty">โหลดข้อมูลไม่สำเร็จ</div>`;
-    }
-  })();
-</script>
+    document.getElementById("copyBtn").addEventListener("click", copyForecast);
+
+    runAI().catch(err => {
+      console.error(err);
+      alert("โหลด ai.html ไม่สำเร็จ: " + err.message);
+    });
+  </script>
 </body>
 </html>
