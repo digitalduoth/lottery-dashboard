@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>AI Analysis v3</title>
+<title>AI Analysis</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,10 +27,6 @@
     --yellow:#ffd86c;
     --red:#ff9d9d;
     --shadow:0 18px 48px rgba(0,0,0,.34);
-    --radius-xl:28px;
-    --radius-lg:22px;
-    --radius-md:18px;
-    --radius-sm:14px;
   }
 
   *{
@@ -51,9 +47,7 @@
     color:var(--text);
   }
 
-  body{
-    padding:16px;
-  }
+  body{ padding:16px; }
 
   .app{
     width:100%;
@@ -61,30 +55,20 @@
     margin:0 auto;
   }
 
-  .hero{
-    position:relative;
-    overflow:hidden;
+  .hero,
+  .panel,
+  .summary-card{
     border:1px solid var(--stroke);
-    border-radius:var(--radius-xl);
-    padding:22px 18px 18px;
     background:
-      radial-gradient(circle at 15% 0%, rgba(255,255,255,.04), transparent 20%),
-      radial-gradient(circle at 88% 12%, rgba(130,168,255,.10), transparent 18%),
       linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)),
-      linear-gradient(180deg, #0b1220, #0a1020);
+      linear-gradient(180deg, var(--panel-1), var(--panel-2));
     box-shadow:var(--shadow);
-    margin-bottom:16px;
   }
 
-  .hero::after{
-    content:"";
-    position:absolute;
-    inset:auto -80px -100px auto;
-    width:220px;
-    height:220px;
-    background:radial-gradient(circle, rgba(130,168,255,.18), transparent 65%);
-    filter:blur(10px);
-    pointer-events:none;
+  .hero{
+    border-radius:28px;
+    padding:22px 18px 18px;
+    margin-bottom:16px;
   }
 
   .eyebrow{
@@ -108,7 +92,7 @@
   }
 
   .hero h1{
-    font-size:clamp(34px, 6vw, 62px);
+    font-size:clamp(34px,6vw,58px);
     line-height:.92;
     letter-spacing:-.06em;
     font-weight:900;
@@ -142,40 +126,25 @@
       linear-gradient(180deg, #182235, #111827);
     border:1px solid var(--stroke);
     cursor:pointer;
-    transition:transform .16s ease, opacity .16s ease, box-shadow .16s ease;
-    box-shadow:0 10px 24px rgba(0,0,0,.20);
   }
-
-  .btn:active{ transform:scale(.985); }
 
   .btn.primary{
     color:#081120;
     background:
       linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0)),
       linear-gradient(180deg, #8ab1ff, #6d79ff);
-    box-shadow:
-      0 14px 28px rgba(0,0,0,.22),
-      0 0 26px rgba(109,121,255,.22);
   }
 
   .summary-grid{
     display:grid;
-    grid-template-columns:repeat(4, minmax(0,1fr));
+    grid-template-columns:repeat(4,minmax(0,1fr));
     gap:12px;
     margin-bottom:16px;
   }
 
   .summary-card{
-    position:relative;
-    overflow:hidden;
-    border:1px solid var(--stroke);
     border-radius:22px;
     padding:16px;
-    background:
-      radial-gradient(circle at 80% 0%, rgba(130,168,255,.08), transparent 22%),
-      linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)),
-      linear-gradient(180deg, var(--panel-1), var(--panel-2));
-    box-shadow:var(--shadow);
   }
 
   .summary-label{
@@ -188,7 +157,7 @@
   }
 
   .summary-value{
-    font-size:clamp(34px, 5vw, 54px);
+    font-size:clamp(34px,5vw,54px);
     line-height:.88;
     font-weight:900;
     letter-spacing:-.06em;
@@ -216,18 +185,13 @@
 
   .two-col{
     display:grid;
-    grid-template-columns:repeat(2, minmax(0,1fr));
+    grid-template-columns:repeat(2,minmax(0,1fr));
     gap:12px;
   }
 
   .panel{
-    border:1px solid var(--stroke);
     border-radius:24px;
     padding:18px;
-    background:
-      linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)),
-      linear-gradient(180deg, #0d1526, #091121);
-    box-shadow:var(--shadow);
   }
 
   .panel-title{
@@ -246,21 +210,25 @@
     margin-bottom:14px;
   }
 
-  .text-card{
+  .text-card,
+  .acc-box,
+  .mini-box{
     border:1px solid var(--stroke-soft);
     border-radius:18px;
     background:rgba(255,255,255,.03);
     padding:14px;
+  }
+
+  .text-card{
     min-height:144px;
     font-size:14px;
     line-height:1.72;
-    color:var(--text);
     white-space:pre-line;
   }
 
   .rank-grid{
     display:grid;
-    grid-template-columns:repeat(5, minmax(0,1fr));
+    grid-template-columns:repeat(5,minmax(0,1fr));
     gap:10px;
   }
 
@@ -282,7 +250,7 @@
   }
 
   .rank-num{
-    font-size:clamp(28px, 3.2vw, 42px);
+    font-size:clamp(28px,3.2vw,42px);
     line-height:.88;
     font-weight:900;
     letter-spacing:-.06em;
@@ -340,10 +308,6 @@
   }
 
   .acc-box{
-    border:1px solid var(--stroke-soft);
-    border-radius:18px;
-    background:rgba(255,255,255,.03);
-    padding:14px;
     min-height:124px;
     font-size:14px;
     line-height:1.7;
@@ -363,10 +327,6 @@
   }
 
   .mini-box{
-    border:1px solid var(--stroke-soft);
-    border-radius:18px;
-    background:rgba(255,255,255,.03);
-    padding:14px;
     min-height:100px;
   }
 
@@ -393,17 +353,9 @@
 
   @media (max-width:760px){
     body{ padding:12px; }
-    .two-col,
-    .acc-grid,
-    .mini-grid{
-      grid-template-columns:1fr;
-    }
-    .rank-grid{
-      grid-template-columns:repeat(2,minmax(0,1fr));
-    }
-    .bar-row{
-      grid-template-columns:54px 1fr 50px;
-    }
+    .two-col,.acc-grid,.mini-grid{ grid-template-columns:1fr; }
+    .rank-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .bar-row{ grid-template-columns:54px 1fr 50px; }
   }
 </style>
 </head>
@@ -412,17 +364,16 @@
   <section class="hero">
     <div class="eyebrow">
       <span class="eyebrow-dot"></span>
-      AI ANALYSIS V3
+      AI ANALYSIS
     </div>
     <h1>วิเคราะห์เลขจากผลจริง</h1>
     <div class="hero-sub">
-      ใช้ข้อมูลจาก <code>data.json</code> โดยตรง • 3 ตัวบนใช้จากท้ายรางวัลที่ 1 เท่านั้น •
-      ใช้ ensemble scoring แบบ transition + position + pair + gap + suppression เพื่อลดอาการเลขล่าสุดเด้งอันดับ 1
+      หน้านี้ใช้ <code>analysis-engine.js</code> เป็นตัวคำนวณทั้งหมด
+      และใช้ <code>data.json</code> เป็นฐานข้อมูลเดียว
     </div>
 
     <div class="toolbar">
       <button class="btn primary" id="runBtn" type="button">Run AI</button>
-      <button class="btn" id="accuracyBtn" type="button">Check Accuracy</button>
       <button class="btn" id="copyBtn" type="button">Copy ชุดเลข</button>
     </div>
   </section>
@@ -433,19 +384,16 @@
       <div class="summary-value" id="summaryLast2">--</div>
       <div class="summary-meta" id="summaryLast2Meta">คะแนน --</div>
     </article>
-
     <article class="summary-card">
       <div class="summary-label">3 ตัวบน</div>
       <div class="summary-value" id="summaryTop3">---</div>
       <div class="summary-meta" id="summaryTop3Meta">คะแนน --</div>
     </article>
-
     <article class="summary-card">
       <div class="summary-label">3 ตัวล่าง</div>
       <div class="summary-value" id="summaryBottom3">---</div>
       <div class="summary-meta" id="summaryBottom3Meta">คะแนน --</div>
     </article>
-
     <article class="summary-card">
       <div class="summary-label">Hybrid</div>
       <div class="summary-value" id="summaryHybrid">---</div>
@@ -464,7 +412,7 @@
 
         <section class="panel">
           <div class="panel-title">Last Settled Check</div>
-          <div class="panel-sub">ตรวจงวดล่าสุดด้วย forecast ที่สร้างจากข้อมูลก่อนงวดนั้นเท่านั้น</div>
+          <div class="panel-sub">ตรวจงวดล่าสุดด้วย forecast ที่สร้างจากข้อมูลก่อนงวดนั้น</div>
           <div class="text-card" id="lastSettledText">กำลังโหลด...</div>
         </section>
       </div>
@@ -503,7 +451,7 @@
 
       <section class="panel">
         <div class="panel-title">Hybrid AI</div>
-        <div class="panel-sub">ผสมคะแนนจาก 3 ตัวบนและ 3 ตัวล่าง แบบกดเลขซ้ำจากงวดล่าสุด</div>
+        <div class="panel-sub">ผสมคะแนนจาก 3 ตัวบนและ 3 ตัวล่าง</div>
         <div class="rank-grid" id="gridHybrid"></div>
       </section>
     </div>
@@ -525,7 +473,7 @@
 
       <section class="panel">
         <div class="panel-title">Backtest Accuracy</div>
-        <div class="panel-sub">Strict = Top 5 • Practical = Top 10 • ย้อนหลัง 20 งวด</div>
+        <div class="panel-sub">ย้อนหลังจาก engine โดยตรง</div>
         <div class="text-card" id="backtestIntro">กำลังโหลด...</div>
 
         <div class="acc-grid">
@@ -554,374 +502,14 @@
       </section>
     </div>
   </section>
-  <script>
-const DATA_URL = "data.json";
-
-const state = {
-  data: [],
-  settled: null,
-  forecastNow: null,
-  lastSettledForecast: null,
-  backtest: null
-};
-
-async function loadData() {
-  const res = await fetch(`${DATA_URL}?v=${Date.now()}`);
-  if (!res.ok) throw new Error("โหลด data.json ไม่สำเร็จ");
-
-  const data = await res.json();
-
-  return data
-    .filter(row =>
-      row &&
-      typeof row.date === "string" &&
-      typeof row.firstPrize === "string" &&
-      typeof row.top3 === "string" &&
-      Array.isArray(row.front3) &&
-      Array.isArray(row.bottom3) &&
-      typeof row.last2 === "string"
-    )
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
-}
-
-function weightByAge(i) {
-  return Math.exp(-i / 18);
-}
-
-function clamp(v, min, max) {
-  return Math.max(min, Math.min(max, v));
-}
+  <script type="module">
+import { AnalysisEngine } from "./analysis-engine.js";
 
 function pct(score) {
   return `${Number(score).toFixed(2)}%`;
 }
 
-function getDigitCounts(values) {
-  const counts = Array.from({ length: values[0].length }, () => ({}));
-  values.forEach((v, i) => {
-    const w = weightByAge(i);
-    v.split("").forEach((d, pos) => {
-      counts[pos][d] = (counts[pos][d] || 0) + w;
-    });
-  });
-  return counts;
-}
-
-function getTransitionCounts(values) {
-  const len = values[0].length;
-  const trans = Array.from({ length: len }, () => ({}));
-
-  for (let i = 1; i < values.length; i++) {
-    const newer = values[i - 1];
-    const older = values[i];
-    const w = weightByAge(i);
-
-    for (let p = 0; p < len; p++) {
-      const key = `${older[p]}->${newer[p]}`;
-      trans[p][key] = (trans[p][key] || 0) + w;
-    }
-  }
-
-  return trans;
-}
-
-function getPairCounts(values) {
-  const len = values[0].length;
-  const map = {};
-
-  values.forEach((v, i) => {
-    const w = weightByAge(i);
-    for (let p = 0; p < len - 1; p++) {
-      const key = v.slice(p, p + 2);
-      map[key] = (map[key] || 0) + w;
-    }
-  });
-
-  return map;
-}
-
-function getExactCounts(values) {
-  const map = {};
-  values.forEach((v, i) => {
-    map[v] = (map[v] || 0) + weightByAge(i);
-  });
-  return map;
-}
-
-function getGapMap(values) {
-  const seen = {};
-  values.forEach((v, i) => {
-    if (seen[v] === undefined) seen[v] = i;
-  });
-  return seen;
-}
-
-function digitDiversityScore(num) {
-  const unique = new Set(num.split("")).size;
-
-  if (num.length === 2) {
-    return unique === 2 ? 1.0 : 0.72;
-  }
-
-  if (unique === 3) return 1.0;
-  if (unique === 2) return 0.84;
-  return 0.58;
-}
-
-function similarityToRecent(num, recent) {
-  let samePos = 0;
-  for (let i = 0; i < num.length; i++) {
-    if (num[i] === recent[i]) samePos++;
-  }
-
-  let sameDigits = 0;
-  const copy = recent.split("");
-  for (const d of num.split("")) {
-    const idx = copy.indexOf(d);
-    if (idx !== -1) {
-      sameDigits++;
-      copy.splice(idx, 1);
-    }
-  }
-
-  return { samePos, sameDigits };
-}
-
-function scoreCandidate(num, values, latestValue) {
-  const posCounts = getDigitCounts(values);
-  const transCounts = getTransitionCounts(values);
-  const pairCounts = getPairCounts(values);
-  const exactCounts = getExactCounts(values);
-  const gapMap = getGapMap(values);
-
-  let positionScore = 0;
-  let transitionScore = 0;
-  let pairScore = 0;
-
-  for (let p = 0; p < num.length; p++) {
-    positionScore += (posCounts[p][num[p]] || 0);
-
-    const transKey = `${latestValue[p]}->${num[p]}`;
-    transitionScore += (transCounts[p][transKey] || 0);
-  }
-
-  for (let p = 0; p < num.length - 1; p++) {
-    pairScore += (pairCounts[num.slice(p, p + 2)] || 0);
-  }
-
-  const exactScore = exactCounts[num] || 0;
-  const gap = gapMap[num] !== undefined ? gapMap[num] : values.length + 4;
-
-  let gapScore = 0;
-  if (gap >= 3 && gap <= 12) gapScore = 1.0;
-  else if (gap >= 13 && gap <= 24) gapScore = 0.72;
-  else if (gap <= 2) gapScore = 0.18;
-  else gapScore = 0.44;
-
-  const diversity = digitDiversityScore(num);
-  const sim = similarityToRecent(num, latestValue);
-
-  let repeatPenalty = 0;
-  if (num === latestValue) repeatPenalty += 3.2;
-  if (sim.samePos === num.length) repeatPenalty += 2.4;
-  if (sim.samePos === num.length - 1) repeatPenalty += 1.3;
-  if (sim.sameDigits === num.length) repeatPenalty += 1.1;
-
-  const hotPenalty = exactScore * 0.55;
-
-  return (
-    (transitionScore * 0.34) +
-    (positionScore * 0.26) +
-    (pairScore * 0.18) +
-    (gapScore * 1.10) +
-    (diversity * 0.85) -
-    repeatPenalty -
-    hotPenalty
-  );
-}
-
-function generateAll2D() {
-  const out = [];
-  for (let a = 0; a <= 9; a++) {
-    for (let b = 0; b <= 9; b++) {
-      out.push(`${a}${b}`);
-    }
-  }
-  return out;
-}
-
-function generateAll3D() {
-  const out = [];
-  for (let a = 0; a <= 9; a++) {
-    for (let b = 0; b <= 9; b++) {
-      for (let c = 0; c <= 9; c++) {
-        out.push(`${a}${b}${c}`);
-      }
-    }
-  }
-  return out;
-}
-
-function normalizeRanked(scored, take = 10) {
-  const top = scored.slice(0, take);
-  const max = top[0]?.score || 1;
-  const min = top[top.length - 1]?.score || 0;
-  const span = Math.max(max - min, 0.0001);
-
-  return top.map(item => ({
-    num: item.num,
-    score: item.score,
-    percent: clamp(40 + ((item.score - min) / span) * 60, 0, 100).toFixed(2)
-  }));
-}
-
-function buildForecastV2(values, digitLength) {
-  const latestValue = values[0];
-  const candidates = digitLength === 2 ? generateAll2D() : generateAll3D();
-
-  const scored = candidates
-    .map(num => ({
-      num,
-      score: scoreCandidate(num, values, latestValue)
-    }))
-    .sort((a, b) => b.score - a.score);
-
-  return normalizeRanked(scored, 10);
-}
-
-function buildLast2Forecast(history) {
-  return buildForecastV2(history.map(r => r.last2), 2);
-}
-
-function buildTop3Forecast(history) {
-  return buildForecastV2(history.map(r => r.top3), 3);
-}
-
-function buildBottom3Forecast(history) {
-  return buildForecastV2(history.flatMap(r => r.bottom3), 3);
-}
-
-function buildHybridForecast(top3, bottom3) {
-  const map = {};
-
-  top3.forEach((x, i) => {
-    map[x.num] = (map[x.num] || 0) + (12 - i);
-  });
-
-  bottom3.forEach((x, i) => {
-    map[x.num] = (map[x.num] || 0) + (12 - i) * 0.92;
-  });
-
-  const ranked = Object.entries(map)
-    .map(([num, score]) => ({ num, score }))
-    .sort((a, b) => b.score - a.score);
-
-  const max = ranked[0]?.score || 1;
-  const min = ranked[ranked.length - 1]?.score || 0;
-  const span = Math.max(max - min, 0.0001);
-
-  return ranked.slice(0, 10).map(item => ({
-    num: item.num,
-    score: item.score,
-    percent: clamp(40 + ((item.score - min) / span) * 60, 0, 100).toFixed(2)
-  }));
-}
-
-function buildForecast(history) {
-  const last2 = buildLast2Forecast(history);
-  const top3 = buildTop3Forecast(history);
-  const bottom3 = buildBottom3Forecast(history);
-  const hybrid = buildHybridForecast(top3, bottom3);
-  return { last2, top3, bottom3, hybrid };
-}
-
-function checkHit(list, actual, topN = 5) {
-  const nums = list.slice(0, topN).map(x => x.num);
-  return Array.isArray(actual)
-    ? actual.some(x => nums.includes(x))
-    : nums.includes(actual);
-}
-
-function nearMatch3(list, actualSet) {
-  const hits = [];
-
-  list.forEach(item => {
-    actualSet.forEach(real => {
-      const sameDigits = [...item.num].filter(d => real.includes(d)).length;
-      const samePos =
-        (item.num[0] === real[0] ? 1 : 0) +
-        (item.num[1] === real[1] ? 1 : 0) +
-        (item.num[2] === real[2] ? 1 : 0);
-
-      if (sameDigits >= 2 || samePos >= 2) {
-        hits.push(`${item.num} ~ ${real} | ซ้ำ ${sameDigits} | ตำแหน่ง ${samePos}`);
-      }
-    });
-  });
-
-  return [...new Set(hits)].slice(0, 6);
-}
-
-function runBacktest(data, rounds = 20) {
-  const limit = Math.min(rounds, data.length - 1);
-  const strict = { last2: 0, top3: 0, bottom3: 0 };
-  const practical = { last2: 0, top3: 0, bottom3: 0 };
-  const rows = [];
-
-  for (let i = 0; i < limit; i++) {
-    const settled = data[i];
-    const history = data.slice(i + 1);
-    if (history.length < 6) continue;
-
-    const forecast = buildForecast(history);
-
-    const strictLast2 = checkHit(forecast.last2, settled.last2, 5);
-    const strictTop3 = checkHit(forecast.top3, settled.top3, 5);
-    const strictBottom3 = checkHit(forecast.bottom3, settled.bottom3, 5);
-
-    const practicalLast2 = checkHit(forecast.last2, settled.last2, 10);
-    const practicalTop3 = checkHit(forecast.top3, settled.top3, 10);
-    const practicalBottom3 = checkHit(forecast.bottom3, settled.bottom3, 10);
-
-    strict.last2 += strictLast2 ? 1 : 0;
-    strict.top3 += strictTop3 ? 1 : 0;
-    strict.bottom3 += strictBottom3 ? 1 : 0;
-
-    practical.last2 += practicalLast2 ? 1 : 0;
-    practical.top3 += practicalTop3 ? 1 : 0;
-    practical.bottom3 += practicalBottom3 ? 1 : 0;
-
-    rows.push({
-      date: settled.date,
-      settled,
-      forecast,
-      strictLast2,
-      strictTop3,
-      strictBottom3,
-      practicalLast2,
-      practicalTop3,
-      practicalBottom3
-    });
-  }
-
-  const count = rows.length || 1;
-
-  return {
-    count,
-    rows,
-    strictRate: {
-      last2: (strict.last2 / count) * 100,
-      top3: (strict.top3 / count) * 100,
-      bottom3: (strict.bottom3 / count) * 100
-    },
-    practicalRate: {
-      last2: (practical.last2 / count) * 100,
-      top3: (practical.top3 / count) * 100,
-      bottom3: (practical.bottom3 / count) * 100
-    }
-  };
-}
-    function makeRankCards(elId, list, label) {
+function makeRankCards(elId, list, label) {
   const el = document.getElementById(elId);
   el.innerHTML = list.map((item, idx) => `
     <div class="rank-item">
@@ -938,9 +526,7 @@ function makeBars(elId, list) {
   el.innerHTML = list.map(item => `
     <div class="bar-row">
       <div>${item.num}</div>
-      <div class="bar-track">
-        <div class="bar-fill" style="width:${item.percent}%"></div>
-      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${item.percent}%"></div></div>
       <div>${pct(item.percent)}</div>
     </div>
   `).join("");
@@ -958,7 +544,8 @@ function renderSummary(forecast) {
   document.getElementById("summaryHybridMeta").textContent = `คะแนน ${pct(forecast.hybrid[0]?.percent || 0)}`;
 }
 
-function renderForecastText(forecast) {
+function renderForecastText(result) {
+  const forecast = result.forecastNow;
   document.getElementById("forecastNowText").textContent =
 `งวดถัดไปที่คาด:
 2 ตัวเด่น: ${forecast.last2.slice(0, 6).map(x => x.num).join(", ")}
@@ -967,22 +554,20 @@ function renderForecastText(forecast) {
 Hybrid: ${forecast.hybrid.slice(0, 6).map(x => x.num).join(", ")}
 
 สูตรที่ใช้:
-- Transition score ระหว่างงวด
-- Position frequency รายหลัก
-- Pair structure
-- Gap return
-- Diversity balance
-- Repeat suppression
-- Hot-number penalty
-
-จุดสำคัญ:
-- 3 ตัวบน = ท้ายรางวัลที่ 1 เท่านั้น
-- เลขที่เพิ่งออกล่าสุดจะโดนกดคะแนน
-- ไม่ให้ exact repeat เด้งอันดับ 1 ง่าย`;
+- transition
+- position
+- pair
+- gap
+- cycle
+- diversity
+- cold/hot balance
+- repeat suppression`;
 }
 
-function renderRoundSummary(data, forecast) {
-  const latest = data[0];
+function renderRoundSummary(result) {
+  const latest = result.settled;
+  const forecast = result.forecastNow;
+
   document.getElementById("roundSummaryText").textContent =
 `ผลงวดล่าสุด:
 วันที่: ${latest.date}
@@ -999,14 +584,17 @@ Forecast Now เด่น:
 Hybrid: ${forecast.hybrid.slice(0, 3).map(x => x.num).join(", ")}`;
 }
 
-function renderLastSettled(settled, forecast) {
-  const strict2 = checkHit(forecast.last2, settled.last2, 5);
-  const strictTop = checkHit(forecast.top3, settled.top3, 5);
-  const strictBottom = checkHit(forecast.bottom3, settled.bottom3, 5);
+function renderLastSettled(result) {
+  const settled = result.settled;
+  const forecast = result.lastSettledForecast;
 
-  const practical2 = checkHit(forecast.last2, settled.last2, 10);
-  const practicalTop = checkHit(forecast.top3, settled.top3, 10);
-  const practicalBottom = checkHit(forecast.bottom3, settled.bottom3, 10);
+  const strict2 = result.backtest.rows[0]?.strictLast2 ?? false;
+  const strictTop = result.backtest.rows[0]?.strictTop3 ?? false;
+  const strictBottom = result.backtest.rows[0]?.strictBottom3 ?? false;
+
+  const practical2 = result.backtest.rows[0]?.practicalLast2 ?? false;
+  const practicalTop = result.backtest.rows[0]?.practicalTop3 ?? false;
+  const practicalBottom = result.backtest.rows[0]?.practicalBottom3 ?? false;
 
   document.getElementById("lastSettledText").textContent =
 `งวดที่ตรวจ: ${settled.date}
@@ -1027,19 +615,20 @@ Strict Top 5 → 2 ตัว: ${strict2 ? "เข้า" : "ไม่เข้�
 Practical Top 10 → 2 ตัว: ${practical2 ? "เข้า" : "ไม่เข้า"} | 3 ตัวบน: ${practicalTop ? "เข้า" : "ไม่เข้า"} | 3 ตัวล่าง: ${practicalBottom ? "เข้า" : "ไม่เข้า"}`;
 }
 
-function renderNearMatch(settled, forecast) {
-  const topHits = nearMatch3(forecast.top3.slice(0, 10), [settled.top3]);
-  const bottomHits = nearMatch3(forecast.bottom3.slice(0, 10), settled.bottom3);
+function renderNearMatch(result) {
+  const topHits = result.nearMatches.top3;
+  const bottomHits = result.nearMatches.bottom3;
 
   document.getElementById("nearMatchText").textContent =
 `ใกล้เคียง 3 ตัวบน:
-${topHits.length ? topHits.join("\n") : "ไม่มี near match เด่น"}
+${topHits.length ? topHits.map(x => `${x.forecast} ~ ${x.actual} | ซ้ำ ${x.sameDigits} | ตำแหน่ง ${x.samePos}`).join("\n") : "ไม่มี near match เด่น"}
 
 ใกล้เคียง 3 ตัวล่าง:
-${bottomHits.length ? bottomHits.join("\n") : "ไม่มี near match เด่น"}`;
+${bottomHits.length ? bottomHits.map(x => `${x.forecast} ~ ${x.actual} | ซ้ำ ${x.sameDigits} | ตำแหน่ง ${x.samePos}`).join("\n") : "ไม่มี near match เด่น"}`;
 }
+    function renderBacktest(result) {
+  const backtest = result.backtest;
 
-function renderBacktest(backtest) {
   document.getElementById("backtestIntro").textContent =
 `ตรวจย้อนหลังทั้งหมด ${backtest.count} งวดแบบ walk-forward
 ทุกงวดใช้เฉพาะข้อมูลที่เก่ากว่างวดนั้น`;
@@ -1066,12 +655,13 @@ Practical → 2 ตัว: ${latest.practicalLast2 ? "เข้า" : "ไม่
 `กติกา:
 - 3 ตัวบน = 3 ตัวท้ายของรางวัลที่ 1
 - เลขหน้า 3 ตัวไม่ถูกใช้แทน 3 ตัวบน
-- งวดล่าสุดจะไม่ถูกใช้ทำนายตัวเอง`;
+- งวดล่าสุดไม่ถูกใช้ทำนายตัวเอง`;
 }
 
-function renderHeuristics(data, forecast) {
-  const latest = data[0];
-  const prev = data[1];
+function renderHeuristics(result) {
+  const latest = result.settled;
+  const prev = result.data[1];
+  const forecast = result.forecastNow;
 
   const items = [
     {
@@ -1097,10 +687,9 @@ function renderHeuristics(data, forecast) {
 3 ตัวล่าง ${forecast.bottom3[0].num}`
     },
     {
-      title: "logic ที่ใช้",
-      body: `Last Settled ใช้ data.slice(1)
-Forecast Now ใช้ data ทั้งหมด
-ไม่เอาผลล่าสุดมาปั่นตัวเอง`
+      title: "engine ใหม่",
+      body: `คำนวณแยกใน analysis-engine.js
+ai.html มีหน้าที่ render อย่างเดียว`
     }
   ];
 
@@ -1112,55 +701,45 @@ Forecast Now ใช้ data ทั้งหมด
   `).join("");
 }
 
-function buildCopyText() {
-  const f = state.forecastNow;
-  return `AI Forecast V3
-2 ตัว: ${f.last2.slice(0, 10).map(x => x.num).join(", ")}
-3 ตัวบน: ${f.top3.slice(0, 10).map(x => x.num).join(", ")}
-3 ตัวล่าง: ${f.bottom3.slice(0, 10).map(x => x.num).join(", ")}
-Hybrid: ${f.hybrid.slice(0, 10).map(x => x.num).join(", ")}`;
-}
+async function copyForecast(result) {
+  const text = `AI Forecast
+2 ตัว: ${result.forecastNow.last2.slice(0, 10).map(x => x.num).join(", ")}
+3 ตัวบน: ${result.forecastNow.top3.slice(0, 10).map(x => x.num).join(", ")}
+3 ตัวล่าง: ${result.forecastNow.bottom3.slice(0, 10).map(x => x.num).join(", ")}
+Hybrid: ${result.forecastNow.hybrid.slice(0, 10).map(x => x.num).join(", ")}`;
 
-async function copyForecast() {
-  if (!state.forecastNow) return;
   try {
-    await navigator.clipboard.writeText(buildCopyText());
+    await navigator.clipboard.writeText(text);
     alert("คัดลอกชุดเลขแล้ว");
   } catch {
     alert("คัดลอกไม่สำเร็จ");
   }
 }
 
-function renderAll() {
-  renderSummary(state.forecastNow);
-  renderForecastText(state.forecastNow);
-  renderRoundSummary(state.data, state.forecastNow);
-  renderLastSettled(state.settled, state.lastSettledForecast);
-  renderNearMatch(state.settled, state.lastSettledForecast);
-  renderBacktest(state.backtest);
-  renderHeuristics(state.data, state.forecastNow);
+function renderAll(result) {
+  renderSummary(result.forecastNow);
+  renderForecastText(result);
+  renderRoundSummary(result);
+  renderLastSettled(result);
+  renderNearMatch(result);
+  renderBacktest(result);
+  renderHeuristics(result);
 
-  makeRankCards("gridLast2", state.forecastNow.last2, "เลข 2 ตัว");
-  makeRankCards("gridTop3", state.forecastNow.top3, "3 ตัวบน");
-  makeRankCards("gridBottom3", state.forecastNow.bottom3, "3 ตัวล่าง");
-  makeRankCards("gridHybrid", state.forecastNow.hybrid, "Hybrid");
+  makeRankCards("gridLast2", result.forecastNow.last2, "เลข 2 ตัว");
+  makeRankCards("gridTop3", result.forecastNow.top3, "3 ตัวบน");
+  makeRankCards("gridBottom3", result.forecastNow.bottom3, "3 ตัวล่าง");
+  makeRankCards("gridHybrid", result.forecastNow.hybrid, "Hybrid");
 
-  makeBars("barsLast2", state.forecastNow.last2);
-  makeBars("barsTop3", state.forecastNow.top3);
-  makeBars("barsBottom3", state.forecastNow.bottom3);
+  makeBars("barsLast2", result.forecastNow.last2);
+  makeBars("barsTop3", result.forecastNow.top3);
+  makeBars("barsBottom3", result.forecastNow.bottom3);
 }
 
+let latestResult = null;
+
 async function runAI() {
-  const data = await loadData();
-  if (data.length < 8) throw new Error("ข้อมูลไม่พอสำหรับวิเคราะห์");
-
-  state.data = data;
-  state.settled = data[0];
-  state.lastSettledForecast = buildForecast(data.slice(1));
-  state.forecastNow = buildForecast(data);
-  state.backtest = runBacktest(data, 20);
-
-  renderAll();
+  latestResult = await AnalysisEngine.runFromUrl("data.json");
+  renderAll(latestResult);
 }
 
 document.getElementById("runBtn").addEventListener("click", async () => {
@@ -1171,16 +750,10 @@ document.getElementById("runBtn").addEventListener("click", async () => {
   }
 });
 
-document.getElementById("accuracyBtn").addEventListener("click", async () => {
-  try {
-    await runAI();
-    alert("เช็ก Accuracy แล้ว");
-  } catch (e) {
-    alert(e.message);
-  }
+document.getElementById("copyBtn").addEventListener("click", async () => {
+  if (!latestResult) return;
+  await copyForecast(latestResult);
 });
-
-document.getElementById("copyBtn").addEventListener("click", copyForecast);
 
 runAI().catch(err => {
   console.error(err);
