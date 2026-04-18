@@ -68,6 +68,16 @@
       padding:12px 16px;
       cursor:pointer;
     }
+    .status{
+      margin-top:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      font-size:13px;
+      white-space:pre-wrap;
+      line-height:1.6;
+    }
     @media (max-width:800px){
       .grid,.triple{grid-template-columns:1fr}
     }
@@ -78,9 +88,10 @@
     <div class="card">
       <h1>Engine Test</h1>
       <div class="muted">หน้า debug เพื่อตรวจว่าสูตรยังมั่วไหม ก่อนเอากลับเข้า AI หลัก</div>
-      <div style="margin-top:12px">
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
         <button id="runBtn">Run Engine Test</button>
       </div>
+      <div id="statusBox" class="status">STATUS: waiting...</div>
     </div>
 
     <div class="grid">
@@ -127,6 +138,7 @@
   </div>
 
   <script>
+    const DATA_URL = "https://digitalduoth.github.io/lottery-dashboard/data.json";
     const CONFIG = {
       minHistory: 12,
       backtestRounds: 20,
@@ -139,25 +151,60 @@
       }
     };
 
+    const $ = (id) => document.getElementById(id);
+
+    function setStatus(text, type = "info") {
+      const el = $("statusBox");
+      el.textContent = text;
+      el.style.color =
+        type === "error" ? "var(--bad)" :
+        type === "ok" ? "var(--good)" :
+        type === "warn" ? "var(--warn)" :
+        "var(--text)";
+    }
+
+    function safeString(v, len = 0) {
+      const s = String(v ?? "").trim();
+      return len ? s.padStart(len, "0") : s;
+    }
+
+    function normalizeRow(d) {
+      const firstPrize = safeString(d.firstPrize ?? d.prize1 ?? d.first ?? "", 6);
+      const top3 = safeString(d.top3 ?? (firstPrize ? firstPrize.slice(-3) : ""), 3);
+      const last2 = safeString(d.last2 ?? d.bottom2 ?? "", 2);
+
+      const front3 = Array.isArray(d.front3)
+        ? d.front3.map(x => safeString(x, 3)).slice(0, 2)
+        : Array.isArray(d.top3Front)
+        ? d.top3Front.map(x => safeString(x, 3)).slice(0, 2)
+        : [];
+
+      const bottom3 = Array.isArray(d.bottom3)
+        ? d.bottom3.map(x => safeString(x, 3)).slice(0, 2)
+        : Array.isArray(d.last3)
+        ? d.last3.map(x => safeString(x, 3)).slice(0, 2)
+        : [];
+
+      return {
+        date: safeString(d.date),
+        firstPrize,
+        top3,
+        last2,
+        front3,
+        bottom3
+      };
+    }
+
     function prepareData(data) {
       return [...data]
+        .map(normalizeRow)
         .filter(d =>
-          d &&
-          typeof d.date === "string" &&
-          typeof d.firstPrize === "string" &&
-          typeof d.top3 === "string" &&
-          typeof d.last2 === "string" &&
-          Array.isArray(d.front3) &&
-          Array.isArray(d.bottom3)
+          d.date &&
+          d.firstPrize.length === 6 &&
+          d.top3.length === 3 &&
+          d.last2.length === 2 &&
+          d.bottom3.length >= 1
         )
-        .map(d => ({
-          date: d.date,
-          firstPrize: String(d.firstPrize).padStart(6, "0"),
-          top3: String(d.top3).padStart(3, "0"),
-          last2: String(d.last2).padStart(2, "0"),
-          front3: d.front3.map(x => String(x).padStart(3, "0")).slice(0, 2),
-          bottom3: d.bottom3.map(x => String(x).padStart(3, "0")).slice(0, 2)
-        }))
         .sort((a, b) => new Date(b.date) - new Date(a.date));
     }
 
@@ -183,7 +230,7 @@
 
     function countUniqueDigits(values) {
       const s = new Set();
-      values.forEach(v => v.split("").forEach(d => s.add(d)));
+      values.forEach(v => String(v).split("").forEach(d => s.add(d)));
       return s.size;
     }
 
@@ -201,10 +248,11 @@
       let overlap = 0;
       let total = 0;
       for (let i = 1; i < values.length; i++) {
-        const a = values[i - 1];
-        const b = values[i];
+        const a = String(values[i - 1]);
+        const b = String(values[i]);
         const pool = b.split("");
         let hit = 0;
+
         a.split("").forEach(d => {
           const idx = pool.indexOf(d);
           if (idx !== -1) {
@@ -212,6 +260,7 @@
             pool.splice(idx, 1);
           }
         });
+
         overlap += hit / a.length;
         total++;
       }
@@ -232,7 +281,9 @@
 
     function samePositionCount(a, b) {
       let count = 0;
-      for (let i = 0; i < a.length; i++) if (a[i] === b[i]) count++;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] === b[i]) count++;
+      }
       return count;
     }
 
@@ -496,21 +547,45 @@ final = ${topItem.score.toFixed(4)}`;
       `;
     }
 
-    async function run() {
-      const res = await fetch(`data.json?v=${Date.now()}`);
-      if (!res.ok) throw new Error("โหลด data.json ไม่สำเร็จ");
+    async function fetchJsonWithTimeout(url, timeoutMs = 10000) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-      const raw = await res.json();
+      try {
+        const res = await fetch(url, {
+          method: "GET",
+          cache: "no-store",
+          signal: controller.signal
+        });
+
+        if (!res.ok) {
+          throw new Error(`โหลด data.json ไม่สำเร็จ (${res.status})`);
+        }
+
+        return await res.json();
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    async function run() {
+      setStatus("STATUS: loading data...", "warn");
+
+      const raw = await fetchJsonWithTimeout(`${DATA_URL}?v=${Date.now()}`, 10000);
+      if (!Array.isArray(raw)) {
+        throw new Error("data.json ไม่ใช่ array");
+      }
+
       const clean = prepareData(raw);
 
       if (clean.length < CONFIG.minHistory + 1) {
-        throw new Error("ข้อมูลย้อนหลังไม่พอ");
+        throw new Error(`ข้อมูลย้อนหลังไม่พอ (usable=${clean.length})`);
       }
 
       const result = runForecast(clean);
       const backtest = runBacktest(clean);
 
-      document.getElementById("latestBox").textContent =
+      $("latestBox").textContent =
 `date: ${result.latest.date}
 firstPrize: ${result.latest.firstPrize}
 top3: ${result.latest.top3}
@@ -518,12 +593,12 @@ last2: ${result.latest.last2}
 front3: ${result.latest.front3.join(", ")}
 bottom3: ${result.latest.bottom3.join(", ")}`;
 
-      document.getElementById("sanityBox").textContent = sanityCheck(result);
-      renderTopBox(document.getElementById("top2Box"), result.top2);
-      renderTopBox(document.getElementById("top3Box"), result.top3);
-      renderTopBox(document.getElementById("bottom3Box"), result.bottom3);
+      $("sanityBox").textContent = sanityCheck(result);
+      renderTopBox($("top2Box"), result.top2);
+      renderTopBox($("top3Box"), result.top3);
+      renderTopBox($("bottom3Box"), result.bottom3);
 
-      document.getElementById("backtestBox").textContent =
+      $("backtestBox").textContent =
 `ย้อนหลัง ${backtest.count} งวด
 
 Strict
@@ -536,23 +611,38 @@ Practical
 - 3 ตัวบน: ${backtest.practicalRate.top3}%
 - 3 ตัวล่าง: ${backtest.practicalRate.bottom3}%`;
 
-      renderReasons(document.getElementById("reasonsBox"), result.top3, "3 ตัวบน");
-      renderRegime(document.getElementById("regimeBox"), result.regime);
+      renderReasons($("reasonsBox"), result.top3, "3 ตัวบน");
+      renderRegime($("regimeBox"), result.regime);
 
-      console.log("ENGINE_TEST_RESULT", result);
-      console.log("ENGINE_TEST_BACKTEST", backtest);
+      setStatus(
+        `STATUS: loaded OK
+rows raw = ${raw.length}
+rows usable = ${clean.length}
+latest = ${result.latest.date}`,
+        "ok"
+      );
     }
 
-    document.getElementById("runBtn").addEventListener("click", () => {
+    function showFatal(message) {
+      setStatus(`STATUS: ERROR\n${message}`, "error");
+      $("latestBox").textContent = message;
+      $("sanityBox").textContent = message;
+      $("top2Box").textContent = message;
+      $("top3Box").textContent = message;
+      $("bottom3Box").textContent = message;
+      $("reasonsBox").textContent = message;
+      $("backtestBox").textContent = message;
+      $("regimeBox").innerHTML = "";
+    }
+
+    $("runBtn").addEventListener("click", () => {
       run().catch(err => {
-        console.error(err);
-        alert("Engine test พัง: " + err.message);
+        showFatal(err.message || String(err));
       });
     });
 
     run().catch(err => {
-      console.error(err);
-      document.getElementById("latestBox").textContent = "โหลดไม่สำเร็จ: " + err.message;
+      showFatal(err.message || String(err));
     });
   </script>
 </body>
