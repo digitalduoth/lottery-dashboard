@@ -15,7 +15,6 @@
       --good:#8ef0b1;
       --warn:#ffd66b;
       --bad:#ff9d9d;
-      --blue:#84a8ff;
     }
     *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,sans-serif}
     body{
@@ -32,10 +31,9 @@
       padding:16px;
       margin-bottom:14px;
     }
-    h1,h2,h3{margin:0 0 10px}
+    h1,h2{margin:0 0 10px}
     h1{font-size:32px}
     h2{font-size:20px}
-    h3{font-size:15px;color:var(--muted)}
     .muted{color:var(--muted)}
     .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
     .triple{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
@@ -49,16 +47,12 @@
       display:inline-block;
       padding:6px 10px;
       border-radius:999px;
-      background:rgba(132,168,255,.12);
-      color:#cfe0ff;
-      border:1px solid rgba(132,168,255,.18);
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
       margin:0 8px 8px 0;
       font-size:13px;
       font-weight:700;
     }
-    .ok{color:var(--good)}
-    .warn{color:var(--warn)}
-    .bad{color:var(--bad)}
     button{
       border:none;
       background:linear-gradient(180deg,#8ab1ff,#6d79ff);
@@ -88,10 +82,10 @@
     <div class="card">
       <h1>Engine Test</h1>
       <div class="muted">หน้า debug เพื่อตรวจว่าสูตรยังมั่วไหม ก่อนเอากลับเข้า AI หลัก</div>
-      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
-        <button id="runBtn">Run Engine Test</button>
+      <div style="margin-top:12px">
+        <button id="runBtn" type="button">Run Engine Test</button>
       </div>
-      <div id="statusBox" class="status">STATUS: waiting...</div>
+      <div id="statusBox" class="status">STATUS: HTML LOADED</div>
     </div>
 
     <div class="grid">
@@ -138,512 +132,524 @@
   </div>
 
   <script>
-    const DATA_URL = "https://digitalduoth.github.io/lottery-dashboard/data.json";
-    const CONFIG = {
-      minHistory: 12,
-      backtestRounds: 20,
-      take: 10,
-      weights: {
-        antiRepeat: 0.42,
-        deltaShift: 0.24,
-        gap: 0.19,
-        novelty: 0.15
-      }
-    };
+    (function () {
+      var DATA_URL = "https://digitalduoth.github.io/lottery-dashboard/data.json?v=" + Date.now();
 
-    const $ = (id) => document.getElementById(id);
-
-    function setStatus(text, type = "info") {
-      const el = $("statusBox");
-      el.textContent = text;
-      el.style.color =
-        type === "error" ? "var(--bad)" :
-        type === "ok" ? "var(--good)" :
-        type === "warn" ? "var(--warn)" :
-        "var(--text)";
-    }
-
-    function safeString(v, len = 0) {
-      const s = String(v ?? "").trim();
-      return len ? s.padStart(len, "0") : s;
-    }
-
-    function normalizeRow(d) {
-      const firstPrize = safeString(d.firstPrize ?? d.prize1 ?? d.first ?? "", 6);
-      const top3 = safeString(d.top3 ?? (firstPrize ? firstPrize.slice(-3) : ""), 3);
-      const last2 = safeString(d.last2 ?? d.bottom2 ?? "", 2);
-
-      const front3 = Array.isArray(d.front3)
-        ? d.front3.map(x => safeString(x, 3)).slice(0, 2)
-        : Array.isArray(d.top3Front)
-        ? d.top3Front.map(x => safeString(x, 3)).slice(0, 2)
-        : [];
-
-      const bottom3 = Array.isArray(d.bottom3)
-        ? d.bottom3.map(x => safeString(x, 3)).slice(0, 2)
-        : Array.isArray(d.last3)
-        ? d.last3.map(x => safeString(x, 3)).slice(0, 2)
-        : [];
-
-      return {
-        date: safeString(d.date),
-        firstPrize,
-        top3,
-        last2,
-        front3,
-        bottom3
+      var CONFIG = {
+        minHistory: 12,
+        backtestRounds: 20,
+        take: 10,
+        weights: {
+          antiRepeat: 0.42,
+          deltaShift: 0.24,
+          gap: 0.19,
+          novelty: 0.15
+        }
       };
-    }
 
-    function prepareData(data) {
-      return [...data]
-        .map(normalizeRow)
-        .filter(d =>
-          d.date &&
-          d.firstPrize.length === 6 &&
-          d.top3.length === 3 &&
-          d.last2.length === 2 &&
-          d.bottom3.length >= 1
-        )
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
-    }
-
-    function gen2() {
-      return Array.from({ length: 100 }, (_, i) => String(i).padStart(2, "0"));
-    }
-
-    function gen3() {
-      return Array.from({ length: 1000 }, (_, i) => String(i).padStart(3, "0"));
-    }
-
-    function top(scored, take = CONFIG.take) {
-      const sorted = [...scored].sort((a, b) => b.score - a.score).slice(0, take);
-      const max = sorted[0]?.score ?? 1;
-      const min = sorted[sorted.length - 1]?.score ?? 0;
-      const span = Math.max(max - min, 0.000001);
-
-      return sorted.map(item => ({
-        ...item,
-        percent: Number((42 + ((item.score - min) / span) * 58).toFixed(2))
-      }));
-    }
-
-    function countUniqueDigits(values) {
-      const s = new Set();
-      values.forEach(v => String(v).split("").forEach(d => s.add(d)));
-      return s.size;
-    }
-
-    function calcRepeatRatio(values) {
-      let repeat = 0;
-      let total = 0;
-      for (let i = 1; i < values.length; i++) {
-        if (values[i - 1] === values[i]) repeat++;
-        total++;
+      function el(id) {
+        return document.getElementById(id);
       }
-      return total ? repeat / total : 0;
-    }
 
-    function calcOverlapRatio(values) {
-      let overlap = 0;
-      let total = 0;
-      for (let i = 1; i < values.length; i++) {
-        const a = String(values[i - 1]);
-        const b = String(values[i]);
-        const pool = b.split("");
-        let hit = 0;
+      function setStatus(text, color) {
+        var box = el("statusBox");
+        box.textContent = text;
+        box.style.color = color || "var(--text)";
+      }
 
-        a.split("").forEach(d => {
-          const idx = pool.indexOf(d);
+      function showFatal(message) {
+        setStatus("STATUS: ERROR\n" + message, "var(--bad)");
+        el("latestBox").textContent = message;
+        el("sanityBox").textContent = message;
+        el("top2Box").textContent = message;
+        el("top3Box").textContent = message;
+        el("bottom3Box").textContent = message;
+        el("reasonsBox").textContent = message;
+        el("backtestBox").textContent = message;
+        el("regimeBox").innerHTML = "";
+      }
+
+      setStatus("STATUS: SCRIPT STARTED", "var(--warn)");
+
+      function safeString(v, len) {
+        var s = String(v == null ? "" : v).trim();
+        if (len) return s.padStart(len, "0");
+        return s;
+      }
+
+      function normalizeRow(d) {
+        var firstPrize = safeString(d.firstPrize || d.prize1 || d.first || "", 6);
+        var top3 = safeString(d.top3 || (firstPrize ? firstPrize.slice(-3) : ""), 3);
+        var last2 = safeString(d.last2 || d.bottom2 || "", 2);
+
+        var front3 = [];
+        if (Array.isArray(d.front3)) {
+          front3 = d.front3.map(function (x) { return safeString(x, 3); }).slice(0, 2);
+        } else if (Array.isArray(d.top3Front)) {
+          front3 = d.top3Front.map(function (x) { return safeString(x, 3); }).slice(0, 2);
+        }
+
+        var bottom3 = [];
+        if (Array.isArray(d.bottom3)) {
+          bottom3 = d.bottom3.map(function (x) { return safeString(x, 3); }).slice(0, 2);
+        } else if (Array.isArray(d.last3)) {
+          bottom3 = d.last3.map(function (x) { return safeString(x, 3); }).slice(0, 2);
+        }
+
+        return {
+          date: safeString(d.date),
+          firstPrize: firstPrize,
+          top3: top3,
+          last2: last2,
+          front3: front3,
+          bottom3: bottom3
+        };
+      }
+
+      function prepareData(data) {
+        return data
+          .map(normalizeRow)
+          .filter(function (d) {
+            return d.date &&
+              d.firstPrize.length === 6 &&
+              d.top3.length === 3 &&
+              d.last2.length === 2 &&
+              d.bottom3.length >= 1;
+          })
+          .sort(function (a, b) {
+            return new Date(b.date) - new Date(a.date);
+          });
+      }
+
+      function gen2() {
+        var arr = [];
+        for (var i = 0; i < 100; i++) arr.push(String(i).padStart(2, "0"));
+        return arr;
+      }
+
+      function gen3() {
+        var arr = [];
+        for (var i = 0; i < 1000; i++) arr.push(String(i).padStart(3, "0"));
+        return arr;
+      }
+
+      function top(scored, take) {
+        take = take || CONFIG.take;
+        var sorted = scored.slice().sort(function (a, b) { return b.score - a.score; }).slice(0, take);
+        var max = sorted.length ? sorted[0].score : 1;
+        var min = sorted.length ? sorted[sorted.length - 1].score : 0;
+        var span = Math.max(max - min, 0.000001);
+
+        return sorted.map(function (item) {
+          return {
+            num: item.num,
+            score: item.score,
+            parts: item.parts,
+            percent: Number((42 + ((item.score - min) / span) * 58).toFixed(2))
+          };
+        });
+      }
+
+      function countUniqueDigits(values) {
+        var s = new Set();
+        values.forEach(function (v) {
+          String(v).split("").forEach(function (d) { s.add(d); });
+        });
+        return s.size;
+      }
+
+      function calcRepeatRatio(values) {
+        var repeat = 0;
+        var total = 0;
+        for (var i = 1; i < values.length; i++) {
+          if (values[i - 1] === values[i]) repeat++;
+          total++;
+        }
+        return total ? repeat / total : 0;
+      }
+
+      function calcOverlapRatio(values) {
+        var overlap = 0;
+        var total = 0;
+        for (var i = 1; i < values.length; i++) {
+          var a = String(values[i - 1]);
+          var b = String(values[i]);
+          var pool = b.split("");
+          var hit = 0;
+
+          a.split("").forEach(function (d) {
+            var idx = pool.indexOf(d);
+            if (idx !== -1) {
+              hit++;
+              pool.splice(idx, 1);
+            }
+          });
+
+          overlap += hit / a.length;
+          total++;
+        }
+        return total ? overlap / total : 0;
+      }
+
+      function detectRegime(data) {
+        var short = data.slice(0, 8).map(function (x) { return x.top3; });
+        var mid = data.slice(0, 24).map(function (x) { return x.top3; });
+
+        return {
+          highRepeat: calcRepeatRatio(short) >= 0.34,
+          highOverlap: calcOverlapRatio(short) >= 0.62,
+          spreadUp: countUniqueDigits(short) > countUniqueDigits(mid),
+          spreadDown: countUniqueDigits(short) < countUniqueDigits(mid)
+        };
+      }
+
+      function samePositionCount(a, b) {
+        var count = 0;
+        for (var i = 0; i < a.length; i++) {
+          if (a[i] === b[i]) count++;
+        }
+        return count;
+      }
+
+      function sharedDigitsRatio(a, b) {
+        var pool = b.split("");
+        var hit = 0;
+        a.split("").forEach(function (d) {
+          var idx = pool.indexOf(d);
           if (idx !== -1) {
             hit++;
             pool.splice(idx, 1);
           }
         });
-
-        overlap += hit / a.length;
-        total++;
+        return hit / a.length;
       }
-      return total ? overlap / total : 0;
-    }
 
-    function detectRegime(data) {
-      const short = data.slice(0, 8).map(x => x.top3);
-      const mid = data.slice(0, 24).map(x => x.top3);
+      function antiRepeat(num, latest, digits) {
+        var score = 1.0;
+        if (num === latest) return -10;
 
-      return {
-        highRepeat: calcRepeatRatio(short) >= 0.34,
-        highOverlap: calcOverlapRatio(short) >= 0.62,
-        spreadUp: countUniqueDigits(short) > countUniqueDigits(mid),
-        spreadDown: countUniqueDigits(short) < countUniqueDigits(mid)
-      };
-    }
+        var samePos = samePositionCount(num, latest);
+        var shared = sharedDigitsRatio(num, latest);
 
-    function samePositionCount(a, b) {
-      let count = 0;
-      for (let i = 0; i < a.length; i++) {
-        if (a[i] === b[i]) count++;
+        if (samePos === digits) score -= 5.0;
+        else if (samePos === digits - 1) score -= 2.4;
+        else if (samePos === 1) score -= 0.7;
+
+        if (shared === 1) score -= 2.0;
+        else if (shared >= 0.66) score -= 1.1;
+        else if (shared >= 0.5) score -= 0.5;
+
+        if (digits === 3 && new Set(num.split("")).size === 1) score -= 0.8;
+        if (digits === 2 && num[0] === num[1]) score -= 0.4;
+
+        return score;
       }
-      return count;
-    }
 
-    function sharedDigitsRatio(a, b) {
-      const pool = b.split("");
-      let hit = 0;
-      a.split("").forEach(d => {
-        const idx = pool.indexOf(d);
-        if (idx !== -1) {
-          hit++;
-          pool.splice(idx, 1);
+      function positionProfile(values, digits) {
+        var out = [];
+        for (var i = 0; i < digits; i++) out.push({});
+
+        values.forEach(function (v, idx) {
+          var w = 1 / (1 + idx * 0.18);
+          for (var i = 0; i < digits; i++) {
+            var d = v[i];
+            out[i][d] = (out[i][d] || 0) + w;
+          }
+        });
+
+        return out;
+      }
+
+      function pairProfile(values, digits) {
+        var out = {};
+        values.forEach(function (v, idx) {
+          var w = 1 / (1 + idx * 0.18);
+          for (var i = 0; i < digits - 1; i++) {
+            var pair = v.slice(i, i + 2);
+            out[pair] = (out[pair] || 0) + w;
+          }
+        });
+        return out;
+      }
+
+      function deltaShift(num, historyValues, digits) {
+        var short = historyValues.slice(0, 8);
+        var mid = historyValues.slice(0, 24);
+        var long = historyValues.slice(0, 80);
+
+        var shortPos = positionProfile(short, digits);
+        var midPos = positionProfile(mid, digits);
+        var longPos = positionProfile(long, digits);
+
+        var score = 0;
+
+        for (var i = 0; i < digits; i++) {
+          var d = num[i];
+          var s = shortPos[i][d] || 0;
+          var m = midPos[i][d] || 0;
+          var l = longPos[i][d] || 0;
+          score += (s - m) + ((m - l) * 0.5);
         }
-      });
-      return hit / a.length;
-    }
 
-    function antiRepeat(num, latest, digits) {
-      let score = 1.0;
-      if (num === latest) return -10;
+        var shortPairs = pairProfile(short, digits);
+        var midPairs = pairProfile(mid, digits);
 
-      const samePos = samePositionCount(num, latest);
-      const shared = sharedDigitsRatio(num, latest);
-
-      if (samePos === digits) score -= 5.0;
-      else if (samePos === digits - 1) score -= 2.4;
-      else if (samePos === 1) score -= 0.7;
-
-      if (shared === 1) score -= 2.0;
-      else if (shared >= 0.66) score -= 1.1;
-      else if (shared >= 0.5) score -= 0.5;
-
-      if (digits === 3 && new Set(num.split("")).size === 1) score -= 0.8;
-      if (digits === 2 && num[0] === num[1]) score -= 0.4;
-
-      return score;
-    }
-
-    function positionProfile(values, digits) {
-      const out = Array.from({ length: digits }, () => ({}));
-      values.forEach((v, idx) => {
-        const w = 1 / (1 + idx * 0.18);
-        for (let i = 0; i < digits; i++) {
-          const d = v[i];
-          out[i][d] = (out[i][d] || 0) + w;
+        for (var j = 0; j < digits - 1; j++) {
+          var pair = num.slice(j, j + 2);
+          score += ((shortPairs[pair] || 0) - (midPairs[pair] || 0)) * 0.8;
         }
-      });
-      return out;
-    }
 
-    function pairProfile(values, digits) {
-      const out = {};
-      values.forEach((v, idx) => {
-        const w = 1 / (1 + idx * 0.18);
-        for (let i = 0; i < digits - 1; i++) {
-          const pair = v.slice(i, i + 2);
-          out[pair] = (out[pair] || 0) + w;
+        return score;
+      }
+
+      function gapScore(num, historyValues) {
+        var idx = historyValues.indexOf(num);
+        if (idx === 0) return -5.5;
+        if (idx === 1) return -3.0;
+        if (idx === 2) return -1.6;
+        if (idx >= 3 && idx <= 8) return 0.25;
+        if (idx >= 9 && idx <= 20) return 1.0;
+        if (idx >= 21 && idx <= 40) return 0.72;
+        if (idx === -1) return 0.48;
+        return 0.36;
+      }
+
+      function novelty(num, historyValues) {
+        var short = historyValues.slice(0, 12);
+        var long = historyValues.slice(0, 60);
+
+        var shortSet = new Set(short);
+        var longSet = new Set(long);
+
+        var score = 0;
+        if (!shortSet.has(num) && longSet.has(num)) score += 0.9;
+        if (!longSet.has(num)) score += 0.35;
+
+        var unique = new Set(num.split("")).size;
+        if (num.length === 2) {
+          if (unique === 2) score += 0.45;
+          else score -= 0.12;
+        } else {
+          if (unique === 3) score += 0.6;
+          else if (unique === 2) score += 0.15;
+          else score -= 0.35;
         }
-      });
-      return out;
-    }
 
-    function deltaShift(num, historyValues, digits) {
-      const short = historyValues.slice(0, 8);
-      const mid = historyValues.slice(0, 24);
-      const long = historyValues.slice(0, 80);
+        var mirror = num.split("").reverse().join("");
+        if (mirror !== num && shortSet.has(mirror)) score += 0.28;
 
-      const shortPos = positionProfile(short, digits);
-      const midPos = positionProfile(mid, digits);
-      const longPos = positionProfile(long, digits);
-
-      let score = 0;
-
-      for (let i = 0; i < digits; i++) {
-        const d = num[i];
-        const s = shortPos[i][d] || 0;
-        const m = midPos[i][d] || 0;
-        const l = longPos[i][d] || 0;
-        score += (s - m) + ((m - l) * 0.5);
+        return score;
       }
 
-      const shortPairs = pairProfile(short, digits);
-      const midPairs = pairProfile(mid, digits);
+      function scoreAll(candidates, latest, historyValues, regime, digits) {
+        return candidates.map(function (num) {
+          var parts = {
+            antiRepeat: antiRepeat(num, latest, digits),
+            deltaShift: deltaShift(num, historyValues, digits),
+            gap: gapScore(num, historyValues),
+            novelty: novelty(num, historyValues)
+          };
 
-      for (let i = 0; i < digits - 1; i++) {
-        const pair = num.slice(i, i + 2);
-        score += ((shortPairs[pair] || 0) - (midPairs[pair] || 0)) * 0.8;
+          var score =
+            parts.antiRepeat * CONFIG.weights.antiRepeat +
+            parts.deltaShift * CONFIG.weights.deltaShift +
+            parts.gap * CONFIG.weights.gap +
+            parts.novelty * CONFIG.weights.novelty;
+
+          if (regime.highRepeat) score *= 0.88;
+          if (regime.highOverlap && sharedDigitsRatio(num, latest) > 0.66) score *= 0.72;
+          if (regime.spreadUp && new Set(num.split("")).size === digits) score *= 1.08;
+          if (regime.spreadDown && new Set(num.split("")).size === 1) score *= 0.82;
+
+          return { num: num, score: score, parts: parts };
+        });
       }
 
-      return score;
-    }
+      function runForecast(clean) {
+        var latest = clean[0];
+        var history = clean.slice(1);
+        var regime = detectRegime(clean);
 
-    function gapScore(num, historyValues) {
-      const idx = historyValues.indexOf(num);
-      if (idx === 0) return -5.5;
-      if (idx === 1) return -3.0;
-      if (idx === 2) return -1.6;
-      if (idx >= 3 && idx <= 8) return 0.25;
-      if (idx >= 9 && idx <= 20) return 1.0;
-      if (idx >= 21 && idx <= 40) return 0.72;
-      if (idx === -1) return 0.48;
-      return 0.36;
-    }
+        var top2 = top(scoreAll(gen2(), latest.last2, history.map(function (x) { return x.last2; }), regime, 2));
+        var top3 = top(scoreAll(gen3(), latest.top3, history.map(function (x) { return x.top3; }), regime, 3));
+        var bottom3 = top(scoreAll(gen3(), latest.bottom3[0], history.flatMap(function (x) { return x.bottom3; }), regime, 3));
 
-    function novelty(num, historyValues) {
-      const short = historyValues.slice(0, 12);
-      const long = historyValues.slice(0, 60);
-
-      const shortSet = new Set(short);
-      const longSet = new Set(long);
-
-      let score = 0;
-      if (!shortSet.has(num) && longSet.has(num)) score += 0.9;
-      if (!longSet.has(num)) score += 0.35;
-
-      const unique = new Set(num.split("")).size;
-      if (num.length === 2) {
-        if (unique === 2) score += 0.45;
-        else score -= 0.12;
-      } else {
-        if (unique === 3) score += 0.6;
-        else if (unique === 2) score += 0.15;
-        else score -= 0.35;
+        return { latest: latest, regime: regime, top2: top2, top3: top3, bottom3: bottom3 };
       }
 
-      const mirror = num.split("").reverse().join("");
-      if (mirror !== num && shortSet.has(mirror)) score += 0.28;
-
-      return score;
-    }
-
-    function scoreAll(candidates, latest, historyValues, regime, digits) {
-      return candidates.map(num => {
-        const parts = {
-          antiRepeat: antiRepeat(num, latest, digits),
-          deltaShift: deltaShift(num, historyValues, digits),
-          gap: gapScore(num, historyValues),
-          novelty: novelty(num, historyValues)
+      function runBacktest(clean, rounds) {
+        rounds = rounds || CONFIG.backtestRounds;
+        var limit = Math.min(rounds, clean.length - 1);
+        var stat = {
+          strict: { last2: 0, top3: 0, bottom3: 0 },
+          practical: { last2: 0, top3: 0, bottom3: 0 },
+          count: 0
         };
 
-        let score =
-          parts.antiRepeat * CONFIG.weights.antiRepeat +
-          parts.deltaShift * CONFIG.weights.deltaShift +
-          parts.gap * CONFIG.weights.gap +
-          parts.novelty * CONFIG.weights.novelty;
+        for (var i = 0; i < limit; i++) {
+          var settled = clean[i];
+          var history = clean.slice(i + 1);
+          if (history.length < CONFIG.minHistory) continue;
 
-        if (regime.highRepeat) score *= 0.88;
-        if (regime.highOverlap && sharedDigitsRatio(num, latest) > 0.66) score *= 0.72;
-        if (regime.spreadUp && new Set(num.split("")).size === digits) score *= 1.08;
-        if (regime.spreadDown && new Set(num.split("")).size === 1) score *= 0.82;
+          var regime = detectRegime(history);
 
-        return { num, score, parts };
-      });
-    }
+          var top2 = top(scoreAll(gen2(), settled.last2, history.map(function (x) { return x.last2; }), regime, 2));
+          var top3 = top(scoreAll(gen3(), settled.top3, history.map(function (x) { return x.top3; }), regime, 3));
+          var bottom3 = top(scoreAll(gen3(), settled.bottom3[0], history.flatMap(function (x) { return x.bottom3; }), regime, 3));
 
-    function runForecast(clean) {
-      const latest = clean[0];
-      const history = clean.slice(1);
-      const regime = detectRegime(clean);
+          if (top2.slice(0, 5).some(function (x) { return x.num === settled.last2; })) stat.strict.last2++;
+          if (top3.slice(0, 5).some(function (x) { return x.num === settled.top3; })) stat.strict.top3++;
+          if (bottom3.slice(0, 5).some(function (x) { return settled.bottom3.includes(x.num); })) stat.strict.bottom3++;
 
-      const top2 = top(scoreAll(gen2(), latest.last2, history.map(x => x.last2), regime, 2));
-      const top3 = top(scoreAll(gen3(), latest.top3, history.map(x => x.top3), regime, 3));
-      const bottom3 = top(scoreAll(gen3(), latest.bottom3[0], history.flatMap(x => x.bottom3), regime, 3));
+          if (top2.slice(0, 10).some(function (x) { return x.num === settled.last2; })) stat.practical.last2++;
+          if (top3.slice(0, 10).some(function (x) { return x.num === settled.top3; })) stat.practical.top3++;
+          if (bottom3.slice(0, 10).some(function (x) { return settled.bottom3.includes(x.num); })) stat.practical.bottom3++;
 
-      return { latest, regime, top2, top3, bottom3 };
-    }
+          stat.count++;
+        }
 
-    function runBacktest(clean, rounds = CONFIG.backtestRounds) {
-      const limit = Math.min(rounds, clean.length - 1);
-      const stat = {
-        strict: { last2: 0, top3: 0, bottom3: 0 },
-        practical: { last2: 0, top3: 0, bottom3: 0 },
-        count: 0
-      };
-
-      for (let i = 0; i < limit; i++) {
-        const settled = clean[i];
-        const history = clean.slice(i + 1);
-        if (history.length < CONFIG.minHistory) continue;
-
-        const regime = detectRegime(history);
-
-        const top2 = top(scoreAll(gen2(), settled.last2, history.map(x => x.last2), regime, 2));
-        const top3 = top(scoreAll(gen3(), settled.top3, history.map(x => x.top3), regime, 3));
-        const bottom3 = top(scoreAll(gen3(), settled.bottom3[0], history.flatMap(x => x.bottom3), regime, 3));
-
-        if (top2.slice(0, 5).some(x => x.num === settled.last2)) stat.strict.last2++;
-        if (top3.slice(0, 5).some(x => x.num === settled.top3)) stat.strict.top3++;
-        if (bottom3.slice(0, 5).some(x => settled.bottom3.includes(x.num))) stat.strict.bottom3++;
-
-        if (top2.slice(0, 10).some(x => x.num === settled.last2)) stat.practical.last2++;
-        if (top3.slice(0, 10).some(x => x.num === settled.top3)) stat.practical.top3++;
-        if (bottom3.slice(0, 10).some(x => settled.bottom3.includes(x.num))) stat.practical.bottom3++;
-
-        stat.count++;
+        var c = stat.count || 1;
+        return {
+          count: stat.count,
+          strictRate: {
+            last2: ((stat.strict.last2 / c) * 100).toFixed(2),
+            top3: ((stat.strict.top3 / c) * 100).toFixed(2),
+            bottom3: ((stat.strict.bottom3 / c) * 100).toFixed(2)
+          },
+          practicalRate: {
+            last2: ((stat.practical.last2 / c) * 100).toFixed(2),
+            top3: ((stat.practical.top3 / c) * 100).toFixed(2),
+            bottom3: ((stat.practical.bottom3 / c) * 100).toFixed(2)
+          }
+        };
       }
 
-      const c = stat.count || 1;
-      return {
-        count: stat.count,
-        strictRate: {
-          last2: ((stat.strict.last2 / c) * 100).toFixed(2),
-          top3: ((stat.strict.top3 / c) * 100).toFixed(2),
-          bottom3: ((stat.strict.bottom3 / c) * 100).toFixed(2)
-        },
-        practicalRate: {
-          last2: ((stat.practical.last2 / c) * 100).toFixed(2),
-          top3: ((stat.practical.top3 / c) * 100).toFixed(2),
-          bottom3: ((stat.practical.bottom3 / c) * 100).toFixed(2)
+      function sanityCheck(result) {
+        var latest = result.latest;
+        var lines = [];
+
+        lines.push(result.top2[0] && result.top2[0].num === latest.last2
+          ? "❌ 2 ตัวอันดับ 1 ซ้ำงวดล่าสุด"
+          : "✅ 2 ตัวอันดับ 1 ไม่ซ้ำงวดล่าสุด");
+
+        lines.push(result.top3[0] && result.top3[0].num === latest.top3
+          ? "❌ 3 ตัวบนอันดับ 1 ซ้ำงวดล่าสุด"
+          : "✅ 3 ตัวบนอันดับ 1 ไม่ซ้ำงวดล่าสุด");
+
+        lines.push(result.bottom3[0] && latest.bottom3.includes(result.bottom3[0].num)
+          ? "⚠️ 3 ตัวล่างอันดับ 1 ชนงวดล่าสุด"
+          : "✅ 3 ตัวล่างอันดับ 1 ไม่ชนงวดล่าสุด");
+
+        return lines.join("\n");
+      }
+
+      function renderTopBox(target, list) {
+        target.textContent = list.map(function (x, i) {
+          return String(i + 1).padStart(2, "0") + ". " + x.num + " | score=" + x.score.toFixed(4) + " | " + x.percent + "%";
+        }).join("\n");
+      }
+
+      function renderReasons(target, list, title) {
+        var topItem = list[0];
+        if (!topItem) {
+          target.textContent = "-";
+          return;
         }
-      };
-    }
 
-    function sanityCheck(result) {
-      const latest = result.latest;
-      const lines = [];
+        target.textContent =
+          title + " อันดับ 1 = " + topItem.num + "\n\n" +
+          "antiRepeat = " + topItem.parts.antiRepeat.toFixed(4) + "\n" +
+          "deltaShift = " + topItem.parts.deltaShift.toFixed(4) + "\n" +
+          "gap = " + topItem.parts.gap.toFixed(4) + "\n" +
+          "novelty = " + topItem.parts.novelty.toFixed(4) + "\n" +
+          "final = " + topItem.score.toFixed(4);
+      }
 
-      lines.push(result.top2[0]?.num === latest.last2
-        ? "❌ 2 ตัวอันดับ 1 ซ้ำงวดล่าสุด"
-        : "✅ 2 ตัวอันดับ 1 ไม่ซ้ำงวดล่าสุด");
+      function renderRegime(target, regime) {
+        target.innerHTML =
+          '<span class="pill">highRepeat: ' + regime.highRepeat + '</span>' +
+          '<span class="pill">highOverlap: ' + regime.highOverlap + '</span>' +
+          '<span class="pill">spreadUp: ' + regime.spreadUp + '</span>' +
+          '<span class="pill">spreadDown: ' + regime.spreadDown + '</span>';
+      }
 
-      lines.push(result.top3[0]?.num === latest.top3
-        ? "❌ 3 ตัวบนอันดับ 1 ซ้ำงวดล่าสุด"
-        : "✅ 3 ตัวบนอันดับ 1 ไม่ซ้ำงวดล่าสุด");
+      function fetchJson(url) {
+        return fetch(url, { method: "GET", cache: "no-store" }).then(function (res) {
+          if (!res.ok) throw new Error("โหลด data.json ไม่สำเร็จ (" + res.status + ")");
+          return res.json();
+        });
+      }
 
-      lines.push(latest.bottom3.includes(result.bottom3[0]?.num)
-        ? "⚠️ 3 ตัวล่างอันดับ 1 ชนงวดล่าสุด"
-        : "✅ 3 ตัวล่างอันดับ 1 ไม่ชนงวดล่าสุด");
+      function run() {
+        setStatus("STATUS: loading data...", "var(--warn)");
 
-      return lines.join("\n");
-    }
+        return fetchJson(DATA_URL)
+          .then(function (raw) {
+            if (!Array.isArray(raw)) {
+              throw new Error("data.json ไม่ใช่ array");
+            }
 
-    function renderTopBox(el, list) {
-      el.textContent = list.map((x, i) =>
-        `${String(i + 1).padStart(2, "0")}. ${x.num} | score=${x.score.toFixed(4)} | ${x.percent}%`
-      ).join("\n");
-    }
+            var clean = prepareData(raw);
+            if (clean.length < CONFIG.minHistory + 1) {
+              throw new Error("ข้อมูลย้อนหลังไม่พอ (usable=" + clean.length + ")");
+            }
 
-    function renderReasons(el, list, title) {
-      const topItem = list[0];
-      if (!topItem) {
-        el.textContent = "-";
+            var result = runForecast(clean);
+            var backtest = runBacktest(clean);
+
+            el("latestBox").textContent =
+              "date: " + result.latest.date + "\n" +
+              "firstPrize: " + result.latest.firstPrize + "\n" +
+              "top3: " + result.latest.top3 + "\n" +
+              "last2: " + result.latest.last2 + "\n" +
+              "front3: " + result.latest.front3.join(", ") + "\n" +
+              "bottom3: " + result.latest.bottom3.join(", ");
+
+            el("sanityBox").textContent = sanityCheck(result);
+            renderTopBox(el("top2Box"), result.top2);
+            renderTopBox(el("top3Box"), result.top3);
+            renderTopBox(el("bottom3Box"), result.bottom3);
+
+            el("backtestBox").textContent =
+              "ย้อนหลัง " + backtest.count + " งวด\n\n" +
+              "Strict\n" +
+              "- 2 ตัว: " + backtest.strictRate.last2 + "%\n" +
+              "- 3 ตัวบน: " + backtest.strictRate.top3 + "%\n" +
+              "- 3 ตัวล่าง: " + backtest.strictRate.bottom3 + "%\n\n" +
+              "Practical\n" +
+              "- 2 ตัว: " + backtest.practicalRate.last2 + "%\n" +
+              "- 3 ตัวบน: " + backtest.practicalRate.top3 + "%\n" +
+              "- 3 ตัวล่าง: " + backtest.practicalRate.bottom3 + "%";
+
+            renderReasons(el("reasonsBox"), result.top3, "3 ตัวบน");
+            renderRegime(el("regimeBox"), result.regime);
+
+            setStatus(
+              "STATUS: loaded OK\n" +
+              "rows raw = " + raw.length + "\n" +
+              "rows usable = " + clean.length + "\n" +
+              "latest = " + result.latest.date,
+              "var(--good)"
+            );
+          })
+          .catch(function (err) {
+            showFatal(err && err.message ? err.message : String(err));
+          });
+      }
+
+      var button = el("runBtn");
+      if (!button) {
+        showFatal("หา runBtn ไม่เจอ");
         return;
       }
 
-      el.textContent =
-`${title} อันดับ 1 = ${topItem.num}
-
-antiRepeat = ${topItem.parts.antiRepeat.toFixed(4)}
-deltaShift = ${topItem.parts.deltaShift.toFixed(4)}
-gap = ${topItem.parts.gap.toFixed(4)}
-novelty = ${topItem.parts.novelty.toFixed(4)}
-final = ${topItem.score.toFixed(4)}`;
-    }
-
-    function renderRegime(el, regime) {
-      el.innerHTML = `
-        <span class="pill">highRepeat: ${regime.highRepeat}</span>
-        <span class="pill">highOverlap: ${regime.highOverlap}</span>
-        <span class="pill">spreadUp: ${regime.spreadUp}</span>
-        <span class="pill">spreadDown: ${regime.spreadDown}</span>
-      `;
-    }
-
-    async function fetchJsonWithTimeout(url, timeoutMs = 10000) {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), timeoutMs);
-
-      try {
-        const res = await fetch(url, {
-          method: "GET",
-          cache: "no-store",
-          signal: controller.signal
-        });
-
-        if (!res.ok) {
-          throw new Error(`โหลด data.json ไม่สำเร็จ (${res.status})`);
-        }
-
-        return await res.json();
-      } finally {
-        clearTimeout(timer);
-      }
-    }
-
-    async function run() {
-      setStatus("STATUS: loading data...", "warn");
-
-      const raw = await fetchJsonWithTimeout(`${DATA_URL}?v=${Date.now()}`, 10000);
-      if (!Array.isArray(raw)) {
-        throw new Error("data.json ไม่ใช่ array");
-      }
-
-      const clean = prepareData(raw);
-
-      if (clean.length < CONFIG.minHistory + 1) {
-        throw new Error(`ข้อมูลย้อนหลังไม่พอ (usable=${clean.length})`);
-      }
-
-      const result = runForecast(clean);
-      const backtest = runBacktest(clean);
-
-      $("latestBox").textContent =
-`date: ${result.latest.date}
-firstPrize: ${result.latest.firstPrize}
-top3: ${result.latest.top3}
-last2: ${result.latest.last2}
-front3: ${result.latest.front3.join(", ")}
-bottom3: ${result.latest.bottom3.join(", ")}`;
-
-      $("sanityBox").textContent = sanityCheck(result);
-      renderTopBox($("top2Box"), result.top2);
-      renderTopBox($("top3Box"), result.top3);
-      renderTopBox($("bottom3Box"), result.bottom3);
-
-      $("backtestBox").textContent =
-`ย้อนหลัง ${backtest.count} งวด
-
-Strict
-- 2 ตัว: ${backtest.strictRate.last2}%
-- 3 ตัวบน: ${backtest.strictRate.top3}%
-- 3 ตัวล่าง: ${backtest.strictRate.bottom3}%
-
-Practical
-- 2 ตัว: ${backtest.practicalRate.last2}%
-- 3 ตัวบน: ${backtest.practicalRate.top3}%
-- 3 ตัวล่าง: ${backtest.practicalRate.bottom3}%`;
-
-      renderReasons($("reasonsBox"), result.top3, "3 ตัวบน");
-      renderRegime($("regimeBox"), result.regime);
-
-      setStatus(
-        `STATUS: loaded OK
-rows raw = ${raw.length}
-rows usable = ${clean.length}
-latest = ${result.latest.date}`,
-        "ok"
-      );
-    }
-
-    function showFatal(message) {
-      setStatus(`STATUS: ERROR\n${message}`, "error");
-      $("latestBox").textContent = message;
-      $("sanityBox").textContent = message;
-      $("top2Box").textContent = message;
-      $("top3Box").textContent = message;
-      $("bottom3Box").textContent = message;
-      $("reasonsBox").textContent = message;
-      $("backtestBox").textContent = message;
-      $("regimeBox").innerHTML = "";
-    }
-
-    $("runBtn").addEventListener("click", () => {
-      run().catch(err => {
-        showFatal(err.message || String(err));
+      button.addEventListener("click", function () {
+        run();
       });
-    });
 
-    run().catch(err => {
-      showFatal(err.message || String(err));
-    });
+      setStatus("STATUS: READY - script parsed OK", "var(--good)");
+      run();
+    })();
   </script>
 </body>
 </html>
