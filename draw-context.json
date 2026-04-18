@@ -1,1 +1,92 @@
-
+[
+  {
+    "date": "2026-04-16",
+    "calendar": {
+      "weekday_en": "thursday",
+      "weekday_th": "พฤหัสบดี",
+      "day": 16,
+      "month": 4,
+      "month_th": "เมษายน",
+      "year_be": 2569,
+      "year_ce": 2026,
+      "is_holiday_window": true,
+      "holiday_tags": ["songkran_week"]
+    },
+    "draw_tags": ["mid_month_draw", "post_holiday"],
+    "special_numbers": {
+      "day_numbers": ["16"],
+      "month_numbers": ["04", "4"],
+      "year_numbers": ["69", "26", "2569", "2026"],
+      "holiday_numbers": ["13", "14", "15", "16"],
+      "derived_numbers": ["04", "16", "69", "26"]
+    },
+    "trend": {
+      "enabled": false,
+      "weight": 0,
+      "numbers": [],
+      "sources": [],
+      "notes": ""
+    },
+    "notes": "งวดหลังสงกรานต์"
+  },
+  {
+    "date": "2026-04-01",
+    "calendar": {
+      "weekday_en": "wednesday",
+      "weekday_th": "พุธ",
+      "day": 1,
+      "month": 4,
+      "month_th": "เมษายน",
+      "year_be": 2569,
+      "year_ce": 2026,
+      "is_holiday_window": false,
+      "holiday_tags": []
+    },
+    "draw_tags": ["month_open_draw"],
+    "special_numbers": {
+      "day_numbers": ["01", "1"],
+      "month_numbers": ["04", "4"],
+      "year_numbers": ["69", "26", "2569", "2026"],
+      "holiday_numbers": [],
+      "derived_numbers": ["01", "04", "69", "26"]
+    },
+    "trend": {
+      "enabled": false,
+      "weight": 0,
+      "numbers": [],
+      "sources": [],
+      "notes": ""
+    },
+    "notes": ""
+  },
+  {
+    "date": "2026-03-16",
+    "calendar": {
+      "weekday_en": "monday",
+      "weekday_th": "จันทร์",
+      "day": 16,
+      "month": 3,
+      "month_th": "มีนาคม",
+      "year_be": 2569,
+      "year_ce": 2026,
+      "is_holiday_window": false,
+      "holiday_tags": []
+    },
+    "draw_tags": ["mid_month_draw"],
+    "special_numbers": {
+      "day_numbers": ["16"],
+      "month_numbers": ["03", "3"],
+      "year_numbers": ["69", "26", "2569", "2026"],
+      "holiday_numbers": [],
+      "derived_numbers": ["16", "03", "69", "26"]
+    },
+    "trend": {
+      "enabled": false,
+      "weight": 0,
+      "numbers": [],
+      "sources": [],
+      "notes": ""
+    },
+    "notes": ""
+  }
+]
