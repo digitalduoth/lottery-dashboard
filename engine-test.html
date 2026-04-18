@@ -1,1 +1,559 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Engine Test</title>
+  <style>
+    :root{
+      --bg:#0a0d14;
+      --panel:#121826;
+      --panel2:#0f1522;
+      --line:rgba(255,255,255,.08);
+      --text:#f7fbff;
+      --muted:rgba(255,255,255,.68);
+      --good:#8ef0b1;
+      --warn:#ffd66b;
+      --bad:#ff9d9d;
+      --blue:#84a8ff;
+    }
+    *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,sans-serif}
+    body{
+      margin:0;
+      background:linear-gradient(180deg,#070a12,#0b1220);
+      color:var(--text);
+      padding:16px;
+    }
+    .wrap{max-width:1100px;margin:0 auto}
+    .card{
+      background:linear-gradient(180deg,var(--panel),var(--panel2));
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+      margin-bottom:14px;
+    }
+    h1,h2,h3{margin:0 0 10px}
+    h1{font-size:32px}
+    h2{font-size:20px}
+    h3{font-size:15px;color:var(--muted)}
+    .muted{color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .triple{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .mono{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      white-space:pre-wrap;
+      line-height:1.6;
+      font-size:13px;
+    }
+    .pill{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(132,168,255,.12);
+      color:#cfe0ff;
+      border:1px solid rgba(132,168,255,.18);
+      margin:0 8px 8px 0;
+      font-size:13px;
+      font-weight:700;
+    }
+    .ok{color:var(--good)}
+    .warn{color:var(--warn)}
+    .bad{color:var(--bad)}
+    button{
+      border:none;
+      background:linear-gradient(180deg,#8ab1ff,#6d79ff);
+      color:#07101e;
+      font-weight:800;
+      border-radius:12px;
+      padding:12px 16px;
+      cursor:pointer;
+    }
+    @media (max-width:800px){
+      .grid,.triple{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Engine Test</h1>
+      <div class="muted">หน้า debug เพื่อตรวจว่าสูตรยังมั่วไหม ก่อนเอากลับเข้า AI หลัก</div>
+      <div style="margin-top:12px">
+        <button id="runBtn">Run Engine Test</button>
+      </div>
+    </div>
 
+    <div class="grid">
+      <div class="card">
+        <h2>Latest Draw</h2>
+        <div id="latestBox" class="mono">-</div>
+      </div>
+      <div class="card">
+        <h2>Sanity Check</h2>
+        <div id="sanityBox" class="mono">-</div>
+      </div>
+    </div>
+
+    <div class="triple">
+      <div class="card">
+        <h2>Top 10 — 2 ตัว</h2>
+        <div id="top2Box" class="mono">-</div>
+      </div>
+      <div class="card">
+        <h2>Top 10 — 3 ตัวบน</h2>
+        <div id="top3Box" class="mono">-</div>
+      </div>
+      <div class="card">
+        <h2>Top 10 — 3 ตัวล่าง</h2>
+        <div id="bottom3Box" class="mono">-</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Model Reasons</h2>
+        <div id="reasonsBox" class="mono">-</div>
+      </div>
+      <div class="card">
+        <h2>Backtest</h2>
+        <div id="backtestBox" class="mono">-</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Regime</h2>
+      <div id="regimeBox"></div>
+    </div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      minHistory: 12,
+      backtestRounds: 20,
+      take: 10,
+      weights: {
+        antiRepeat: 0.42,
+        deltaShift: 0.24,
+        gap: 0.19,
+        novelty: 0.15
+      }
+    };
+
+    function prepareData(data) {
+      return [...data]
+        .filter(d =>
+          d &&
+          typeof d.date === "string" &&
+          typeof d.firstPrize === "string" &&
+          typeof d.top3 === "string" &&
+          typeof d.last2 === "string" &&
+          Array.isArray(d.front3) &&
+          Array.isArray(d.bottom3)
+        )
+        .map(d => ({
+          date: d.date,
+          firstPrize: String(d.firstPrize).padStart(6, "0"),
+          top3: String(d.top3).padStart(3, "0"),
+          last2: String(d.last2).padStart(2, "0"),
+          front3: d.front3.map(x => String(x).padStart(3, "0")).slice(0, 2),
+          bottom3: d.bottom3.map(x => String(x).padStart(3, "0")).slice(0, 2)
+        }))
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+
+    function gen2() {
+      return Array.from({ length: 100 }, (_, i) => String(i).padStart(2, "0"));
+    }
+
+    function gen3() {
+      return Array.from({ length: 1000 }, (_, i) => String(i).padStart(3, "0"));
+    }
+
+    function top(scored, take = CONFIG.take) {
+      const sorted = [...scored].sort((a, b) => b.score - a.score).slice(0, take);
+      const max = sorted[0]?.score ?? 1;
+      const min = sorted[sorted.length - 1]?.score ?? 0;
+      const span = Math.max(max - min, 0.000001);
+
+      return sorted.map(item => ({
+        ...item,
+        percent: Number((42 + ((item.score - min) / span) * 58).toFixed(2))
+      }));
+    }
+
+    function countUniqueDigits(values) {
+      const s = new Set();
+      values.forEach(v => v.split("").forEach(d => s.add(d)));
+      return s.size;
+    }
+
+    function calcRepeatRatio(values) {
+      let repeat = 0;
+      let total = 0;
+      for (let i = 1; i < values.length; i++) {
+        if (values[i - 1] === values[i]) repeat++;
+        total++;
+      }
+      return total ? repeat / total : 0;
+    }
+
+    function calcOverlapRatio(values) {
+      let overlap = 0;
+      let total = 0;
+      for (let i = 1; i < values.length; i++) {
+        const a = values[i - 1];
+        const b = values[i];
+        const pool = b.split("");
+        let hit = 0;
+        a.split("").forEach(d => {
+          const idx = pool.indexOf(d);
+          if (idx !== -1) {
+            hit++;
+            pool.splice(idx, 1);
+          }
+        });
+        overlap += hit / a.length;
+        total++;
+      }
+      return total ? overlap / total : 0;
+    }
+
+    function detectRegime(data) {
+      const short = data.slice(0, 8).map(x => x.top3);
+      const mid = data.slice(0, 24).map(x => x.top3);
+
+      return {
+        highRepeat: calcRepeatRatio(short) >= 0.34,
+        highOverlap: calcOverlapRatio(short) >= 0.62,
+        spreadUp: countUniqueDigits(short) > countUniqueDigits(mid),
+        spreadDown: countUniqueDigits(short) < countUniqueDigits(mid)
+      };
+    }
+
+    function samePositionCount(a, b) {
+      let count = 0;
+      for (let i = 0; i < a.length; i++) if (a[i] === b[i]) count++;
+      return count;
+    }
+
+    function sharedDigitsRatio(a, b) {
+      const pool = b.split("");
+      let hit = 0;
+      a.split("").forEach(d => {
+        const idx = pool.indexOf(d);
+        if (idx !== -1) {
+          hit++;
+          pool.splice(idx, 1);
+        }
+      });
+      return hit / a.length;
+    }
+
+    function antiRepeat(num, latest, digits) {
+      let score = 1.0;
+      if (num === latest) return -10;
+
+      const samePos = samePositionCount(num, latest);
+      const shared = sharedDigitsRatio(num, latest);
+
+      if (samePos === digits) score -= 5.0;
+      else if (samePos === digits - 1) score -= 2.4;
+      else if (samePos === 1) score -= 0.7;
+
+      if (shared === 1) score -= 2.0;
+      else if (shared >= 0.66) score -= 1.1;
+      else if (shared >= 0.5) score -= 0.5;
+
+      if (digits === 3 && new Set(num.split("")).size === 1) score -= 0.8;
+      if (digits === 2 && num[0] === num[1]) score -= 0.4;
+
+      return score;
+    }
+
+    function positionProfile(values, digits) {
+      const out = Array.from({ length: digits }, () => ({}));
+      values.forEach((v, idx) => {
+        const w = 1 / (1 + idx * 0.18);
+        for (let i = 0; i < digits; i++) {
+          const d = v[i];
+          out[i][d] = (out[i][d] || 0) + w;
+        }
+      });
+      return out;
+    }
+
+    function pairProfile(values, digits) {
+      const out = {};
+      values.forEach((v, idx) => {
+        const w = 1 / (1 + idx * 0.18);
+        for (let i = 0; i < digits - 1; i++) {
+          const pair = v.slice(i, i + 2);
+          out[pair] = (out[pair] || 0) + w;
+        }
+      });
+      return out;
+    }
+
+    function deltaShift(num, historyValues, digits) {
+      const short = historyValues.slice(0, 8);
+      const mid = historyValues.slice(0, 24);
+      const long = historyValues.slice(0, 80);
+
+      const shortPos = positionProfile(short, digits);
+      const midPos = positionProfile(mid, digits);
+      const longPos = positionProfile(long, digits);
+
+      let score = 0;
+
+      for (let i = 0; i < digits; i++) {
+        const d = num[i];
+        const s = shortPos[i][d] || 0;
+        const m = midPos[i][d] || 0;
+        const l = longPos[i][d] || 0;
+        score += (s - m) + ((m - l) * 0.5);
+      }
+
+      const shortPairs = pairProfile(short, digits);
+      const midPairs = pairProfile(mid, digits);
+
+      for (let i = 0; i < digits - 1; i++) {
+        const pair = num.slice(i, i + 2);
+        score += ((shortPairs[pair] || 0) - (midPairs[pair] || 0)) * 0.8;
+      }
+
+      return score;
+    }
+
+    function gapScore(num, historyValues) {
+      const idx = historyValues.indexOf(num);
+      if (idx === 0) return -5.5;
+      if (idx === 1) return -3.0;
+      if (idx === 2) return -1.6;
+      if (idx >= 3 && idx <= 8) return 0.25;
+      if (idx >= 9 && idx <= 20) return 1.0;
+      if (idx >= 21 && idx <= 40) return 0.72;
+      if (idx === -1) return 0.48;
+      return 0.36;
+    }
+
+    function novelty(num, historyValues) {
+      const short = historyValues.slice(0, 12);
+      const long = historyValues.slice(0, 60);
+
+      const shortSet = new Set(short);
+      const longSet = new Set(long);
+
+      let score = 0;
+      if (!shortSet.has(num) && longSet.has(num)) score += 0.9;
+      if (!longSet.has(num)) score += 0.35;
+
+      const unique = new Set(num.split("")).size;
+      if (num.length === 2) {
+        if (unique === 2) score += 0.45;
+        else score -= 0.12;
+      } else {
+        if (unique === 3) score += 0.6;
+        else if (unique === 2) score += 0.15;
+        else score -= 0.35;
+      }
+
+      const mirror = num.split("").reverse().join("");
+      if (mirror !== num && shortSet.has(mirror)) score += 0.28;
+
+      return score;
+    }
+
+    function scoreAll(candidates, latest, historyValues, regime, digits) {
+      return candidates.map(num => {
+        const parts = {
+          antiRepeat: antiRepeat(num, latest, digits),
+          deltaShift: deltaShift(num, historyValues, digits),
+          gap: gapScore(num, historyValues),
+          novelty: novelty(num, historyValues)
+        };
+
+        let score =
+          parts.antiRepeat * CONFIG.weights.antiRepeat +
+          parts.deltaShift * CONFIG.weights.deltaShift +
+          parts.gap * CONFIG.weights.gap +
+          parts.novelty * CONFIG.weights.novelty;
+
+        if (regime.highRepeat) score *= 0.88;
+        if (regime.highOverlap && sharedDigitsRatio(num, latest) > 0.66) score *= 0.72;
+        if (regime.spreadUp && new Set(num.split("")).size === digits) score *= 1.08;
+        if (regime.spreadDown && new Set(num.split("")).size === 1) score *= 0.82;
+
+        return { num, score, parts };
+      });
+    }
+
+    function runForecast(clean) {
+      const latest = clean[0];
+      const history = clean.slice(1);
+      const regime = detectRegime(clean);
+
+      const top2 = top(scoreAll(gen2(), latest.last2, history.map(x => x.last2), regime, 2));
+      const top3 = top(scoreAll(gen3(), latest.top3, history.map(x => x.top3), regime, 3));
+      const bottom3 = top(scoreAll(gen3(), latest.bottom3[0], history.flatMap(x => x.bottom3), regime, 3));
+
+      return { latest, regime, top2, top3, bottom3 };
+    }
+
+    function runBacktest(clean, rounds = CONFIG.backtestRounds) {
+      const limit = Math.min(rounds, clean.length - 1);
+      const stat = {
+        strict: { last2: 0, top3: 0, bottom3: 0 },
+        practical: { last2: 0, top3: 0, bottom3: 0 },
+        count: 0
+      };
+
+      for (let i = 0; i < limit; i++) {
+        const settled = clean[i];
+        const history = clean.slice(i + 1);
+        if (history.length < CONFIG.minHistory) continue;
+
+        const regime = detectRegime(history);
+
+        const top2 = top(scoreAll(gen2(), settled.last2, history.map(x => x.last2), regime, 2));
+        const top3 = top(scoreAll(gen3(), settled.top3, history.map(x => x.top3), regime, 3));
+        const bottom3 = top(scoreAll(gen3(), settled.bottom3[0], history.flatMap(x => x.bottom3), regime, 3));
+
+        if (top2.slice(0, 5).some(x => x.num === settled.last2)) stat.strict.last2++;
+        if (top3.slice(0, 5).some(x => x.num === settled.top3)) stat.strict.top3++;
+        if (bottom3.slice(0, 5).some(x => settled.bottom3.includes(x.num))) stat.strict.bottom3++;
+
+        if (top2.slice(0, 10).some(x => x.num === settled.last2)) stat.practical.last2++;
+        if (top3.slice(0, 10).some(x => x.num === settled.top3)) stat.practical.top3++;
+        if (bottom3.slice(0, 10).some(x => settled.bottom3.includes(x.num))) stat.practical.bottom3++;
+
+        stat.count++;
+      }
+
+      const c = stat.count || 1;
+      return {
+        count: stat.count,
+        strictRate: {
+          last2: ((stat.strict.last2 / c) * 100).toFixed(2),
+          top3: ((stat.strict.top3 / c) * 100).toFixed(2),
+          bottom3: ((stat.strict.bottom3 / c) * 100).toFixed(2)
+        },
+        practicalRate: {
+          last2: ((stat.practical.last2 / c) * 100).toFixed(2),
+          top3: ((stat.practical.top3 / c) * 100).toFixed(2),
+          bottom3: ((stat.practical.bottom3 / c) * 100).toFixed(2)
+        }
+      };
+    }
+
+    function sanityCheck(result) {
+      const latest = result.latest;
+      const lines = [];
+
+      lines.push(result.top2[0]?.num === latest.last2
+        ? "❌ 2 ตัวอันดับ 1 ซ้ำงวดล่าสุด"
+        : "✅ 2 ตัวอันดับ 1 ไม่ซ้ำงวดล่าสุด");
+
+      lines.push(result.top3[0]?.num === latest.top3
+        ? "❌ 3 ตัวบนอันดับ 1 ซ้ำงวดล่าสุด"
+        : "✅ 3 ตัวบนอันดับ 1 ไม่ซ้ำงวดล่าสุด");
+
+      lines.push(latest.bottom3.includes(result.bottom3[0]?.num)
+        ? "⚠️ 3 ตัวล่างอันดับ 1 ชนงวดล่าสุด"
+        : "✅ 3 ตัวล่างอันดับ 1 ไม่ชนงวดล่าสุด");
+
+      return lines.join("\n");
+    }
+
+    function renderTopBox(el, list) {
+      el.textContent = list.map((x, i) =>
+        `${String(i + 1).padStart(2, "0")}. ${x.num} | score=${x.score.toFixed(4)} | ${x.percent}%`
+      ).join("\n");
+    }
+
+    function renderReasons(el, list, title) {
+      const topItem = list[0];
+      if (!topItem) {
+        el.textContent = "-";
+        return;
+      }
+
+      el.textContent =
+`${title} อันดับ 1 = ${topItem.num}
+
+antiRepeat = ${topItem.parts.antiRepeat.toFixed(4)}
+deltaShift = ${topItem.parts.deltaShift.toFixed(4)}
+gap = ${topItem.parts.gap.toFixed(4)}
+novelty = ${topItem.parts.novelty.toFixed(4)}
+final = ${topItem.score.toFixed(4)}`;
+    }
+
+    function renderRegime(el, regime) {
+      el.innerHTML = `
+        <span class="pill">highRepeat: ${regime.highRepeat}</span>
+        <span class="pill">highOverlap: ${regime.highOverlap}</span>
+        <span class="pill">spreadUp: ${regime.spreadUp}</span>
+        <span class="pill">spreadDown: ${regime.spreadDown}</span>
+      `;
+    }
+
+    async function run() {
+      const res = await fetch(`data.json?v=${Date.now()}`);
+      if (!res.ok) throw new Error("โหลด data.json ไม่สำเร็จ");
+
+      const raw = await res.json();
+      const clean = prepareData(raw);
+
+      if (clean.length < CONFIG.minHistory + 1) {
+        throw new Error("ข้อมูลย้อนหลังไม่พอ");
+      }
+
+      const result = runForecast(clean);
+      const backtest = runBacktest(clean);
+
+      document.getElementById("latestBox").textContent =
+`date: ${result.latest.date}
+firstPrize: ${result.latest.firstPrize}
+top3: ${result.latest.top3}
+last2: ${result.latest.last2}
+front3: ${result.latest.front3.join(", ")}
+bottom3: ${result.latest.bottom3.join(", ")}`;
+
+      document.getElementById("sanityBox").textContent = sanityCheck(result);
+      renderTopBox(document.getElementById("top2Box"), result.top2);
+      renderTopBox(document.getElementById("top3Box"), result.top3);
+      renderTopBox(document.getElementById("bottom3Box"), result.bottom3);
+
+      document.getElementById("backtestBox").textContent =
+`ย้อนหลัง ${backtest.count} งวด
+
+Strict
+- 2 ตัว: ${backtest.strictRate.last2}%
+- 3 ตัวบน: ${backtest.strictRate.top3}%
+- 3 ตัวล่าง: ${backtest.strictRate.bottom3}%
+
+Practical
+- 2 ตัว: ${backtest.practicalRate.last2}%
+- 3 ตัวบน: ${backtest.practicalRate.top3}%
+- 3 ตัวล่าง: ${backtest.practicalRate.bottom3}%`;
+
+      renderReasons(document.getElementById("reasonsBox"), result.top3, "3 ตัวบน");
+      renderRegime(document.getElementById("regimeBox"), result.regime);
+
+      console.log("ENGINE_TEST_RESULT", result);
+      console.log("ENGINE_TEST_BACKTEST", backtest);
+    }
+
+    document.getElementById("runBtn").addEventListener("click", () => {
+      run().catch(err => {
+        console.error(err);
+        alert("Engine test พัง: " + err.message);
+      });
+    });
+
+    run().catch(err => {
+      console.error(err);
+      document.getElementById("latestBox").textContent = "โหลดไม่สำเร็จ: " + err.message;
+    });
+  </script>
+</body>
+</html>
